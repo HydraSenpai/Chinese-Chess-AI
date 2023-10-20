@@ -9,7 +9,7 @@ class Main:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Chinese Chess')
-        colour_bg = (92, 84, 112)
+        colour_bg = (56,56,56)
         self.screen.fill(colour_bg)
         self.game = Game()
         
@@ -21,6 +21,7 @@ class Main:
         while True:
             game.show_background(screen)
             game.show_pieces(screen)
+            game.show_log(screen)
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 

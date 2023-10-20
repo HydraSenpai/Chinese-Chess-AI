@@ -1,5 +1,5 @@
 # Screen Dimensions
-SCREEN_WIDTH = 1100
+SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 880
 
 # Board dimensions (80)
