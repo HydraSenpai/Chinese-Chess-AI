@@ -1,10 +1,12 @@
 import pygame
 from const import *
 from board import Board
+from drag import DragHandler
 
 class Game:
     def __init__(self):
         self.board = Board()
+        self.dragger = DragHandler()
     
     # Show methods
     
@@ -52,12 +54,15 @@ class Game:
                 if self.board.squares[row][col].has_piece():
                     # Save piece data to variable in individual square
                     piece = self.board.squares[row][col].piece
-                    img = pygame.image.load(piece.texture).convert_alpha()
-                    # Scale image to board size
-                    img_scaled = pygame.transform.scale(img, (SQUARE_SIZE / 1.2, SQUARE_SIZE / 1.2))
-                    img_center = (col * SQUARE_SIZE) + 80, (row * SQUARE_SIZE) + 80
-                    piece.texture_rect = img_scaled.get_rect(center=img_center)
-                    surface.blit(img_scaled, piece.texture_rect)
+                    
+                    # Check if piece is being dragged and not to show it
+                    if piece is not self.dragger.piece:
+                        img = pygame.image.load(piece.texture).convert_alpha()
+                        # Scale image to board size
+                        img_scaled = pygame.transform.scale(img, (SQUARE_SIZE / 1.2, SQUARE_SIZE / 1.2))
+                        img_center = (col * SQUARE_SIZE) + 80, (row * SQUARE_SIZE) + 80
+                        piece.texture_rect = img_scaled.get_rect(center=img_center)
+                        surface.blit(img_scaled, piece.texture_rect)
                     
     def show_log(self,surface):
         log_rect = (WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
