@@ -78,4 +78,5 @@ class Board:
             # Create King
             self.squares[9][4] = Square(9, 4, King(colour))
             
+  
         

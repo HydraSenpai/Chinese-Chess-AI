@@ -12,6 +12,8 @@ class Main:
         colour_bg = (56,56,56)
         self.screen.fill(colour_bg)
         self.game = Game()
+        self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
+        
         
     def mainloop(self):
         
@@ -21,12 +23,14 @@ class Main:
         drag = self.game.dragger
         
         while True:
-
+            
+            self.screen.blit(self.bg_surface, (0,0))
             game.show_background(screen)
             game.show_pieces(screen)
             game.show_log(screen)
             if drag.is_dragging:
                 drag.update_blit(screen)
+            
             
             
             
@@ -45,6 +49,7 @@ class Main:
                 elif event.type == pygame.MOUSEMOTION:
                     if drag.is_dragging == True:
                         drag.update_mouse(event.pos)
+                        self.screen.blit(self.bg_surface, (0,0))
                         game.show_background(screen)
                         game.show_pieces(screen)
                         game.show_log(screen)

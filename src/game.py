@@ -67,3 +67,4 @@ class Game:
     def show_log(self,surface):
         log_rect = (WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
         pygame.draw.rect(surface, (171,172,173), log_rect)
+        
