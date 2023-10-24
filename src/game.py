@@ -68,3 +68,12 @@ class Game:
         log_rect = (WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
         pygame.draw.rect(surface, (171,172,173), log_rect)
         
+    def show_moves(self, surface):
+        if self.dragger.is_dragging:
+            piece = self.dragger.piece
+            for move in piece.moves:
+                colour = '#C86464'
+                rect = (move.final.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), move.final.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.2, SQUARE_SIZE // 1.2)
+                pygame.draw.ellipse(surface, colour, rect)
+                
+        

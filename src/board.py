@@ -1,6 +1,7 @@
 from square import Square
 from piece import *
 from const import *
+from move import Move
 
 class Board:
     def __init__(self):
@@ -78,5 +79,41 @@ class Board:
             # Create King
             self.squares[9][4] = Square(9, 4, King(colour))
             
-  
+    def calculate_moves(self, piece, row, column):
         
+        def next_knight_moves(row, column):
+            possible_moves = [
+                (row-2, column+1),
+                (row-2, column-1),
+                (row+2, column+1),
+                (row+2, column-1),
+                (row-1, column-2),
+                (row-1, column+2),
+                (row+1, column-2),
+                (row+1, column+2)
+            ]
+            
+            for possible_move in possible_moves:
+                possible_row, possible_column = possible_move
+                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+
+        if piece.name == 'pawn':
+            pass
+        if piece.name == 'cannon':
+            pass
+        if piece.name == 'knight':
+            next_knight_moves(row, column)
+        if piece.name == 'elephant':
+            pass
+        if piece.name == 'guard':
+            pass
+        if piece.name == 'king':
+            pass
+        
+    
+                    

@@ -21,7 +21,7 @@ class Piece:
             f'assets/images/pieces/{self.colour}_{self.name}.png'
         )
         
-    def add_moves(self, move):
+    def add_move(self, move):
         self.moves.append(move)
         
 class Pawn(Piece):

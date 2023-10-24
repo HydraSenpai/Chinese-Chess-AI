@@ -26,13 +26,13 @@ class Main:
             
             self.screen.blit(self.bg_surface, (0,0))
             game.show_background(screen)
-            game.show_pieces(screen)
             game.show_log(screen)
+            game.show_moves(screen)
+            game.show_pieces(screen)
+            
+            
             if drag.is_dragging:
                 drag.update_blit(screen)
-            
-            
-            
             
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -43,16 +43,26 @@ class Main:
                     row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
                     if(board.squares[row_clicked][column_clicked].has_piece()):
                         piece = board.squares[row_clicked][column_clicked].piece
+                        # Calculate moves
+                        board.calculate_moves(piece, row_clicked, column_clicked)
                         # Save initial piece position and start dragging
                         drag.save_initial_pos(event.pos)
                         drag.drag_piece(piece)
+                        # Show methods
+                        self.screen.blit(self.bg_surface, (0,0))
+                        game.show_background(screen)
+                        game.show_log(screen)
+                        game.show_moves(screen)
+                        game.show_pieces(screen)
+                        drag.update_blit(screen)
                 elif event.type == pygame.MOUSEMOTION:
                     if drag.is_dragging == True:
                         drag.update_mouse(event.pos)
                         self.screen.blit(self.bg_surface, (0,0))
                         game.show_background(screen)
-                        game.show_pieces(screen)
                         game.show_log(screen)
+                        game.show_moves(screen)
+                        game.show_pieces(screen)
                         drag.update_blit(screen)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     drag.undrag_piece()
