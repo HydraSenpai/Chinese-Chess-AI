@@ -187,6 +187,30 @@ class Board:
             upward_check()
             left_check()
             right_check()
+            
+        def next_king_moves(row, column):
+            possible_moves = [
+                (row+1, column),
+                (row-1, column),
+                (row, column+1),
+                (row, column-1),
+            ]
+            max_column = 6
+            min_column = 3
+            if piece.colour == 'red':
+                max_row = 3
+                min_row = 0
+            else:
+                max_row = 10
+                min_row = 7
+            for possible_move in possible_moves:
+                possible_row, possible_column = possible_move
+                if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
 
         if piece.name == 'pawn':
             pass
@@ -199,7 +223,7 @@ class Board:
         if piece.name == 'guard':
             pass
         if piece.name == 'king':
-            pass
+            next_king_moves(row, column)
         if piece.name == 'rook':
             next_rook_moves(row, column)
         
