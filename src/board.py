@@ -236,6 +236,23 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         piece.add_move(move)
+        
+        # Does not check if piece is blocking the move yet                                 
+        def next_elephant_moves(row, column):
+            possible_moves = [
+                (row+2, column+2),
+                (row-2, column-2),
+                (row-2, column+2),
+                (row+2, column-2),
+            ]
+            for possible_move in possible_moves:
+                possible_row, possible_column = possible_move
+                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
 
         if piece.name == 'pawn':
             pass
@@ -244,7 +261,7 @@ class Board:
         if piece.name == 'knight':
             next_knight_moves(row, column)
         if piece.name == 'elephant':
-            pass
+            next_elephant_moves(row, column)
         if piece.name == 'guard':
             next_guard_moves(row, column)
         if piece.name == 'king':
