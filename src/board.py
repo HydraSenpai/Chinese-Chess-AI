@@ -50,7 +50,7 @@ class Board:
             self.squares[0][4] = Square(0, 4, King(colour))
         else:
             # Create all pawns
-            self.squares[6][0] = Square(6, 1, Pawn(colour))
+            self.squares[6][0] = Square(6, 0, Pawn(colour))
             self.squares[6][2] = Square(6, 2, Pawn(colour))
             self.squares[6][4] = Square(6, 4, Pawn(colour))
             self.squares[6][6] = Square(6, 6, Pawn(colour))
@@ -253,9 +253,74 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         piece.add_move(move)
+                        
+        def next_pawn_moves(row, column):
+            def move_red_home():
+                possible_move = (row + 1, column)
+                possible_row, possible_column = possible_move
+                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                        
+            def move_red_rival():
+                possible_moves = [
+                (row+1, column),
+                (row-1, column),
+                (row, column+1),
+                (row, column-1),
+            ]
+                for possible_move in possible_moves:
+                    possible_row, possible_column = possible_move
+                    if possible_row in range(5,10) and Square.column_in_range(possible_column):
+                        if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                            initial = Square(row, column)
+                            final = Square(possible_row, possible_column)
+                            move = Move(initial, final)
+                            piece.add_move(move)
+                            
+            def move_black_home():
+                possible_move = (row - 1, column)
+                possible_row, possible_column = possible_move
+                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+            def move_black_rival():
+                possible_moves = [
+                (row+1, column),
+                (row-1, column),
+                (row, column+1),
+                (row, column-1),
+            ]
+                for possible_move in possible_moves:
+                    possible_row, possible_column = possible_move
+                    if possible_row in range(0,5) and Square.column_in_range(possible_column):
+                        if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                            initial = Square(row, column)
+                            final = Square(possible_row, possible_column)
+                            move = Move(initial, final)
+                            piece.add_move(move)
+            
+            if piece.colour == 'red':
+                if row < 5:
+                    move_red_home()
+                else:
+                    move_red_rival()
+            else:
+                if row > 4:
+                    move_black_home()
+                else:
+                    move_black_rival()
+                    
+            
 
         if piece.name == 'pawn':
-            pass
+            next_pawn_moves(row, column)
         if piece.name == 'cannon':
             pass
         if piece.name == 'knight':
