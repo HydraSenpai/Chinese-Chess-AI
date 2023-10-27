@@ -101,6 +101,92 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         piece.add_move(move)
+    
+        def next_rook_moves(row, column):
+            #Downward Check
+            def downward_check():
+                counter = 1
+                next_move = (row + counter, column)
+                while(Square.row_in_range(row + counter)):
+                    next_move = (row + counter, column)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        return
+                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Upward Check
+            def upward_check():
+                counter = 1
+                next_move = (row - counter, column)
+                while(Square.row_in_range(row - counter)):
+                    next_move = (row - counter, column)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        return
+                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Right Check
+            def right_check():
+                counter = 1
+                next_move = (row, column + counter)
+                while(Square.column_in_range(column + counter)):
+                    next_move = (row, column + counter)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        return
+                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Left Check
+            def left_check():
+                counter = 1
+                next_move = (row, column - counter)
+                while(Square.column_in_range(column - counter)):
+                    next_move = (row, column - counter)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        return
+                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            downward_check()
+            upward_check()
+            left_check()
+            right_check()
 
         if piece.name == 'pawn':
             pass
@@ -114,6 +200,8 @@ class Board:
             pass
         if piece.name == 'king':
             pass
+        if piece.name == 'rook':
+            next_rook_moves(row, column)
         
     
                     
