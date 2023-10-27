@@ -81,6 +81,7 @@ class Board:
             
     def calculate_moves(self, piece, row, column):
         
+        # This method is wrong as it doesn't check sides of knight (it cannot jump over pieces)
         def next_knight_moves(row, column):
             possible_moves = [
                 (row-2, column+1),
@@ -211,6 +212,30 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         piece.add_move(move)
+                        
+        def next_guard_moves(row, column):
+            possible_moves = [
+                (row+1, column+1),
+                (row-1, column-1),
+                (row-1, column+1),
+                (row+1, column-1),
+            ]
+            max_column = 6
+            min_column = 3
+            if piece.colour == 'red':
+                max_row = 3
+                min_row = 0
+            else:
+                max_row = 10
+                min_row = 7
+            for possible_move in possible_moves:
+                possible_row, possible_column = possible_move
+                if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
+                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        initial = Square(row, column)
+                        final = Square(possible_row, possible_column)
+                        move = Move(initial, final)
+                        piece.add_move(move)
 
         if piece.name == 'pawn':
             pass
@@ -221,7 +246,7 @@ class Board:
         if piece.name == 'elephant':
             pass
         if piece.name == 'guard':
-            pass
+            next_guard_moves(row, column)
         if piece.name == 'king':
             next_king_moves(row, column)
         if piece.name == 'rook':
