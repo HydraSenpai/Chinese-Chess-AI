@@ -83,17 +83,28 @@ class Board:
         
         # This method is wrong as it doesn't check sides of knight (it cannot jump over pieces)
         def next_knight_moves(row, column):
-            possible_moves = [
-                (row-2, column+1),
-                (row-2, column-1),
-                (row+2, column+1),
-                (row+2, column-1),
-                (row-1, column-2),
-                (row-1, column+2),
-                (row+1, column-2),
-                (row+1, column+2)
-            ]
-            
+            possible_moves = []
+            #Check top
+            if Square.row_in_range(row-1) and Square.column_in_range(column):
+                if self.squares[row-1][column].is_empty():
+                    possible_moves.append((row-2, column-1))
+                    possible_moves.append((row-2, column+1))
+            #Check bottom
+            if Square.row_in_range(row+1) and Square.column_in_range(column):
+                if self.squares[row+1][column].is_empty():
+                    possible_moves.append((row+2, column-1))
+                    possible_moves.append((row+2, column+1))
+            #Check Left
+            if Square.row_in_range(row) and Square.column_in_range(column-1):
+                if self.squares[row][column-1].is_empty():
+                    possible_moves.append((row-1, column-2))
+                    possible_moves.append((row+1, column-2))
+            #Check Right
+            if Square.row_in_range(row) and Square.column_in_range(column+1):
+                if self.squares[row][column+1].is_empty():
+                    possible_moves.append((row-1, column+2))
+                    possible_moves.append((row+1, column+2))
+                
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
@@ -317,12 +328,13 @@ class Board:
                 else:
                     move_black_rival()
                     
-            
+        def next_cannon_moves(row, column):     
+            pass
 
         if piece.name == 'pawn':
             next_pawn_moves(row, column)
         if piece.name == 'cannon':
-            pass
+            next_cannon_moves(row, column)
         if piece.name == 'knight':
             next_knight_moves(row, column)
         if piece.name == 'elephant':

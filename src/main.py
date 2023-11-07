@@ -23,7 +23,6 @@ class Main:
         drag = self.game.dragger
         
         while True:
-            
             self.screen.blit(self.bg_surface, (0,0))
             game.show_background(screen)
             game.show_log(screen)
