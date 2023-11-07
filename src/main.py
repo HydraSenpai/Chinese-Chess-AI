@@ -44,18 +44,20 @@ class Main:
                     row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
                     if(board.squares[row_clicked][column_clicked].has_piece()):
                         piece = board.squares[row_clicked][column_clicked].piece
-                        # Calculate moves
-                        board.calculate_moves(piece, row_clicked, column_clicked)
-                        # Save initial piece position and start dragging
-                        drag.save_initial_pos(event.pos)
-                        drag.drag_piece(piece)
-                        # Show methods
-                        self.screen.blit(self.bg_surface, (0,0))
-                        game.show_background(screen)
-                        game.show_log(screen)
-                        game.show_moves(screen)
-                        game.show_pieces(screen)
-                        drag.update_blit(screen)
+                        # Check colour is equal to turn
+                        if piece.colour == game.next_player:
+                            # Calculate moves
+                            board.calculate_moves(piece, row_clicked, column_clicked)
+                            # Save initial piece position and start dragging
+                            drag.save_initial_pos(event.pos)
+                            drag.drag_piece(piece)
+                            # Show methods
+                            self.screen.blit(self.bg_surface, (0,0))
+                            game.show_background(screen)
+                            game.show_log(screen)
+                            game.show_moves(screen)
+                            game.show_pieces(screen)
+                            drag.update_blit(screen)
                 elif event.type == pygame.MOUSEMOTION:
                     if drag.is_dragging == True:
                         drag.update_mouse(event.pos)
@@ -85,6 +87,7 @@ class Main:
                             game.show_background(screen)
                             game.show_log(screen)
                             game.show_pieces(screen)
+                            game.next_turn()
                     drag.undrag_piece()
                     
                 elif event.type == pygame.QUIT: 

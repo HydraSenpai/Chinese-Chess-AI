@@ -7,6 +7,7 @@ class Game:
     def __init__(self):
         self.board = Board()
         self.dragger = DragHandler()
+        self.next_player = 'red'
     
     # Show methods
     
@@ -75,5 +76,11 @@ class Game:
                 colour = '#C86464'
                 rect = (move.final.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), move.final.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.ellipse(surface, colour, rect)
+                
+    def next_turn(self):
+        if self.next_player == 'red':
+            self.next_player = 'black'
+        else: 
+            self.next_player = 'red'
                 
         
