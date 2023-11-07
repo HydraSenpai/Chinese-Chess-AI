@@ -2,6 +2,8 @@ import sys, pygame
 
 from const import *
 from game import Game
+from square import Square
+from move import Move
 
 
 class Main:
@@ -64,7 +66,27 @@ class Main:
                         game.show_pieces(screen)
                         drag.update_blit(screen)
                 elif event.type == pygame.MOUSEBUTTONUP:
+                    if drag.is_dragging:
+                        drag.update_mouse(event.pos)
+                        # Save released grid position
+                        released_row = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
+                        released_column = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
+                        print("Row Released = " + str(released_row))
+                        print("Column Released = " + str(released_column))
+                        # Create possible move
+                        initial = Square((drag.initial_row + 40) // (SQUARE_SIZE) - 1, (drag.initial_column + 40) // (SQUARE_SIZE) - 1)
+                        final = Square(released_row, released_column)
+                        move = Move(initial, final)
+                        # Start moving process
+                        if board.valid_move(drag.piece, move):
+                            print('valid move')
+                            board.move(drag.piece, move)
+                            # Redraw board
+                            game.show_background(screen)
+                            game.show_log(screen)
+                            game.show_pieces(screen)
                     drag.undrag_piece()
+                    
                 elif event.type == pygame.QUIT: 
                     pygame.quit()
                     sys.exit()

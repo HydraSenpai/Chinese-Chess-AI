@@ -10,6 +10,30 @@ class Board:
         self.create()
         self.add_pieces('red')
         self.add_pieces('black')
+        self.last_move = None
+        
+    def move(self, piece, move):
+        initial = move.initial
+        final = move.final
+        
+        # Update squares
+        self.squares[initial.row][initial.column].piece = None
+        self.squares[final.row][final.column].piece = piece
+        
+        piece.moved = True
+        
+        # Clear valid moves
+        piece.clear_moves()
+        
+        # Set last move
+        self.last_move = move
+        
+    def valid_move(self, piece, move):
+        return move in piece.moves
+        # for i in piece.moves:
+        #     if move.initial.row == i.initial.row and move.initial.column == i.initial.column and move.final.row == i.final.row and move.final.column == i.final.column:
+        #         return True
+        # return False
     
     def create(self):
         # Looping each square and creating corresponding Square object
@@ -486,5 +510,3 @@ class Board:
         if piece.name == 'rook':
             next_rook_moves(row, column)
         
-    
-                    
