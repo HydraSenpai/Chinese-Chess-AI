@@ -81,7 +81,6 @@ class Board:
             
     def calculate_moves(self, piece, row, column):
         
-        # This method is wrong as it doesn't check sides of knight (it cannot jump over pieces)
         def next_knight_moves(row, column):
             possible_moves = []
             #Check top
@@ -250,12 +249,24 @@ class Board:
         
         # Does not check if piece is blocking the move yet                                 
         def next_elephant_moves(row, column):
-            possible_moves = [
-                (row+2, column+2),
-                (row-2, column-2),
-                (row-2, column+2),
-                (row+2, column-2),
-            ]
+            possible_moves = []
+            #Check top
+            if Square.row_in_range(row+1) and Square.column_in_range(column+1):
+                if self.squares[row+1][column+1].is_empty():
+                    possible_moves.append((row+2, column+2))
+            #Check bottom
+            if Square.row_in_range(row-2) and Square.column_in_range(column-2):
+                if self.squares[row-1][column-1].is_empty():
+                    possible_moves.append((row-2, column-2))
+            #Check Left
+            if Square.row_in_range(row+2) and Square.column_in_range(column-2):
+                if self.squares[row+1][column-1].is_empty():
+                    possible_moves.append((row+2, column-2))
+            #Check Right
+            if Square.row_in_range(row-2) and Square.column_in_range(column+2):
+                if self.squares[row-1][column+1].is_empty():
+                    possible_moves.append((row-2, column+2))
+            
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
