@@ -329,7 +329,136 @@ class Board:
                     move_black_rival()
                     
         def next_cannon_moves(row, column):     
-            pass
+            #Downward Check
+            def downward_check():
+                counter = 1
+                next_move = (row + counter, column)
+                while(Square.row_in_range(row + counter)):
+                    next_move = (row + counter, column)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].is_empty():
+                        # Check whether a rival piece is in a square after the first blocking piece
+                        counter += 1
+                        # Loop after blocking piece to find next piece
+                        while(Square.row_in_range(row + counter)):
+                            next_move = (row + counter, column)
+                            possible_row, possible_column = next_move
+                            # If piece is team piece then no jump occurs and return
+                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                                return
+                            # If piece is rival then add move to possible moves
+                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                                initial = Square(row, column)
+                                final = Square(possible_row, possible_column)
+                                move = Move(initial, final)
+                                piece.add_move(move)
+                                return
+                            counter += 1 
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Upward Check
+            def upward_check():
+                counter = 1
+                next_move = (row - counter, column)
+                # Loop until check either isn't on board or is intercepted by own piece or rival piece
+                while(Square.row_in_range(row - counter)):
+                    next_move = (row - counter, column)
+                    possible_row, possible_column = next_move
+                    # Check whether move contains a blocking piece
+                    if not self.squares[possible_row][possible_column].is_empty():
+                        # Check whether a rival piece is in a square after the first blocking piece
+                        counter += 1
+                        # Loop after blocking piece to find next piece
+                        while(Square.row_in_range(row - counter)):
+                            next_move = (row - counter, column)
+                            possible_row, possible_column = next_move
+                            # If piece is team piece then no jump occurs and return
+                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                                return
+                            # If piece is rival then add move to possible moves
+                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                                initial = Square(row, column)
+                                final = Square(possible_row, possible_column)
+                                move = Move(initial, final)
+                                piece.add_move(move)
+                                return
+                            counter += 1 
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Right Check
+            def right_check():
+                counter = 1
+                next_move = (row, column + counter)
+                while(Square.column_in_range(column + counter)):
+                    next_move = (row, column + counter)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].is_empty():
+                        # Check whether a rival piece is in a square after the first blocking piece
+                        counter += 1
+                        # Loop after blocking piece to find next piece
+                        while(Square.column_in_range(column + counter)):
+                            next_move = (row, column + counter)
+                            possible_row, possible_column = next_move
+                            # If piece is team piece then no jump occurs and return
+                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                                return
+                            # If piece is rival then add move to possible moves
+                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                                initial = Square(row, column)
+                                final = Square(possible_row, possible_column)
+                                move = Move(initial, final)
+                                piece.add_move(move)
+                                return
+                            counter += 1 
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            #Left Check
+            def left_check():
+                counter = 1
+                next_move = (row, column - counter)
+                while(Square.column_in_range(column - counter)):
+                    next_move = (row, column - counter)
+                    possible_row, possible_column = next_move
+                    if not self.squares[possible_row][possible_column].is_empty():
+                        # Check whether a rival piece is in a square after the first blocking piece
+                        counter += 1
+                        # Loop after blocking piece to find next piece
+                        while(Square.column_in_range(column - counter)):
+                            next_move = (row, column - counter)
+                            possible_row, possible_column = next_move
+                            # If piece is team piece then no jump occurs and return
+                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                                return
+                            # If piece is rival then add move to possible moves
+                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                                initial = Square(row, column)
+                                final = Square(possible_row, possible_column)
+                                move = Move(initial, final)
+                                piece.add_move(move)
+                                return
+                            counter += 1 
+                        return
+                    initial = Square(row, column)
+                    final = Square(possible_row, possible_column)
+                    move = Move(initial, final)
+                    piece.add_move(move)
+                    counter += 1
+            downward_check()
+            upward_check()
+            left_check()
+            right_check()
 
         if piece.name == 'pawn':
             next_pawn_moves(row, column)
