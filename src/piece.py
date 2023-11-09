@@ -27,6 +27,7 @@ class Piece:
     def clear_moves(self):
         self.moves = []
         
+#The value changes to 2 when across thr river
 class Pawn(Piece):
     def __init__(self, colour):
         if colour == 'white':
@@ -37,23 +38,23 @@ class Pawn(Piece):
         
 class Cannon(Piece):
     def __init__(self, colour):
-        super().__init__('cannon', colour, 3.0)
+        super().__init__('cannon', colour, 4.5)
 
 class Knight(Piece):
     def __init__(self, colour):
-        super().__init__('knight', colour, 3.0)
+        super().__init__('knight', colour, 4.0)
         
 class Elephant(Piece):
     def __init__(self, colour):
-        super().__init__('elephant', colour, 3.001)
+        super().__init__('elephant', colour, 2)
         
 class Rook(Piece):
     def __init__(self, colour):
-        super().__init__('rook', colour, 5.0)
+        super().__init__('rook', colour, 9.0)
         
 class Guard(Piece):
     def __init__(self, colour):
-        super().__init__('guard', colour, 9.0)
+        super().__init__('guard', colour, 2.0)
         
 class King(Piece):
     def __init__(self, colour):
