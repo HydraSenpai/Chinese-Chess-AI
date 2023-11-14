@@ -82,5 +82,16 @@ class Game:
             self.next_player = 'black'
         else: 
             self.next_player = 'red'
-                
-        
+            
+    def show_last_move(self, surface):
+        if self.board.last_move:
+            initial = self.board.last_move.initial
+            final = self.board.last_move.final
+            for pos in [initial, final]:
+                colour = (167, 211, 151)
+                rect = (pos.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), pos.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
+                pygame.draw.rect(surface, colour, rect)
+              
+      
+    def reset(self):
+        self.__init__()
