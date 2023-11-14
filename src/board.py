@@ -133,7 +133,8 @@ class Board:
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
     
@@ -149,12 +150,14 @@ class Board:
                         return
                     if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
                         return
                     initial = Square(row, column)
-                    final = Square(possible_row, possible_column)
+                    final_piece = self.squares[possible_row][possible_column].piece
+                    final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     piece.add_move(move)
                     counter += 1
@@ -243,7 +246,8 @@ class Board:
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
                         
@@ -267,7 +271,8 @@ class Board:
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
         
@@ -296,7 +301,8 @@ class Board:
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
                         
@@ -307,7 +313,8 @@ class Board:
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
                         
@@ -323,7 +330,8 @@ class Board:
                     if possible_row in range(5,10) and Square.column_in_range(possible_column):
                         if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                             initial = Square(row, column)
-                            final = Square(possible_row, possible_column)
+                            final_piece = self.squares[possible_row][possible_column].piece
+                            final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             piece.add_move(move)
                             
@@ -333,7 +341,8 @@ class Board:
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
                     if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
+                        final_piece = self.squares[possible_row][possible_column].piece
+                        final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
             def move_black_rival():
@@ -348,7 +357,8 @@ class Board:
                     if possible_row in range(0,5) and Square.column_in_range(possible_column):
                         if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                             initial = Square(row, column)
-                            final = Square(possible_row, possible_column)
+                            final_piece = self.squares[possible_row][possible_column].piece
+                            final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             piece.add_move(move)
             
@@ -384,14 +394,16 @@ class Board:
                             # If piece is rival then add move to possible moves
                             if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final = Square(possible_row, possible_column)
+                                final_piece = self.squares[possible_row][possible_column].piece
+                                final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 piece.add_move(move)
                                 return
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final = Square(possible_row, possible_column)
+                    final_piece = self.squares[possible_row][possible_column].piece
+                    final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     piece.add_move(move)
                     counter += 1
@@ -417,14 +429,16 @@ class Board:
                             # If piece is rival then add move to possible moves
                             if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final = Square(possible_row, possible_column)
+                                final_piece = self.squares[possible_row][possible_column].piece
+                                final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 piece.add_move(move)
                                 return
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final = Square(possible_row, possible_column)
+                    final_piece = self.squares[possible_row][possible_column].piece
+                    final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     piece.add_move(move)
                     counter += 1
@@ -448,14 +462,16 @@ class Board:
                             # If piece is rival then add move to possible moves
                             if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final = Square(possible_row, possible_column)
+                                final_piece = self.squares[possible_row][possible_column].piece
+                                final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 piece.add_move(move)
                                 return
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final = Square(possible_row, possible_column)
+                    final_piece = self.squares[possible_row][possible_column].piece
+                    final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     piece.add_move(move)
                     counter += 1
@@ -479,14 +495,16 @@ class Board:
                             # If piece is rival then add move to possible moves
                             if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final = Square(possible_row, possible_column)
+                                final_piece = self.squares[possible_row][possible_column].piece
+                                final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 piece.add_move(move)
                                 return
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final = Square(possible_row, possible_column)
+                    final_piece = self.squares[possible_row][possible_column].piece
+                    final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     piece.add_move(move)
                     counter += 1
@@ -497,16 +515,18 @@ class Board:
 
         if piece.name == 'pawn':
             next_pawn_moves(row, column)
-        if piece.name == 'cannon':
+        elif piece.name == 'cannon':
             next_cannon_moves(row, column)
-        if piece.name == 'knight':
+        elif piece.name == 'knight':
             next_knight_moves(row, column)
-        if piece.name == 'elephant':
+        elif piece.name == 'elephant':
             next_elephant_moves(row, column)
-        if piece.name == 'guard':
+        elif piece.name == 'guard':
             next_guard_moves(row, column)
-        if piece.name == 'king':
+        elif piece.name == 'king':
             next_king_moves(row, column)
-        if piece.name == 'rook':
+        elif piece.name == 'rook':
             next_rook_moves(row, column)
         
+    def in_check(self, piece, move):
+        pass
