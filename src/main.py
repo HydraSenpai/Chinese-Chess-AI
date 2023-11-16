@@ -48,7 +48,7 @@ class Main:
                         # Check colour is equal to turn
                         if piece.colour == game.next_player:
                             # Calculate moves
-                            board.calculate_moves(piece, row_clicked, column_clicked)
+                            board.calculate_moves(piece, row_clicked, column_clicked, bool=True)
                             # Save initial piece position and start dragging
                             drag.save_initial_pos(event.pos)
                             drag.drag_piece(piece)
