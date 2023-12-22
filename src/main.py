@@ -43,6 +43,10 @@ class Main:
                     # Check if mouse click is in a row and column that contains a piece
                     column_clicked = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
                     row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
+                    print("Row Clicked = " + str(row_clicked))
+                    print("Column Clicked = " + str(column_clicked))
+                    if column_clicked > 8 or column_clicked < 0 or row_clicked > 9 or row_clicked < 0:
+                        break
                     if(board.squares[row_clicked][column_clicked].has_piece()):
                         piece = board.squares[row_clicked][column_clicked].piece
                         # Check colour is equal to turn
