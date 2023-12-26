@@ -51,6 +51,8 @@ class Main:
                         piece = board.squares[row_clicked][column_clicked].piece
                         # Check colour is equal to turn
                         if piece.colour == game.next_player:
+                            # Clear before valid move
+                            piece.clear_moves()
                             # Calculate moves
                             board.calculate_moves(piece, row_clicked, column_clicked, bool=True)
                             # Save initial piece position and start dragging
@@ -89,7 +91,6 @@ class Main:
                         move = Move(initial, final)
                         # Start moving process
                         if board.valid_move(drag.piece, move):
-                            print('valid move')
                             board.move(drag.piece, move)
                             # Redraw board
                             game.show_background(screen)

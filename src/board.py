@@ -143,7 +143,7 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
@@ -298,7 +298,7 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
@@ -326,7 +326,7 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
@@ -356,7 +356,7 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
@@ -372,7 +372,7 @@ class Board:
                 possible_move = (row + 1, column)
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
@@ -393,7 +393,7 @@ class Board:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(5,10) and Square.column_in_range(possible_column):
-                        if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                             initial = Square(row, column)
                             final_piece = self.squares[possible_row][possible_column].piece
                             final = Square(possible_row, possible_column, final_piece)
@@ -408,7 +408,7 @@ class Board:
                 possible_move = (row - 1, column)
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
@@ -428,7 +428,7 @@ class Board:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(0,5) and Square.column_in_range(possible_column):
-                        if self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                        if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
                             initial = Square(row, column)
                             final_piece = self.squares[possible_row][possible_column].piece
                             final = Square(possible_row, possible_column, final_piece)

@@ -23,6 +23,9 @@ class Square:
     def empty_or_rival(self, colour):
         return self.is_empty() or self.has_rival_piece(colour)
     
+    def is_valid_move(self, colour):   
+        return self.empty_or_rival(colour) and not self.has_team_piece(colour)
+    
     @staticmethod
     def row_in_range(*args):
         for arg in args:
