@@ -12,6 +12,7 @@ class Board:
         self.add_pieces('red')
         self.add_pieces('black')
         self.last_move = None
+        self.is_in_check = False
         
     def print_board(self):
         print("----------------------------------------------")
@@ -331,7 +332,11 @@ class Board:
                         final_piece = self.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
-                        piece.add_move(move)
+                        if bool:
+                            if not self.in_check(piece, move):
+                                piece.add_move(move)
+                        else:
+                            piece.add_move(move)
         
         # Does not check if piece is blocking the move yet                                 
         def next_elephant_moves(row, column):
@@ -636,14 +641,15 @@ class Board:
             next_king_moves(row, column)
         elif piece.name == 'rook':
             next_rook_moves(row, column)
-        
+    
+    # Method used to calculate if moving a friendly piece results in its own checkmate (to prevent moves that put yourself in checkmate)
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
         
-        for row in range(ROWS):
-            for column in range(COLUMNS):
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
                 if temp_board.squares[row][column].has_rival_piece(piece.colour):
                     p = temp_board.squares[row][column].piece
                     temp_board.calculate_moves(p, row, column, bool=False)
@@ -651,3 +657,23 @@ class Board:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
                             return True
         return False
+    
+    # Method used to see if king is currently in check
+    def is_check(self, next_player):
+        print("is_check method")
+        if next_player == 'red':
+            turn = 'black'
+        else:
+            turn = 'red'
+        # Search through board to find all enemy pieces
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                if self.squares[row][column].has_rival_piece(next_player):
+                    print("found enemy" + str(row) + str(column))
+                    p = self.squares[row][column].piece
+                    # Calculate all possible moves
+                    self.calculate_moves(p, row, column, bool=False)
+                    # Search through all moves to find if any result in a checkmate
+                    for x in p.moves:
+                        if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            print("piece is checking king")

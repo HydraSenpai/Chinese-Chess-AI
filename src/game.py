@@ -83,6 +83,7 @@ class Game:
         else: 
             self.next_player = 'red'
             
+            
     def show_last_move(self, surface):
         if self.board.last_move:
             initial = self.board.last_move.initial

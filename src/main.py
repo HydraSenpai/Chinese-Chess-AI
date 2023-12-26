@@ -98,6 +98,7 @@ class Main:
                             game.show_log(screen)
                             game.show_pieces(screen)
                             game.next_turn()
+                            board.is_check(game.next_player)
                             board.print_board()
                     drag.undrag_piece()
                     
