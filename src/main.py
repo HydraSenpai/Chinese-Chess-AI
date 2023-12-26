@@ -74,6 +74,7 @@ class Main:
                         game.show_moves(screen)
                         game.show_pieces(screen)
                         drag.update_blit(screen)
+                        
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if drag.is_dragging:
                         drag.update_mouse(event.pos)
@@ -96,7 +97,9 @@ class Main:
                             game.show_log(screen)
                             game.show_pieces(screen)
                             game.next_turn()
+                            board.print_board()
                     drag.undrag_piece()
+                    
                 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:

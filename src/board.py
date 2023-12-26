@@ -13,6 +13,17 @@ class Board:
         self.add_pieces('black')
         self.last_move = None
         
+    def print_board(self):
+        print("----------------------------------------------")
+        for x in self.squares:
+            for i in x:
+                if not hasattr(i.piece, 'name'):
+                    print("----",end = " ")
+                else:
+                    print(" " + i.piece.colour[0:1].upper() + i.piece.name[0:1] + " ",end = " ")
+            print("\n")
+        print("-----------------------------------------------")
+        
     def move(self, piece, move):
         initial = move.initial
         final = move.final
