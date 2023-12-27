@@ -43,8 +43,8 @@ class Main:
                     # Check if mouse click is in a row and column that contains a piece
                     column_clicked = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
                     row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
-                    print("Row Clicked = " + str(row_clicked))
-                    print("Column Clicked = " + str(column_clicked))
+                    # print("Row Clicked = " + str(row_clicked))
+                    # print("Column Clicked = " + str(column_clicked))
                     if column_clicked > 8 or column_clicked < 0 or row_clicked > 9 or row_clicked < 0:
                         break
                     if(board.squares[row_clicked][column_clicked].has_piece()):
@@ -83,8 +83,8 @@ class Main:
                         # Save released grid position
                         released_row = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
                         released_column = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
-                        print("Row Released = " + str(released_row))
-                        print("Column Released = " + str(released_column))
+                        # print("Row Released = " + str(released_row))
+                        # print("Column Released = " + str(released_column))
                         # Create possible move
                         initial = Square((drag.initial_row + 40) // (SQUARE_SIZE) - 1, (drag.initial_column + 40) // (SQUARE_SIZE) - 1)
                         final = Square(released_row, released_column)
@@ -98,7 +98,7 @@ class Main:
                             game.show_log(screen)
                             game.show_pieces(screen)
                             game.next_turn()
-                            board.is_check(game.next_player)
+                            # board.is_check(game.next_player)
                             board.print_board()
                     drag.undrag_piece()
                     

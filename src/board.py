@@ -76,8 +76,10 @@ class Board:
             self.squares[0][6] = Square(0, 6, Elephant(colour))
             
             # Create Rooks
-            self.squares[0][0] = Square(0, 0, Rook(colour))
-            self.squares[0][8] = Square(0, 8, Rook(colour))
+            # self.squares[0][0] = Square(0, 0, Rook(colour))
+            # self.squares[0][8] = Square(0, 8, Rook(colour))
+            self.squares[9][7] = Square(9, 7, Rook(colour))
+            self.squares[9][8] = Square(9, 8, Rook(colour))
             
             # Create Guard
             self.squares[0][3] = Square(0, 3, Guard(colour))
@@ -98,16 +100,16 @@ class Board:
             self.squares[7][7] = Square(7, 7, Cannon(colour))
                 
             # Create Knights
-            self.squares[9][1] = Square(9, 1, Knight(colour))
-            self.squares[9][7] = Square(9, 7, Knight(colour))
+            # self.squares[9][1] = Square(9, 1, Knight(colour))
+            # self.squares[9][7] = Square(9, 7, Knight(colour))
             
             # Create Elephant
-            self.squares[9][2] = Square(9, 2, Elephant(colour))
-            self.squares[9][6] = Square(9, 6, Elephant(colour))
+            # self.squares[9][2] = Square(9, 2, Elephant(colour))
+            # self.squares[9][6] = Square(9, 6, Elephant(colour))
             
             # Create Rooks
-            self.squares[9][0] = Square(9, 0, Rook(colour))
-            self.squares[9][8] = Square(9, 8, Rook(colour))
+            # self.squares[9][0] = Square(9, 0, Rook(colour))
+            # self.squares[9][8] = Square(9, 8, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
@@ -304,7 +306,14 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            # if piece.colour == "red":
+                            #     opp = "black"
+                            # else: opp = "red"
+                            print("move is row = " + str(possible_row) + ", column = " + str(possible_column))
+                            if self.is_check(piece.colour):
+                                if self.out_of_check(piece, move):
+                                    piece.add_move(move)
+                            elif not self.in_check(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -660,19 +669,35 @@ class Board:
     
     # Method used to see if king is currently in check
     def is_check(self, next_player):
-        print("is_check method")
+        # Search through board to find all enemy pieces
+        # for row in range(PIECE_ROWS):
+        #     for column in range(PIECE_COLUMNS):
+        #         if self.squares[row][column].has_rival_piece(next_player):
+        #             p = self.squares[row][column].piece
+        #             # Calculate all possible moves of each piece
+        #             self.calculate_moves(p, row, column, bool=False)
+        #             # Search through all moves to find if any are a checkmate
+        #             for x in p.moves:
+        #                 if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+        #                     print('is check method = True')
+        #                     return True
+        # print('is check method = False')
+        # return False
+    
+        temp_board = copy.deepcopy(self)
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
-                if self.squares[row][column].has_rival_piece(next_player):
-                    print("found enemy" + str(row) + str(column))
-                    p = self.squares[row][column].piece
-                    # Calculate all possible moves of each piece
-                    self.calculate_moves(p, row, column, bool=False)
+                # Calculate all possible moves of each piece
+                if temp_board.squares[row][column].has_rival_piece(next_player):
+                    p = temp_board.squares[row][column].piece
+                    temp_board.calculate_moves(p, row, column, bool=False)
                     # Search through all moves to find if any are a checkmate
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            print('is check method = True')
                             return True
+        print('is check method = False')
         return False
     
     # Method used to calculate if moving a friendly piece results in getting out of checkmate
@@ -680,6 +705,7 @@ class Board:
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
+        temp_board.print_board()
         
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
@@ -688,5 +714,13 @@ class Board:
                     temp_board.calculate_moves(p, row, column, bool=False)
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            print("out of check method = False")
+                            print(str(p.name) + " " + str(p.colour))
+                            print(x.initial.row)
+                            print(x.initial.column)
+                            print(x.final.row)
+                            print(x.final.column)
                             return False
-        return True
+        print("out of check method = True")
+        return True 
+    
