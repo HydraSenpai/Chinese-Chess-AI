@@ -661,19 +661,32 @@ class Board:
     # Method used to see if king is currently in check
     def is_check(self, next_player):
         print("is_check method")
-        if next_player == 'red':
-            turn = 'black'
-        else:
-            turn = 'red'
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
                 if self.squares[row][column].has_rival_piece(next_player):
                     print("found enemy" + str(row) + str(column))
                     p = self.squares[row][column].piece
-                    # Calculate all possible moves
+                    # Calculate all possible moves of each piece
                     self.calculate_moves(p, row, column, bool=False)
-                    # Search through all moves to find if any result in a checkmate
+                    # Search through all moves to find if any are a checkmate
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                            print("piece is checking king")
+                            return True
+        return False
+    
+    # Method used to calculate if moving a friendly piece results in getting out of checkmate
+    def out_of_check(self, piece, move):
+        temp_piece = copy.deepcopy(piece)
+        temp_board = copy.deepcopy(self)
+        temp_board.move(temp_piece, move)
+        
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                if temp_board.squares[row][column].has_rival_piece(piece.colour):
+                    p = temp_board.squares[row][column].piece
+                    temp_board.calculate_moves(p, row, column, bool=False)
+                    for x in p.moves:
+                        if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            return False
+        return True
