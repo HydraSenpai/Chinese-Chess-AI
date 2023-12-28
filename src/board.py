@@ -152,7 +152,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -173,7 +173,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -183,7 +183,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -203,7 +203,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -213,7 +213,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -233,7 +233,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -243,7 +243,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -263,7 +263,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -273,7 +273,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                       if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -298,6 +298,7 @@ class Board:
             else:
                 max_row = 10
                 min_row = 7
+                
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
@@ -306,17 +307,14 @@ class Board:
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
                         if bool:
-                            # if piece.colour == "red":
-                            #     opp = "black"
-                            # else: opp = "red"
-                            print("move is row = " + str(possible_row) + ", column = " + str(possible_column))
-                            if self.is_check(piece.colour):
+                            if self.is_check(piece.colour) and not self.flying_general(piece, move):
                                 if self.out_of_check(piece, move):
                                     piece.add_move(move)
-                            elif not self.in_check(piece, move):
+                            elif not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
+                
                         
         def next_guard_moves(row, column):
             possible_moves = [
@@ -342,7 +340,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -376,7 +374,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -392,7 +390,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -412,7 +410,7 @@ class Board:
                             final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             if bool:
-                                if not self.in_check(piece, move):
+                                if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                     piece.add_move(move)
                             else:
                                 piece.add_move(move)
@@ -427,7 +425,7 @@ class Board:
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
@@ -446,7 +444,7 @@ class Board:
                             final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             if bool:
-                                if not self.in_check(piece, move):
+                                if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                     piece.add_move(move)
                             else:
                                 piece.add_move(move)
@@ -487,7 +485,7 @@ class Board:
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
-                                    if not self.in_check(piece, move):
+                                    if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
                                 else:
                                     piece.add_move(move)
@@ -499,7 +497,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -530,7 +528,7 @@ class Board:
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
-                                    if not self.in_check(piece, move):
+                                    if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
                                 else:
                                     piece.add_move(move)
@@ -542,7 +540,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -571,7 +569,7 @@ class Board:
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
-                                    if not self.in_check(piece, move):
+                                    if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
                                 else:
                                     piece.add_move(move)
@@ -583,7 +581,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -612,7 +610,7 @@ class Board:
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
-                                    if not self.in_check(piece, move):
+                                    if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
                                 else:
                                     piece.add_move(move)
@@ -624,7 +622,7 @@ class Board:
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
                     else:
                         piece.add_move(move)
@@ -648,6 +646,29 @@ class Board:
             next_king_moves(row, column)
         elif piece.name == 'rook':
             next_rook_moves(row, column)
+            
+    # Method used to check if a particular move will put the kings in check by having no pieces inbetween       
+    def flying_general(self, piece, move):
+        temp_piece = copy.deepcopy(piece)
+        temp_board = copy.deepcopy(self)
+        temp_board.move(temp_piece, move)
+        
+        # Find top king piece
+        for row in range(3):
+            for column in range(PIECE_COLUMNS):
+                if temp_board.squares[row][column].has_piece() and temp_board.squares[row][column].piece.name == "king":
+                    # king = temp_board.squares[row][column].piece
+                    king_col = column
+                    king_row = row
+        print("King found at: column " + str(king_col) + ", row " + str(king_row))
+        
+        # Loop through row which king is on and check for rule by checking a piece is between it or no king at the end 
+        for row in range(king_row+1, PIECE_ROWS):
+            if temp_board.squares[row][king_col].has_piece() and temp_board.squares[row][king_col].piece.name == "king":
+                return True
+            if temp_board.squares[row][king_col].has_piece() and temp_board.squares[row][king_col].piece.name != "king":
+                return False
+        return False
     
     # Method used to calculate if moving a friendly piece results in its own checkmate (to prevent moves that put yourself in checkmate)
     def in_check(self, piece, move):
@@ -667,21 +688,6 @@ class Board:
     
     # Method used to see if king is currently in check
     def is_check(self, next_player):
-        # Search through board to find all enemy pieces
-        # for row in range(PIECE_ROWS):
-        #     for column in range(PIECE_COLUMNS):
-        #         if self.squares[row][column].has_rival_piece(next_player):
-        #             p = self.squares[row][column].piece
-        #             # Calculate all possible moves of each piece
-        #             self.calculate_moves(p, row, column, bool=False)
-        #             # Search through all moves to find if any are a checkmate
-        #             for x in p.moves:
-        #                 if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-        #                     print('is check method = True')
-        #                     return True
-        # print('is check method = False')
-        # return False
-    
         temp_board = copy.deepcopy(self)
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
