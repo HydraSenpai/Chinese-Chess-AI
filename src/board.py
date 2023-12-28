@@ -76,10 +76,10 @@ class Board:
             self.squares[0][6] = Square(0, 6, Elephant(colour))
             
             # Create Rooks
-            # self.squares[0][0] = Square(0, 0, Rook(colour))
-            # self.squares[0][8] = Square(0, 8, Rook(colour))
-            self.squares[9][7] = Square(9, 7, Rook(colour))
-            self.squares[9][8] = Square(9, 8, Rook(colour))
+            self.squares[0][0] = Square(0, 0, Rook(colour))
+            self.squares[0][8] = Square(0, 8, Rook(colour))
+            # self.squares[9][7] = Square(9, 7, Rook(colour))
+            # self.squares[9][8] = Square(9, 8, Rook(colour))
             
             # Create Guard
             self.squares[0][3] = Square(0, 3, Guard(colour))
@@ -100,16 +100,16 @@ class Board:
             self.squares[7][7] = Square(7, 7, Cannon(colour))
                 
             # Create Knights
-            # self.squares[9][1] = Square(9, 1, Knight(colour))
-            # self.squares[9][7] = Square(9, 7, Knight(colour))
+            self.squares[9][1] = Square(9, 1, Knight(colour))
+            self.squares[9][7] = Square(9, 7, Knight(colour))
             
             # Create Elephant
-            # self.squares[9][2] = Square(9, 2, Elephant(colour))
-            # self.squares[9][6] = Square(9, 6, Elephant(colour))
+            self.squares[9][2] = Square(9, 2, Elephant(colour))
+            self.squares[9][6] = Square(9, 6, Elephant(colour))
             
             # Create Rooks
-            # self.squares[9][0] = Square(9, 0, Rook(colour))
-            # self.squares[9][8] = Square(9, 8, Rook(colour))
+            self.squares[9][0] = Square(9, 0, Rook(colour))
+            self.squares[9][8] = Square(9, 8, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
@@ -400,7 +400,6 @@ class Board:
             def move_red_rival():
                 possible_moves = [
                 (row+1, column),
-                (row-1, column),
                 (row, column+1),
                 (row, column-1),
             ]
@@ -434,7 +433,6 @@ class Board:
                             piece.add_move(move)
             def move_black_rival():
                 possible_moves = [
-                (row+1, column),
                 (row-1, column),
                 (row, column+1),
                 (row, column-1),
