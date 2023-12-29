@@ -33,6 +33,7 @@ class Main:
             if not self.is_playing:
                 screen.fill((50, 43, 43))
                 self.menu.show_title(screen)
+                self.menu.show_buttons(screen)
                 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT: 
