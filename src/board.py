@@ -57,15 +57,15 @@ class Board:
     def add_pieces(self, colour):
         if colour == 'red':
             # Create all pawns
-            # self.squares[3][0] = Square(3, 1, Pawn(colour))
-            # self.squares[3][2] = Square(3, 2, Pawn(colour))
-            # self.squares[3][4] = Square(3, 4, Pawn(colour))
-            # self.squares[3][6] = Square(3, 6, Pawn(colour))
-            # self.squares[3][8] = Square(3, 8, Pawn(colour))
+            self.squares[3][0] = Square(3, 1, Pawn(colour))
+            self.squares[3][2] = Square(3, 2, Pawn(colour))
+            self.squares[3][4] = Square(3, 4, Pawn(colour))
+            self.squares[3][6] = Square(3, 6, Pawn(colour))
+            self.squares[3][8] = Square(3, 8, Pawn(colour))
             
             # Create Cannon
-            # self.squares[2][1] = Square(3, 1, Cannon(colour))
-            # self.squares[2][7] = Square(3, 7, Cannon(colour))
+            self.squares[2][1] = Square(3, 1, Cannon(colour))
+            self.squares[2][7] = Square(3, 7, Cannon(colour))
                 
             # Create Knights
             self.squares[0][1] = Square(0, 1, Knight(colour))
@@ -89,15 +89,15 @@ class Board:
             self.squares[0][4] = Square(0, 4, King(colour))
         else:
             # Create all pawns
-            # self.squares[6][0] = Square(6, 0, Pawn(colour))
-            # self.squares[6][2] = Square(6, 2, Pawn(colour))
-            # self.squares[6][4] = Square(6, 4, Pawn(colour))
-            # self.squares[6][6] = Square(6, 6, Pawn(colour))
-            # self.squares[6][8] = Square(6, 8, Pawn(colour))
+            self.squares[6][0] = Square(6, 0, Pawn(colour))
+            self.squares[6][2] = Square(6, 2, Pawn(colour))
+            self.squares[6][4] = Square(6, 4, Pawn(colour))
+            self.squares[6][6] = Square(6, 6, Pawn(colour))
+            self.squares[6][8] = Square(6, 8, Pawn(colour))
             
             # Create Cannon
-            # self.squares[7][1] = Square(7, 1, Cannon(colour))
-            # self.squares[7][7] = Square(7, 7, Cannon(colour))
+            self.squares[7][1] = Square(7, 1, Cannon(colour))
+            self.squares[7][7] = Square(7, 7, Cannon(colour))
                 
             # Create Knights
             self.squares[9][1] = Square(9, 1, Knight(colour))

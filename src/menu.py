@@ -1,4 +1,4 @@
-import pygame
+import sys, pygame
 from pygame import font
 from const import *
 
@@ -12,10 +12,11 @@ class Menu:
         title_text = title_font.render("Xiangqi", True, (255,255,255))
         surface.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) // 2, 160))
     
+    # Function to create buttons (could be changed to be created once and stored in local)
     def show_buttons(self, surface):
-        self.create_button(surface, 400, "Beginner")
-        self.create_button(surface, 520, "Intermediate")
-        self.create_button(surface, 640, "Experienced")
+        self.beginner_btn = self.create_button(surface, 400, "Beginner")
+        self.intermediate_btn = self.create_button(surface, 520, "Intermediate")
+        self.experienced_btn = self.create_button(surface, 640, "Experienced")
     
     def create_button(self, surface, height, text):
         # Create Solid Square for button
@@ -36,3 +37,16 @@ class Menu:
         # Draw items on screen
         pygame.draw.rect(surface, square_colour, square_rect)
         surface.blit(button_text, (text_x, text_y))
+        return square_rect
+        
+    # Function to check if button was clicked and return game mode if so
+    def was_button_clicked(self, mouse_pos):
+        if self.beginner_btn.collidepoint(mouse_pos):
+            return "beginner"
+        elif self.intermediate_btn.collidepoint(mouse_pos):
+            return "intermediate"
+        elif self.experienced_btn.collidepoint(mouse_pos):
+            return "experienced"
+        else:
+            return None
+        

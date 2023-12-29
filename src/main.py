@@ -18,6 +18,7 @@ class Main:
         self.menu = Menu()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
+        self.ai_level = None
         
     def mainloop(self):
         
@@ -39,6 +40,14 @@ class Main:
                     if event.type == pygame.QUIT: 
                         pygame.quit()
                         sys.exit()
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        # Check if the mouse click occurred within the buttons box
+                        result = self.menu.was_button_clicked(event.pos)
+                        if not result:
+                            break
+                        else:
+                            self.ai_level = result
+                            self.is_playing = True
             
             # Game loop for game
             elif self.is_playing:
