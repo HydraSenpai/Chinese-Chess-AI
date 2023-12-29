@@ -57,15 +57,15 @@ class Board:
     def add_pieces(self, colour):
         if colour == 'red':
             # Create all pawns
-            self.squares[3][0] = Square(3, 1, Pawn(colour))
-            self.squares[3][2] = Square(3, 2, Pawn(colour))
-            self.squares[3][4] = Square(3, 4, Pawn(colour))
-            self.squares[3][6] = Square(3, 6, Pawn(colour))
-            self.squares[3][8] = Square(3, 8, Pawn(colour))
+            # self.squares[3][0] = Square(3, 1, Pawn(colour))
+            # self.squares[3][2] = Square(3, 2, Pawn(colour))
+            # self.squares[3][4] = Square(3, 4, Pawn(colour))
+            # self.squares[3][6] = Square(3, 6, Pawn(colour))
+            # self.squares[3][8] = Square(3, 8, Pawn(colour))
             
             # Create Cannon
-            self.squares[2][1] = Square(3, 1, Cannon(colour))
-            self.squares[2][7] = Square(3, 7, Cannon(colour))
+            # self.squares[2][1] = Square(3, 1, Cannon(colour))
+            # self.squares[2][7] = Square(3, 7, Cannon(colour))
                 
             # Create Knights
             self.squares[0][1] = Square(0, 1, Knight(colour))
@@ -89,15 +89,15 @@ class Board:
             self.squares[0][4] = Square(0, 4, King(colour))
         else:
             # Create all pawns
-            self.squares[6][0] = Square(6, 0, Pawn(colour))
-            self.squares[6][2] = Square(6, 2, Pawn(colour))
-            self.squares[6][4] = Square(6, 4, Pawn(colour))
-            self.squares[6][6] = Square(6, 6, Pawn(colour))
-            self.squares[6][8] = Square(6, 8, Pawn(colour))
+            # self.squares[6][0] = Square(6, 0, Pawn(colour))
+            # self.squares[6][2] = Square(6, 2, Pawn(colour))
+            # self.squares[6][4] = Square(6, 4, Pawn(colour))
+            # self.squares[6][6] = Square(6, 6, Pawn(colour))
+            # self.squares[6][8] = Square(6, 8, Pawn(colour))
             
             # Create Cannon
-            self.squares[7][1] = Square(7, 1, Cannon(colour))
-            self.squares[7][7] = Square(7, 7, Cannon(colour))
+            # self.squares[7][1] = Square(7, 1, Cannon(colour))
+            # self.squares[7][7] = Square(7, 7, Cannon(colour))
                 
             # Create Knights
             self.squares[9][1] = Square(9, 1, Knight(colour))
@@ -314,7 +314,6 @@ class Board:
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
-                
                         
         def next_guard_moves(row, column):
             possible_moves = [
@@ -659,9 +658,8 @@ class Board:
                 if temp_board.squares[row][column].has_piece() and temp_board.squares[row][column].piece.name == "king":
                     # king = temp_board.squares[row][column].piece
                     king_col = column
-                    king_row = row
-        print("King found at: column " + str(king_col) + ", row " + str(king_row))
-        
+                    king_row = row     
+                       
         # Loop through row which king is on and check for rule by checking a piece is between it or no king at the end 
         for row in range(king_row+1, PIECE_ROWS):
             if temp_board.squares[row][king_col].has_piece() and temp_board.squares[row][king_col].piece.name == "king":
@@ -709,7 +707,6 @@ class Board:
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
-        temp_board.print_board()
         
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
@@ -718,13 +715,69 @@ class Board:
                     temp_board.calculate_moves(p, row, column, bool=False)
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            # print("out of check method = False")
+                            # print(str(p.name) + " " + str(p.colour))
+                            # print(x.initial.row)
+                            # print(x.initial.column)
+                            # print(x.final.row)
+                            # print(x.final.column)
                             print("out of check method = False")
-                            print(str(p.name) + " " + str(p.colour))
-                            print(x.initial.row)
-                            print(x.initial.column)
-                            print(x.final.row)
-                            print(x.final.column)
                             return False
         print("out of check method = True")
         return True 
     
+    def is_checkmate(self, colour):
+        print(str(colour))
+        # Check if king is in check
+        if not self.is_check(colour):
+            return False
+        else:
+            # Check each move that puts the king into check and search if any move removes all checks on the king
+            temp_board = copy.deepcopy(self)
+            # Search through board to find all enemy pieces
+            for row in range(PIECE_ROWS):
+                for column in range(PIECE_COLUMNS):
+                    # Calculate all possible moves of each enemy piece
+                    if temp_board.squares[row][column].has_rival_piece(colour):
+                        p = temp_board.squares[row][column].piece
+                        temp_board.calculate_moves(p, row, column, bool=False)
+                        # Filter through all moves to find any enemy moves that check the king
+                        for x in p.moves:
+                            if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                                print(str(p.name) + ", " + str(p.colour) + ", " + str(x.initial.row) + "," + str(x.initial.column))
+                                # If it is a check then we need to search for any friendly moves that bring the king out of check
+                                
+                                # Set checkmated to true to reset for each possible checkmate
+                                checkmated = True
+                                
+                                # Search through all friendly pieces of the king being checked
+                                for row1 in range(PIECE_ROWS):
+                                    for column1 in range(PIECE_COLUMNS):
+                                        # Calculate all possible moves of each friendly piece
+                                        if temp_board.squares[row1][column1].has_team_piece(colour):
+                                            friendly_piece = temp_board.squares[row1][column1].piece
+                                            temp_board.calculate_moves(friendly_piece, row1, column1, bool=False)
+                                            # For each move calculate if there is a way to get it out of check
+                                            for y in friendly_piece.moves:
+                                                print(str(friendly_piece.name) + " " + str(friendly_piece.colour))
+                                                print(y.initial.row)
+                                                print(y.initial.column)
+                                                print(y.final.row)
+                                                print(y.final.column)
+                                                if self.out_of_check(friendly_piece, y) and not self.flying_general(friendly_piece, y):
+                                                    # If a move successfully gets out of check then we can stop searching for that check and move on
+                                                    checkmated = False
+                                                    row1 = PIECE_ROWS - 1
+                                                    column1 = PIECE_COLUMNS - 1
+                                                    break
+                                
+                                # Since no moves were found to turn checkmate false after checking all moves for a specific check
+                                # Condition then the king has been checkmated
+                                if checkmated == True:
+                                    return True
+                                
+                                
+            return False
+                                
+                                
+                                

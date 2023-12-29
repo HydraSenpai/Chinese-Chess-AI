@@ -98,7 +98,11 @@ class Main:
                             game.show_log(screen)
                             game.show_pieces(screen)
                             game.next_turn()
-                            # board.is_check(game.next_player)
+                            result = board.is_checkmate(game.next_player)
+                            if result:
+                                print(str(game.next_player) + " has been checkmated")
+                            else:
+                                print("No checkmate yet")
                             board.print_board()
                     drag.undrag_piece()
                     
