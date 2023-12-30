@@ -121,26 +121,24 @@ class Board:
             self.squares[9][4] = Square(9, 4, King(colour))
        
     def add_custom_board(self, colour):
-        if colour == 'red':                          
+        if colour == 'red':    
+            
+            self.squares[3][4] = Square(3, 4, Pawn(colour))   
+            
+            # Create Cannon
+            self.squares[7][6] = Square(7, 6, Cannon(colour))
+                               
             # Create Knights
             self.squares[2][2] = Square(2, 2, Knight(colour))
-            self.squares[5][4] = Square(5, 4, Knight(colour))
-                   
+
             # Create Rooks
             self.squares[6][7] = Square(6, 7, Rook(colour))
             
             # Create King
-            self.squares[0][4] = Square(0, 4, King(colour))
+            self.squares[1][4] = Square(1, 4, King(colour))
         else:      
             # Create Cannon
             self.squares[0][8] = Square(0, 8, Cannon(colour))
-            
-            # Create Knights
-            self.squares[8][7] = Square(8, 7, Knight(colour))
-            self.squares[8][4] = Square(8, 4, Knight(colour))
-            
-            # Create Elephant
-            self.squares[7][4] = Square(7, 4, Elephant(colour))
             
             # Create Rooks
             self.squares[0][7] = Square(0, 7, Rook(colour))
@@ -212,8 +210,6 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
                         return
@@ -224,8 +220,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                                break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -246,8 +240,6 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
                         return
@@ -258,8 +250,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                                break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -280,8 +270,6 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
                         return
@@ -292,8 +280,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                                break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -314,8 +300,6 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
                         return
@@ -326,8 +310,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                            break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -539,8 +521,6 @@ class Board:
                                 if bool:
                                     if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
-                                    else:
-                                        break
                                 else:
                                     piece.add_move(move)
                                 return
@@ -553,8 +533,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                                break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -586,8 +564,6 @@ class Board:
                                 if bool:
                                     if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
-                                    else:
-                                        break
                                 else:
                                     piece.add_move(move)
                                 return
@@ -600,8 +576,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                            break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -643,8 +617,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                            break
                     else:
                         piece.add_move(move)
                     counter += 1
@@ -674,8 +646,6 @@ class Board:
                                 if bool:
                                     if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                         piece.add_move(move)
-                                    else:
-                                        break
                                 else:
                                     piece.add_move(move)
                                 return
@@ -688,8 +658,6 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move) and not self.flying_general(piece, move):
                             piece.add_move(move)
-                        else:
-                            break
                     else:
                         piece.add_move(move)
                     counter += 1
