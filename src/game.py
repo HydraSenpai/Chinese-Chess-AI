@@ -8,7 +8,7 @@ class Game:
         self.board = Board()
         self.dragger = DragHandler()
         self.next_player = 'red'
-        self.won = True
+        self.won = False
     
     # Show methods
     

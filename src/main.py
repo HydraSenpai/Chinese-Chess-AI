@@ -133,6 +133,7 @@ class Main:
                                     result = board.is_checkmate(game.next_player)
                                     if result:
                                         print(str(game.next_player) + " has been checkmated")
+                                        game.won = True
                                     else:
                                         print("No checkmate yet")
                                     board.print_board()
