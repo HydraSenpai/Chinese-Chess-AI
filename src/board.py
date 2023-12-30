@@ -9,10 +9,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        self.add_pieces('red')
-        self.add_pieces('black')
-        # self.add_custom_board("red")
-        # self.add_custom_board("black")
+        # self.add_pieces('red')
+        # self.add_pieces('black')
+        self.add_custom_board("red")
+        self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         
@@ -133,7 +133,7 @@ class Board:
             self.squares[0][4] = Square(0, 4, King(colour))
         else:      
             # Create Cannon
-            self.squares[7][1] = Square(7, 1, Cannon(colour))
+            self.squares[0][8] = Square(0, 8, Cannon(colour))
             
             # Create Knights
             self.squares[8][7] = Square(8, 7, Knight(colour))
@@ -143,7 +143,8 @@ class Board:
             self.squares[7][4] = Square(7, 4, Elephant(colour))
             
             # Create Rooks
-            self.squares[9][2] = Square(9, 2, Rook(colour))
+            self.squares[0][7] = Square(0, 7, Rook(colour))
+            self.squares[2][8] = Square(2, 8, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
@@ -188,6 +189,8 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
+                            else:
+                                break
                         else:
                             piece.add_move(move)
     

@@ -130,7 +130,6 @@ class Main:
                                         # Play move sound
                                         sound = pygame.mixer.Sound("assets/sounds/move.wav")
                                         sound.play()
-                                        result = board.is_checkmate(game.next_player)
                                     board.move(drag.piece, move)
                                     # Redraw board
                                     game.show_background(screen)
@@ -138,6 +137,7 @@ class Main:
                                     game.show_log(screen)
                                     game.show_pieces(screen)
                                     game.next_turn()
+                                    result = board.is_checkmate(game.next_player)
                                     if result:
                                         print(str(game.next_player) + " has been checkmated")
                                         game.won = True
