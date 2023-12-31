@@ -74,7 +74,7 @@ class Game:
     def show_log(self, surface, move_list):
         
         def show_move_list(move_list):
-            counter = len(move_list) - 1
+            counter = 0
             for move in reversed(move_list):
                 initial_row = move.initial.row
                 initial_column = move.initial.column
@@ -86,7 +86,7 @@ class Game:
                 
                 # Create text for the index of history list
                 index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
-                index_text = index_font.render(str(counter), True, (0,0,0))
+                index_text = index_font.render(str(len(move_list) - 1 - counter), True, (0,0,0))
                 text_x = move_rect.x + ((move_rect.width // 3) // 2)
                 text_y = move_rect.y + (40 * counter)
                 surface.blit(index_text, (text_x, text_y))
@@ -105,7 +105,9 @@ class Game:
                 text_y = move_rect.y + (40 * counter)
                 surface.blit(index_text, (text_x, text_y))
                 
-                counter -= 1
+                counter += 1
+                if counter == 18:
+                    return
         
         
         log_rect = pygame.Rect(WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
