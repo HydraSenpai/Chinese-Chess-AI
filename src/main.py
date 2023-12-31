@@ -56,9 +56,13 @@ class Main:
                 game.show_background(screen)
                 game.show_log(screen)
                 game.show_pieces(screen)
+                
                 # If game is won then show winning modal to allow user to leave or stay looking at board
                 if game.is_won:
-                    game.show_winning_modal(screen, game.lost)
+                    if not game.stay:
+                        game.show_winning_modal(screen, game.lost)
+                    else:
+                        game.show_exit_button(screen)
                     # Only checks should be for quitting and clicking one of two menu buttons (exit to menu or stay)
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
@@ -79,7 +83,13 @@ class Main:
                                     drag = self.game.dragger
                                 # If stay remove modal
                                 elif leave_or_stay == "stay":
-                                    pass
+                                    game.stay = True
+                                elif leave_or_stay == "exit":
+                                    self.is_playing = False
+                                    game.reset()
+                                    game = self.game
+                                    board = self.game.board
+                                    drag = self.game.dragger
                                 
                 # Main game input
                 elif not game.is_won:
@@ -88,6 +98,7 @@ class Main:
                     # game.show_last_move(screen)
                     game.show_moves(screen)
                     game.show_pieces(screen)
+                    game.show_exit_button(screen)
                     
                     
                     if drag.is_dragging:
@@ -95,6 +106,14 @@ class Main:
                     
                     for event in pygame.event.get():
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            leave_or_stay = game.was_button_clicked(event.pos)
+                            if leave_or_stay == "exit":
+                                self.is_playing = False
+                                game.reset()
+                                game = self.game
+                                board = self.game.board
+                                drag = self.game.dragger
+                                break
                             # Update mouse position
                             drag.update_mouse(event.pos)
                             # Check if mouse click is in a row and column that contains a piece
@@ -122,6 +141,7 @@ class Main:
                                     # game.show_last_move(screen)
                                     game.show_moves(screen)
                                     game.show_pieces(screen)
+                                    game.show_exit_button(screen)
                                     drag.update_blit(screen)
                         elif event.type == pygame.MOUSEMOTION:
                             if drag.is_dragging == True:
@@ -132,6 +152,7 @@ class Main:
                                 # game.show_last_move(screen)
                                 game.show_moves(screen)
                                 game.show_pieces(screen)
+                                game.show_exit_button(screen)
                                 drag.update_blit(screen)
                                 
                         elif event.type == pygame.MOUSEBUTTONUP:
@@ -148,7 +169,7 @@ class Main:
                                 move = Move(initial, final)
                                 # Start moving process
                                 if board.valid_move(drag.piece, move):
-                                    if board.squares[released_row][released_column].has_piece():      
+                                    if board.squares[released_row][released_column].has_piece():    
                                         sound = pygame.mixer.Sound("assets/sounds/capture.wav")
                                         sound.play()
                                     else:
@@ -156,11 +177,16 @@ class Main:
                                         sound = pygame.mixer.Sound("assets/sounds/move.wav")
                                         sound.play()
                                     board.move(drag.piece, move)
+                                    # # Check if king is in check
+                                    # if board.is_check("red"):
+                                    #     sound = pygame.mixer.Sound("assets/sounds/check.mp3")
+                                    #     sound.play()
                                     # Redraw board
                                     game.show_background(screen)
                                     # game.show_last_move(screen)
                                     game.show_log(screen)
                                     game.show_pieces(screen)
+                                    game.show_exit_button(screen)
                                     game.next_turn()
                                     # Check if checkmate has occurred at end of each turn
                                     result = board.is_checkmate(game.next_player)

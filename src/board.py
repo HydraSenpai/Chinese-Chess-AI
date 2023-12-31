@@ -15,6 +15,8 @@ class Board:
         self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
+        # Variable used to store if king is in check (updated each turn)
+        self.checked = False
         
     def print_board(self):
         print("----------------------------------------------")
@@ -733,8 +735,10 @@ class Board:
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
                             print('is check method = True')
+                            self.checked = True
                             return True
         print('is check method = False')
+        self.checked = False
         return False
     
     # Method used to calculate if moving a friendly piece results in getting out of checkmate
