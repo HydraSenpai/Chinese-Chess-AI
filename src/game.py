@@ -93,7 +93,60 @@ class Game:
                 colour = (167, 211, 151)
                 rect = (pos.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), pos.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.rect(surface, colour, rect)
-              
-      
+                
+    def show_winning_modal(self, surface):
+        # Create background for modal
+        rect_colour = (255,255,255)
+        rect_width = SQUARE_SIZE * 8
+        rect_height = SQUARE_SIZE * 2
+        modal_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2, (SCREEN_HEIGHT - rect_height) // 2, rect_width, rect_height)
+        pygame.draw.rect(surface, rect_colour, modal_rect)
+        
+        # Create text for modal
+        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
+        button_text = modal_font.render("Exit to main menu or review game?", True, (0,0,0))
+        text_x = modal_rect.x + (modal_rect.width - button_text.get_width()) // 2
+        text_y = modal_rect.y + 30
+        surface.blit(button_text, (text_x, text_y))
+        
+        # Create leave to main menu button
+        rect_colour = (255, 51, 15)
+        rect_width = SQUARE_SIZE * 1.5
+        rect_height = SQUARE_SIZE // 2
+        self.leave_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2 - 80, (modal_rect.y + modal_rect.height - 70), rect_width, rect_height)
+        leave_rect = self.leave_rect
+        pygame.draw.rect(surface, rect_colour, leave_rect)
+        
+        # Create text for leave button
+        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
+        button_text = modal_font.render("Exit", True, (0,0,0))
+        text_x = leave_rect.x + (leave_rect.width - button_text.get_width()) // 2
+        text_y = leave_rect.y + 7
+        surface.blit(button_text, (text_x, text_y))
+        
+        # Create stay button
+        rect_colour = (255, 51, 15)
+        rect_width = SQUARE_SIZE * 1.5
+        rect_height = SQUARE_SIZE // 2
+        self.stay_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2 + 80, (modal_rect.y + modal_rect.height - 70), rect_width, rect_height)
+        stay_rect = self.stay_rect
+        pygame.draw.rect(surface, rect_colour, stay_rect)
+        
+        # Create text for stay button
+        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
+        button_text = modal_font.render("Stay", True, (0,0,0))
+        text_x = stay_rect.x + (stay_rect.width - button_text.get_width()) // 2
+        text_y = stay_rect.y + 7
+        surface.blit(button_text, (text_x, text_y))
+        
+    # Function to check if button was clicked and return game mode if so
+    def was_button_clicked(self, mouse_pos):
+        if self.leave_rect.collidepoint(mouse_pos):
+            return "leave"
+        elif self.stay_rect.collidepoint(mouse_pos):
+            return "stay"
+        else:
+            return None
+        
     def reset(self):
         self.__init__()

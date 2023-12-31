@@ -52,11 +52,29 @@ class Main:
             # Game loop for game
             elif self.is_playing:
                 self.screen.blit(self.bg_surface, (0,0))
+                game.show_background(screen)
+                game.show_log(screen)
+                game.show_pieces(screen)
                 if game.won:
+                    game.show_winning_modal(screen)
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
                             pygame.quit()
                             sys.exit()
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                            # Check if the mouse click occurred within the buttons box
+                            leave_or_stay = game.was_button_clicked(event.pos)
+                            if not leave_or_stay:
+                                break
+                            else:
+                                if leave_or_stay == "leave":
+                                    self.is_playing = False
+                                    game.reset()
+                                    game = self.game
+                                    board = self.game.board
+                                    drag = self.game.dragger
+                                elif leave_or_stay == "stay":
+                                    pass
                 elif not game.won:
                     game.show_background(screen)
                     game.show_log(screen)

@@ -9,10 +9,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        # self.add_pieces('red')
-        # self.add_pieces('black')
-        self.add_custom_board("red")
-        self.add_custom_board("black")
+        self.add_pieces('red')
+        self.add_pieces('black')
+        # self.add_custom_board("red")
+        # self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         
@@ -135,14 +135,14 @@ class Board:
             self.squares[6][7] = Square(6, 7, Rook(colour))
             
             # Create King
-            self.squares[1][4] = Square(1, 4, King(colour))
+            self.squares[0][4] = Square(0, 4, King(colour))
         else:      
             # Create Cannon
             self.squares[0][8] = Square(0, 8, Cannon(colour))
             
             # Create Rooks
-            self.squares[0][7] = Square(0, 7, Rook(colour))
-            self.squares[2][8] = Square(2, 8, Rook(colour))
+            self.squares[0][6] = Square(0, 6, Rook(colour))
+            self.squares[2][7] = Square(2, 7, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
