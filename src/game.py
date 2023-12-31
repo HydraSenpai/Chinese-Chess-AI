@@ -71,9 +71,47 @@ class Game:
                         piece.texture_rect = img_scaled.get_rect(center=img_center)
                         surface.blit(img_scaled, piece.texture_rect)
                     
-    def show_log(self,surface):
-        log_rect = (WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
+    def show_log(self, surface, move_list):
+        
+        def show_move_list(move_list):
+            counter = len(move_list) - 1
+            for move in reversed(move_list):
+                initial_row = move.initial.row
+                initial_column = move.initial.column
+                final_row = move.final.row
+                final_column = move.final.column
+                
+                
+                move_rect = pygame.Rect(log_rect.x, log_rect.y, log_rect.width, 50)
+                
+                # Create text for the index of history list
+                index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
+                index_text = index_font.render(str(counter), True, (0,0,0))
+                text_x = move_rect.x + ((move_rect.width // 3) // 2)
+                text_y = move_rect.y + (40 * counter)
+                surface.blit(index_text, (text_x, text_y))
+                
+                # Create text for the first move in index
+                index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
+                index_text = index_font.render(str(initial_row)+str(initial_column)+str(final_row)+str(final_column), True, (0,0,0))
+                text_x = move_rect.x + ((move_rect.width // 3) + ((move_rect.width // 3) // 4))
+                text_y = move_rect.y + (40 * counter)
+                surface.blit(index_text, (text_x, text_y))
+                
+                # Create text for the second move in index
+                index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 20)
+                index_text = index_font.render("D1A4", True, (0,0,0))
+                text_x = move_rect.x + (((move_rect.width // 3) * 2) + ((move_rect.width // 3) // 4))
+                text_y = move_rect.y + (40 * counter)
+                surface.blit(index_text, (text_x, text_y))
+                
+                counter -= 1
+        
+        
+        log_rect = pygame.Rect(WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
         pygame.draw.rect(surface, (171,172,173), log_rect)
+        show_move_list(move_list)
+        
         
     def show_moves(self, surface):
         if self.dragger.is_dragging:

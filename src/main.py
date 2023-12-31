@@ -5,6 +5,7 @@ from game import Game
 from square import Square
 from move import Move
 from menu import Menu
+from log import Log
 
 
 class Main:
@@ -16,6 +17,7 @@ class Main:
         self.screen.fill(colour_bg)
         self.game = Game()
         self.menu = Menu()
+        self.log = Log()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
         self.ai_level = None
@@ -24,6 +26,7 @@ class Main:
         
         game = self.game
         screen = self.screen
+        log = self.log
         board = self.game.board
         drag = self.game.dragger
         
@@ -54,7 +57,7 @@ class Main:
             elif self.is_playing:
                 self.screen.blit(self.bg_surface, (0,0))
                 game.show_background(screen)
-                game.show_log(screen)
+                game.show_log(screen, log.move_list)
                 game.show_pieces(screen)
                 
                 # If game is won then show winning modal to allow user to leave or stay looking at board
@@ -94,7 +97,7 @@ class Main:
                 # Main game input
                 elif not game.is_won:
                     game.show_background(screen)
-                    game.show_log(screen)
+                    game.show_log(screen, log.move_list)
                     # game.show_last_move(screen)
                     game.show_moves(screen)
                     game.show_pieces(screen)
@@ -106,6 +109,7 @@ class Main:
                     
                     for event in pygame.event.get():
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            # Check if exit button was clicked to leave application
                             leave_or_stay = game.was_button_clicked(event.pos)
                             if leave_or_stay == "exit":
                                 self.is_playing = False
@@ -137,7 +141,7 @@ class Main:
                                     # Show methods
                                     self.screen.blit(self.bg_surface, (0,0))
                                     game.show_background(screen)
-                                    game.show_log(screen)
+                                    game.show_log(screen, log.move_list)
                                     # game.show_last_move(screen)
                                     game.show_moves(screen)
                                     game.show_pieces(screen)
@@ -148,7 +152,7 @@ class Main:
                                 drag.update_mouse(event.pos)
                                 self.screen.blit(self.bg_surface, (0,0))
                                 game.show_background(screen)
-                                game.show_log(screen)
+                                game.show_log(screen, log.move_list)
                                 # game.show_last_move(screen)
                                 game.show_moves(screen)
                                 game.show_pieces(screen)
@@ -177,6 +181,8 @@ class Main:
                                         sound = pygame.mixer.Sound("assets/sounds/move.wav")
                                         sound.play()
                                     board.move(drag.piece, move)
+                                    # Add move to log
+                                    log.add_to_list(move)
                                     # # Check if king is in check
                                     # if board.is_check("red"):
                                     #     sound = pygame.mixer.Sound("assets/sounds/check.mp3")
@@ -184,7 +190,7 @@ class Main:
                                     # Redraw board
                                     game.show_background(screen)
                                     # game.show_last_move(screen)
-                                    game.show_log(screen)
+                                    game.show_log(screen, log.move_list)
                                     game.show_pieces(screen)
                                     game.show_exit_button(screen)
                                     game.next_turn()
