@@ -96,7 +96,7 @@ class Game:
                 
     def show_winning_modal(self, surface):
         # Create background for modal
-        rect_colour = (255,255,255)
+        rect_colour = (56,56,56)
         rect_width = SQUARE_SIZE * 8
         rect_height = SQUARE_SIZE * 2
         modal_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2, (SCREEN_HEIGHT - rect_height) // 2, rect_width, rect_height)
@@ -104,13 +104,13 @@ class Game:
         
         # Create text for modal
         modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
-        button_text = modal_font.render("Exit to main menu or review game?", True, (0,0,0))
+        button_text = modal_font.render("Exit to main menu or review game?", True, (255,255,255))
         text_x = modal_rect.x + (modal_rect.width - button_text.get_width()) // 2
         text_y = modal_rect.y + 30
         surface.blit(button_text, (text_x, text_y))
         
         # Create leave to main menu button
-        rect_colour = (255, 51, 15)
+        rect_colour = (233, 97, 97)
         rect_width = SQUARE_SIZE * 1.5
         rect_height = SQUARE_SIZE // 2
         self.leave_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2 - 80, (modal_rect.y + modal_rect.height - 70), rect_width, rect_height)
@@ -125,7 +125,7 @@ class Game:
         surface.blit(button_text, (text_x, text_y))
         
         # Create stay button
-        rect_colour = (255, 51, 15)
+        rect_colour = (233, 97, 97)
         rect_width = SQUARE_SIZE * 1.5
         rect_height = SQUARE_SIZE // 2
         self.stay_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2 + 80, (modal_rect.y + modal_rect.height - 70), rect_width, rect_height)
