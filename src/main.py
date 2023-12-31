@@ -36,6 +36,7 @@ class Main:
                 self.menu.show_title(screen)
                 self.menu.show_buttons(screen)
                 
+                # Only input checks should be for quitting and clicking difficulty to start game
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT: 
                         pygame.quit()
@@ -55,26 +56,32 @@ class Main:
                 game.show_background(screen)
                 game.show_log(screen)
                 game.show_pieces(screen)
+                # If game is won then show winning modal to allow user to leave or stay looking at board
                 if game.won:
                     game.show_winning_modal(screen)
+                    # Only checks should be for quitting and clicking one of two menu buttons (exit to menu or stay)
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
                             pygame.quit()
                             sys.exit()
                         elif event.type == pygame.MOUSEBUTTONDOWN:
-                            # Check if the mouse click occurred within the buttons box
+                            # Checks if a button was clicked on the modal and returns the type clicked
                             leave_or_stay = game.was_button_clicked(event.pos)
                             if not leave_or_stay:
                                 break
                             else:
+                                # If leave return to main menu and reset game objects
                                 if leave_or_stay == "leave":
                                     self.is_playing = False
                                     game.reset()
                                     game = self.game
                                     board = self.game.board
                                     drag = self.game.dragger
+                                # If stay remove modal
                                 elif leave_or_stay == "stay":
                                     pass
+                                
+                # Main game input
                 elif not game.won:
                     game.show_background(screen)
                     game.show_log(screen)
@@ -155,6 +162,7 @@ class Main:
                                     game.show_log(screen)
                                     game.show_pieces(screen)
                                     game.next_turn()
+                                    # Check if checkmate has occurred at end of each turn
                                     result = board.is_checkmate(game.next_player)
                                     if result:
                                         print(str(game.next_player) + " has been checkmated")
@@ -166,7 +174,7 @@ class Main:
                                     board.print_board()
                             drag.undrag_piece()
                             
-                        
+                        # Pressing R resets the game if playing
                         elif event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_r:
                                 game.reset()    
