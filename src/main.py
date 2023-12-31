@@ -57,8 +57,8 @@ class Main:
                 game.show_log(screen)
                 game.show_pieces(screen)
                 # If game is won then show winning modal to allow user to leave or stay looking at board
-                if game.won:
-                    game.show_winning_modal(screen)
+                if game.is_won:
+                    game.show_winning_modal(screen, game.lost)
                     # Only checks should be for quitting and clicking one of two menu buttons (exit to menu or stay)
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
@@ -82,7 +82,7 @@ class Main:
                                     pass
                                 
                 # Main game input
-                elif not game.won:
+                elif not game.is_won:
                     game.show_background(screen)
                     game.show_log(screen)
                     # game.show_last_move(screen)
@@ -166,7 +166,8 @@ class Main:
                                     result = board.is_checkmate(game.next_player)
                                     if result:
                                         print(str(game.next_player) + " has been checkmated")
-                                        game.won = True
+                                        game.is_won = True
+                                        game.lost = game.next_player
                                         sound = pygame.mixer.Sound("assets/sounds/win.mp3")
                                         sound.play()
                                     else:

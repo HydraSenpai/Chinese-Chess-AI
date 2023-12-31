@@ -8,7 +8,10 @@ class Game:
         self.board = Board()
         self.dragger = DragHandler()
         self.next_player = 'red'
-        self.won = False
+        # boolean to keep if game is finished
+        self.is_won = False
+        # variable to keep colour of losing opponent
+        self.lost = None
     
     # Show methods
     
@@ -94,19 +97,30 @@ class Game:
                 rect = (pos.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), pos.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.rect(surface, colour, rect)
                 
-    def show_winning_modal(self, surface):
+    def show_winning_modal(self, surface, loser):
         # Create background for modal
         rect_colour = (56,56,56)
         rect_width = SQUARE_SIZE * 8
-        rect_height = SQUARE_SIZE * 2
+        rect_height = SQUARE_SIZE * 3
         modal_rect = pygame.Rect((SCREEN_WIDTH - rect_width) // 2, (SCREEN_HEIGHT - rect_height) // 2, rect_width, rect_height)
         pygame.draw.rect(surface, rect_colour, modal_rect)
+        
+        # Create text for modal loser
+        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 50)
+        if loser == "red":
+            winner = "black"
+        else:
+            winner = "red"
+        loser_text = modal_font.render(str(winner).capitalize() + " checkmated " + str(loser).capitalize() + "!", True, (255,255,255))
+        text_x = modal_rect.x + (modal_rect.width - loser_text.get_width()) // 2
+        text_y = modal_rect.y + 30
+        surface.blit(loser_text, (text_x, text_y))
         
         # Create text for modal
         modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
         button_text = modal_font.render("Exit to main menu or review game?", True, (255,255,255))
         text_x = modal_rect.x + (modal_rect.width - button_text.get_width()) // 2
-        text_y = modal_rect.y + 30
+        text_y = modal_rect.y + SQUARE_SIZE + 30
         surface.blit(button_text, (text_x, text_y))
         
         # Create leave to main menu button
