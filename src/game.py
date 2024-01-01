@@ -136,7 +136,7 @@ class Game:
                 text_y = move_rect.y + (40 * math.ceil((i + start_value) // 2))
                 surface.blit(index_text, (text_x, text_y))
                 
-                if i >= 34:
+                if i >= 32:
                     return
         
         
