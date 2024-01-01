@@ -16,6 +16,27 @@ class Game:
         self.lost = None
         # variable to keep track of showing modal for when the user wants to look at board after game
         self.stay = False
+        
+        # Load Images to improve performance
+        # Red images
+        self.red_images = {
+            'pawn' : pygame.image.load('assets/images/pieces/red_pawn.png'),
+            'elephant' : pygame.image.load('assets/images/pieces/red_elephant.png'),
+            'guard' : pygame.image.load('assets/images/pieces/red_guard.png'),
+            'king' : pygame.image.load('assets/images/pieces/red_king.png'),
+            'rook' : pygame.image.load('assets/images/pieces/red_rook.png'),
+            'knight' : pygame.image.load('assets/images/pieces/red_knight.png'),
+            'cannon' : pygame.image.load('assets/images/pieces/red_cannon.png'),
+        }
+        self.black_images = {
+            'pawn' : pygame.image.load('assets/images/pieces/black_pawn.png'),
+            'elephant' : pygame.image.load('assets/images/pieces/black_elephant.png'),
+            'guard' : pygame.image.load('assets/images/pieces/black_guard.png'),
+            'king' : pygame.image.load('assets/images/pieces/black_king.png'),
+            'rook' : pygame.image.load('assets/images/pieces/black_rook.png'),
+            'knight' : pygame.image.load('assets/images/pieces/black_knight.png'),
+            'cannon' : pygame.image.load('assets/images/pieces/black_cannon.png'),
+        }
     
     # Show methods
     
@@ -66,7 +87,12 @@ class Game:
                     
                     # Check if piece is being dragged and not to show it
                     if piece is not self.dragger.piece:
-                        img = pygame.image.load(piece.texture).convert_alpha()
+                        if piece.colour == "red":
+                            img = self.red_images.get(piece.name)
+                        else:
+                            img = self.black_images.get(piece.name)
+                        
+                        # img = pygame.image.load(piece.texture).convert_alpha()
                         # Scale image to board size
                         img_scaled = pygame.transform.scale(img, (SQUARE_SIZE / 1.2, SQUARE_SIZE / 1.2))
                         img_center = (col * SQUARE_SIZE) + 80, (row * SQUARE_SIZE) + 80

@@ -21,6 +21,7 @@ class Main:
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
         self.ai_level = None
+        self.clock = pygame.time.Clock()
         
     def mainloop(self):
         
@@ -224,6 +225,8 @@ class Main:
                     
             # Updates screen so put at end
             pygame.display.update()
+            
+            self.clock.tick(30)
     
 main = Main()
 main.mainloop()
