@@ -104,8 +104,7 @@ class Game:
                 start_value = 1
             else:
                 start_value = 0
-                
-                                
+                               
             for i in range(start_value, len(moves_list)-1, 2):
                 initial_row = moves_list[i].initial.row
                 initial_column = moves_list[i].initial.column
@@ -139,12 +138,24 @@ class Game:
                 if i >= 32:
                     return
         
-        
         log_rect = pygame.Rect(WIDTH + (SQUARE_SIZE * 2), 80, 350, HEIGHT)
         pygame.draw.rect(surface, (171,172,173), log_rect)
         reversed_list = move_list[::-1]
         show_move_list(reversed_list)
+        self.show_turn(surface)
         
+    def show_turn(self, surface):
+        if self.next_player == "red":
+            text = "It is Red's turn!"
+            # colour = (233, 97, 97)
+        else:
+            text = "It is Black's turn!"
+            # colour = (0,0,0) 
+            
+        # Create text for the index of history list
+        index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
+        index_text = index_font.render(text, True, (255,255,255))
+        surface.blit(index_text, (WIDTH + (SQUARE_SIZE * 2), 40))
         
     def show_moves(self, surface):
         if self.dragger.is_dragging:
@@ -153,14 +164,13 @@ class Game:
                 colour = '#C86464'
                 rect = (move.final.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), move.final.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.ellipse(surface, colour, rect)
-                
+                       
     def next_turn(self):
         if self.next_player == 'red':
             self.next_player = 'black'
         else: 
             self.next_player = 'red'
-            
-            
+             
     def show_last_move(self, surface):
         if self.board.last_move:
             initial = self.board.last_move.initial
@@ -251,8 +261,6 @@ class Game:
         text_x = stay_circle.x + (stay_circle.width - button_text.get_width()) // 2
         text_y = stay_circle.y // 2
         surface.blit(button_text, (text_x, text_y))
-        
-        
-        
+            
     def reset(self):
         self.__init__()

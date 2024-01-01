@@ -9,10 +9,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        # self.add_pieces('red')
-        # self.add_pieces('black')
-        self.add_custom_board("red")
-        self.add_custom_board("black")
+        self.add_pieces('red')
+        self.add_pieces('black')
+        # self.add_custom_board("red")
+        # self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
