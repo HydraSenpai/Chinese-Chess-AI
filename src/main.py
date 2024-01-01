@@ -84,6 +84,7 @@ class Main:
                                     game = self.game
                                     board = self.game.board
                                     drag = self.game.dragger
+                                    log.clear_list()
                                 # If stay remove modal
                                 elif leave_or_stay == "stay":
                                     game.stay = True
@@ -118,6 +119,7 @@ class Main:
                                 game = self.game
                                 board = self.game.board
                                 drag = self.game.dragger
+                                log.clear_list()
                                 break
                             # Update mouse position
                             drag.update_mouse(event.pos)
