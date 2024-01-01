@@ -1,5 +1,6 @@
 import os
-
+import pygame
+from const import *
 class Piece:
     def __init__(self, name, colour, value, texture=None, texture_rect=None):
         self.name = name
@@ -11,7 +12,7 @@ class Piece:
         self.texture = texture
         
         self.set_texture()
-        self.texture_rect = texture_rect
+        self.texture_rect = texture_rect       
         
         self.moves = []
         self.moved = False

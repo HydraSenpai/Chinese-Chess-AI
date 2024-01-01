@@ -10,6 +10,9 @@ class DragHandler:
         self.initial_column = 0
         self.piece = None
         self.is_dragging = False
+        
+        # Load Images to improve performance
+        
     
     def update_mouse(self, pos):
         self.mouseX, self.mouseY = pos
@@ -27,6 +30,9 @@ class DragHandler:
         self.is_dragging = False
         
     def update_blit(self,surface):
+        # Get piece name and use stored image instead of loading it every render
+        
+        
         texture = self.piece.texture
         img = pygame.image.load(texture).convert_alpha()
         # Scale image a bit bigger to show its the one moving to user
