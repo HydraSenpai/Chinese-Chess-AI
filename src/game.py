@@ -81,7 +81,6 @@ class Game:
                 final_row = move.final.row
                 final_column = move.final.column
                 
-                
                 move_rect = pygame.Rect(log_rect.x, log_rect.y, log_rect.width, 50)
                 
                 # Create text for the index of history list

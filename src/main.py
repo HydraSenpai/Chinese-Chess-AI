@@ -93,6 +93,7 @@ class Main:
                                     game = self.game
                                     board = self.game.board
                                     drag = self.game.dragger
+                                    log.clear_list()
                                 
                 # Main game input
                 elif not game.is_won:
@@ -214,6 +215,7 @@ class Main:
                                 game = self.game
                                 board = self.game.board
                                 drag = self.game.dragger
+                                log.clear_list()
                         elif event.type == pygame.QUIT: 
                             pygame.quit()
                             sys.exit()
