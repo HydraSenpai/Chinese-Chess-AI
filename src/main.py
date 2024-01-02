@@ -6,7 +6,7 @@ from square import Square
 from move import Move
 from menu import Menu
 from log import Log
-
+from agent import Agent
 
 class Main:
     def __init__(self):
@@ -18,6 +18,7 @@ class Main:
         self.game = Game()
         self.menu = Menu()
         self.log = Log()
+        self.agent = Agent()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
         self.ai_level = None
@@ -30,6 +31,7 @@ class Main:
         log = self.log
         board = self.game.board
         drag = self.game.dragger
+        agent = self.agent
         
         # Main game render loop
         while True:
@@ -208,7 +210,15 @@ class Main:
                                         sound.play()
                                     else:
                                         print("No checkmate yet")
-                                    board.print_board()
+                                    # If turn is black then do agent move instead
+                                    # if game.next_player == "black": 
+                                    #     agent.update_board(board)
+                                    #     agent_result = agent.calculate_all_possible_moves(game.next_player)
+                                    #     agent_piece, agent_move = agent_result 
+                                    #     board.move(agent_piece, agent_move)
+                                    #     game.next_turn()
+                                    
+                                    
                             drag.undrag_piece()
                             
                         # Pressing R resets the game if playing

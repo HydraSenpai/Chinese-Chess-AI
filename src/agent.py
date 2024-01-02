@@ -3,187 +3,63 @@ from piece import *
 from const import *
 from move import Move
 import copy
+import random
 
-class Board:
+class Agent:
     def __init__(self):
-        # Creates empty 8x8 board array
-        self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
-        self.create()
-        self.add_pieces('red')
-        self.add_pieces('black')
-        # self.add_custom_board("red")
-        # self.add_custom_board("black")
-        self.last_move = None
-        self.is_in_check = False
-        # Variable used to store if king is in check (updated each turn)
-        self.checked = False
-        
-    def print_board(self):
-        print("----------------------------------------------")
-        for x in self.squares:
-            for i in x:
-                if not hasattr(i.piece, 'name'):
-                    print("----",end = " ")
-                else:
-                    print(" " + i.piece.colour[0:1].upper() + i.piece.name[0:1] + " ",end = " ")
-            print("\n")
-        print("-----------------------------------------------")
-        
-    def move(self, piece, move):
-        initial = move.initial
-        final = move.final
-        
-        # Update squares
-        self.squares[initial.row][initial.column].piece = None
-        self.squares[final.row][final.column].piece = piece
-        
-        piece.moved = True
-        
-        # Clear valid moves
-        piece.clear_moves()
-        
-        # Set last move
-        self.last_move = move
-        
-    def valid_move(self, piece, move):
-        return move in piece.moves
-        # for i in piece.moves:
-        #     if move.initial.row == i.initial.row and move.initial.column == i.initial.column and move.final.row == i.final.row and move.final.column == i.final.column:
-        #         return True
-        # return False
+        self.board = None
     
-    def create(self):
-        # Looping each square and creating corresponding Square object
-        for row in range(PIECE_ROWS):
-            for col in range(PIECE_COLUMNS):
-                self.squares[row][col] = Square(row, col)
-        
-    def add_pieces(self, colour):
-        if colour == 'red':
-            # Create all pawns
-            self.squares[3][0] = Square(3, 1, Pawn(colour))
-            self.squares[3][2] = Square(3, 2, Pawn(colour))
-            self.squares[3][4] = Square(3, 4, Pawn(colour))
-            self.squares[3][6] = Square(3, 6, Pawn(colour))
-            self.squares[3][8] = Square(3, 8, Pawn(colour))
-            
-            # Create Cannon
-            self.squares[2][1] = Square(3, 1, Cannon(colour))
-            self.squares[2][7] = Square(3, 7, Cannon(colour))
-                
-            # Create Knights
-            self.squares[0][1] = Square(0, 1, Knight(colour))
-            self.squares[0][7] = Square(0, 7, Knight(colour))
-            
-            # Create Elephant
-            self.squares[0][2] = Square(0, 2, Elephant(colour))
-            self.squares[0][6] = Square(0, 6, Elephant(colour))
-            
-            # Create Rooks
-            self.squares[0][0] = Square(0, 0, Rook(colour))
-            self.squares[0][8] = Square(0, 8, Rook(colour))
-            # self.squares[9][7] = Square(9, 7, Rook(colour))
-            # self.squares[9][8] = Square(9, 8, Rook(colour))
-            
-            # Create Guard
-            self.squares[0][3] = Square(0, 3, Guard(colour))
-            self.squares[0][5] = Square(0, 5, Guard(colour))
-            
-            # Create King
-            self.squares[0][4] = Square(0, 4, King(colour))
-        else:
-            # Create all pawns
-            self.squares[6][0] = Square(6, 0, Pawn(colour))
-            self.squares[6][2] = Square(6, 2, Pawn(colour))
-            self.squares[6][4] = Square(6, 4, Pawn(colour))
-            self.squares[6][6] = Square(6, 6, Pawn(colour))
-            self.squares[6][8] = Square(6, 8, Pawn(colour))
-            
-            # Create Cannon
-            self.squares[7][1] = Square(7, 1, Cannon(colour))
-            self.squares[7][7] = Square(7, 7, Cannon(colour))
-                
-            # Create Knights
-            self.squares[9][1] = Square(9, 1, Knight(colour))
-            self.squares[9][7] = Square(9, 7, Knight(colour))
-            
-            # Create Elephant
-            self.squares[9][2] = Square(9, 2, Elephant(colour))
-            self.squares[9][6] = Square(9, 6, Elephant(colour))
-            
-            # Create Rooks
-            self.squares[9][0] = Square(9, 0, Rook(colour))
-            self.squares[9][8] = Square(9, 8, Rook(colour))
-            
-            # Create Guard
-            self.squares[9][3] = Square(9, 3, Guard(colour))
-            self.squares[9][5] = Square(9, 5, Guard(colour))
-            
-            # Create King
-            self.squares[9][4] = Square(9, 4, King(colour))
-       
-    def add_custom_board(self, colour):
-        if colour == 'red':    
-            
-            self.squares[3][4] = Square(3, 4, Pawn(colour))   
-            
-            # Create Cannon
-            self.squares[7][6] = Square(7, 6, Cannon(colour))
-                               
-            # Create Knights
-            self.squares[2][2] = Square(2, 2, Knight(colour))
+    def update_board(self, board):
+        self.board = board
 
-            # Create Rooks
-            self.squares[6][7] = Square(6, 7, Rook(colour))
-            
-            # Create King
-            self.squares[0][4] = Square(0, 4, King(colour))
-        else:      
-            # Create Cannon
-            self.squares[0][8] = Square(0, 8, Cannon(colour))
-            
-            # Create Rooks
-            self.squares[0][6] = Square(0, 6, Rook(colour))
-            self.squares[2][7] = Square(2, 7, Rook(colour))
-            
-            # Create Guard
-            self.squares[9][3] = Square(9, 3, Guard(colour))
-            self.squares[9][5] = Square(9, 5, Guard(colour))
-            
-            # Create King
-            self.squares[9][4] = Square(9, 4, King(colour))
-            
-    def calculate_moves(self, piece, row, column, bool=True):
+    def calculate_all_possible_moves(self, colour):
+        pieces = []
+        possible_moves = []
+        for row in range(PIECE_ROWS):
+                for column in range(PIECE_COLUMNS):
+                    # Find every team piece and calculate all moves
+                    if self.board.squares[row][column].has_team_piece(colour):
+                        p = self.board.squares[row][column].piece
+                        self.board.calculate_moves(p, row, column, bool=False)
+                        # Add possible moves to array
+                        for x in p.moves:
+                            pieces.append(p)
+                            possible_moves.append(x)
+        choice = random.randint(0, len(possible_moves) - 1)
+        return (pieces[choice], possible_moves[choice])
         
+    
+    def calculate_moves(self, piece, row, column, bool=True):
+    
         def next_knight_moves(row, column):
             possible_moves = []
             #Check top
             if Square.row_in_range(row-1) and Square.column_in_range(column):
-                if self.squares[row-1][column].is_empty():
+                if self.board.squares[row-1][column].is_empty():
                     possible_moves.append((row-2, column-1))
                     possible_moves.append((row-2, column+1))
             #Check bottom
             if Square.row_in_range(row+1) and Square.column_in_range(column):
-                if self.squares[row+1][column].is_empty():
+                if self.board.squares[row+1][column].is_empty():
                     possible_moves.append((row+2, column-1))
                     possible_moves.append((row+2, column+1))
             #Check Left
             if Square.row_in_range(row) and Square.column_in_range(column-1):
-                if self.squares[row][column-1].is_empty():
+                if self.board.squares[row][column-1].is_empty():
                     possible_moves.append((row-1, column-2))
                     possible_moves.append((row+1, column-2))
             #Check Right
             if Square.row_in_range(row) and Square.column_in_range(column+1):
-                if self.squares[row][column+1].is_empty():
+                if self.board.squares[row][column+1].is_empty():
                     possible_moves.append((row-1, column+2))
                     possible_moves.append((row+1, column+2))
                 
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                    if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -202,11 +78,11 @@ class Board:
                 while(Square.row_in_range(row + counter)):
                     next_move = (row + counter, column)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not self.board.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         return
-                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                    if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -216,7 +92,7 @@ class Board:
                             piece.add_move(move)
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -232,11 +108,11 @@ class Board:
                 while(Square.row_in_range(row - counter)):
                     next_move = (row - counter, column)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not self.board.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         return
-                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                    if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -246,7 +122,7 @@ class Board:
                             piece.add_move(move)
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -262,11 +138,11 @@ class Board:
                 while(Square.column_in_range(column + counter)):
                     next_move = (row, column + counter)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not self.board.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         return
-                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                    if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -276,7 +152,7 @@ class Board:
                             piece.add_move(move)
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -292,11 +168,11 @@ class Board:
                 while(Square.column_in_range(column - counter)):
                     next_move = (row, column - counter)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not self.board.squares[possible_row][possible_column].empty_or_rival(piece.colour):
                         return
-                    if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                    if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -306,7 +182,7 @@ class Board:
                             piece.add_move(move)
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -339,7 +215,7 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                    if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
                         final = Square(possible_row, possible_column)
                         move = Move(initial, final)
@@ -370,9 +246,9 @@ class Board:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                    if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -380,7 +256,8 @@ class Board:
                                 piece.add_move(move)
                         else:
                             piece.add_move(move)
-                                         
+        
+        # Does not check if piece is blocking the move yet                                 
         def next_elephant_moves(row, column):
             possible_moves = []
             #Check top
@@ -423,9 +300,9 @@ class Board:
                 possible_move = (row + 1, column)
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                    if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -443,9 +320,9 @@ class Board:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(5,10) and Square.column_in_range(possible_column):
-                        if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                        if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                             initial = Square(row, column)
-                            final_piece = self.squares[possible_row][possible_column].piece
+                            final_piece = self.board.squares[possible_row][possible_column].piece
                             final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             if bool:
@@ -458,9 +335,9 @@ class Board:
                 possible_move = (row - 1, column)
                 possible_row, possible_column = possible_move
                 if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                    if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                         initial = Square(row, column)
-                        final_piece = self.squares[possible_row][possible_column].piece
+                        final_piece = self.board.squares[possible_row][possible_column].piece
                         final = Square(possible_row, possible_column, final_piece)
                         move = Move(initial, final)
                         if bool:
@@ -477,9 +354,9 @@ class Board:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(0,5) and Square.column_in_range(possible_column):
-                        if self.squares[possible_row][possible_column].is_valid_move(piece.colour):
+                        if self.board.squares[possible_row][possible_column].is_valid_move(piece.colour):
                             initial = Square(row, column)
-                            final_piece = self.squares[possible_row][possible_column].piece
+                            final_piece = self.board.squares[possible_row][possible_column].piece
                             final = Square(possible_row, possible_column, final_piece)
                             move = Move(initial, final)
                             if bool:
@@ -507,7 +384,7 @@ class Board:
                 while(Square.row_in_range(row + counter)):
                     next_move = (row + counter, column)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].is_empty():
+                    if not self.board.squares[possible_row][possible_column].is_empty():
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
@@ -515,12 +392,12 @@ class Board:
                             next_move = (row + counter, column)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_team_piece(piece.colour):
                                 return
                             # If piece is rival then add move to possible moves
-                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final_piece = self.squares[possible_row][possible_column].piece
+                                final_piece = self.board.squares[possible_row][possible_column].piece
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
@@ -532,7 +409,7 @@ class Board:
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -550,7 +427,7 @@ class Board:
                     next_move = (row - counter, column)
                     possible_row, possible_column = next_move
                     # Check whether move contains a blocking piece
-                    if not self.squares[possible_row][possible_column].is_empty():
+                    if not self.board.squares[possible_row][possible_column].is_empty():
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
@@ -558,12 +435,12 @@ class Board:
                             next_move = (row - counter, column)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_team_piece(piece.colour):
                                 return
                             # If piece is rival then add move to possible moves
-                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final_piece = self.squares[possible_row][possible_column].piece
+                                final_piece = self.board.squares[possible_row][possible_column].piece
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
@@ -575,7 +452,7 @@ class Board:
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -591,7 +468,7 @@ class Board:
                 while(Square.column_in_range(column + counter)):
                     next_move = (row, column + counter)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].is_empty():
+                    if not self.board.squares[possible_row][possible_column].is_empty():
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
@@ -599,12 +476,12 @@ class Board:
                             next_move = (row, column + counter)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_team_piece(piece.colour):
                                 return
                             # If piece is rival then add move to possible moves
-                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final_piece = self.squares[possible_row][possible_column].piece
+                                final_piece = self.board.squares[possible_row][possible_column].piece
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
@@ -616,7 +493,7 @@ class Board:
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -632,7 +509,7 @@ class Board:
                 while(Square.column_in_range(column - counter)):
                     next_move = (row, column - counter)
                     possible_row, possible_column = next_move
-                    if not self.squares[possible_row][possible_column].is_empty():
+                    if not self.board.squares[possible_row][possible_column].is_empty():
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
@@ -640,12 +517,12 @@ class Board:
                             next_move = (row, column - counter)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if self.squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_team_piece(piece.colour):
                                 return
                             # If piece is rival then add move to possible moves
-                            if self.squares[possible_row][possible_column].has_rival_piece(piece.colour):
+                            if self.board.squares[possible_row][possible_column].has_rival_piece(piece.colour):
                                 initial = Square(row, column)
-                                final_piece = self.squares[possible_row][possible_column].piece
+                                final_piece = self.board.squares[possible_row][possible_column].piece
                                 final = Square(possible_row, possible_column, final_piece)
                                 move = Move(initial, final)
                                 if bool:
@@ -657,7 +534,7 @@ class Board:
                             counter += 1 
                         return
                     initial = Square(row, column)
-                    final_piece = self.squares[possible_row][possible_column].piece
+                    final_piece = self.board.squares[possible_row][possible_column].piece
                     final = Square(possible_row, possible_column, final_piece)
                     move = Move(initial, final)
                     if bool:
@@ -696,7 +573,7 @@ class Board:
         for row in range(3):
             for column in range(PIECE_COLUMNS):
                 if temp_board.squares[row][column].has_piece() and temp_board.squares[row][column].piece.name == "king":
-                    # king = temp_board.squares[row][column].piece
+                    # king = temp_board.board.squares[row][column].piece
                     king_col = column
                     king_row = row     
                        
@@ -711,7 +588,7 @@ class Board:
     # Method used to calculate if moving a friendly piece results in its own checkmate (to prevent moves that put yourself in checkmate)
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
-        temp_board = copy.deepcopy(self)
+        temp_board = copy.deepcopy(self.board)
         temp_board.move(temp_piece, move)
         
         for row in range(PIECE_ROWS):
@@ -726,7 +603,7 @@ class Board:
     
     # Method used to see if king is currently in check
     def is_check(self, next_player):
-        temp_board = copy.deepcopy(self)
+        temp_board = copy.deepcopy(self.board)
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
@@ -747,7 +624,7 @@ class Board:
     # Method used to calculate if moving a friendly piece results in getting out of checkmate
     def out_of_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
-        temp_board = copy.deepcopy(self)
+        temp_board = copy.deepcopy(self.board)
         temp_board.move(temp_piece, move)
         
         for row in range(PIECE_ROWS):
@@ -775,7 +652,7 @@ class Board:
             return False
         else:
             # Check each move that puts the king into check and search if any move removes all checks on the king
-            temp_board = copy.deepcopy(self)
+            temp_board = copy.deepcopy(self.board)
             # Search through board to find all enemy pieces
             for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
@@ -820,6 +697,5 @@ class Board:
                                 
                                 
             return False
-                                
                                 
                                 

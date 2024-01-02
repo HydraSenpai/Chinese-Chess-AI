@@ -75,7 +75,6 @@ class Game:
         pygame.draw.line(surface, (0,0,0), (3*SQUARE_SIZE+80, 7*SQUARE_SIZE+80), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), 3)
         pygame.draw.line(surface, (0,0,0), (5*SQUARE_SIZE+80, 9*SQUARE_SIZE+80), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), 3)
         pygame.draw.line(surface, (0,0,0), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), (5*SQUARE_SIZE+80, 7*SQUARE_SIZE+80), 3)
-
                 
     def show_pieces(self, surface):
         for row in range(PIECE_ROWS):
