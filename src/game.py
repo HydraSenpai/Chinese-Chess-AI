@@ -201,9 +201,9 @@ class Game:
             initial = self.board.last_move.initial
             final = self.board.last_move.final
             for pos in [initial, final]:
-                colour = (167, 211, 151)
+                colour = (231, 247, 0)
                 rect = (pos.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), pos.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
-                pygame.draw.rect(surface, colour, rect)
+                pygame.draw.ellipse(surface, colour, rect)
                 
     def show_winning_modal(self, surface, loser):
         # Create background for modal

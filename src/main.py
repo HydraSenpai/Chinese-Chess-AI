@@ -60,6 +60,7 @@ class Main:
             elif self.is_playing:
                 self.screen.blit(self.bg_surface, (0,0))
                 game.show_background(screen)
+                game.show_last_move(screen)
                 game.show_log(screen, log.move_list)
                 game.show_pieces(screen)
                 
@@ -103,7 +104,7 @@ class Main:
                 elif not game.is_won:
                     game.show_background(screen)
                     game.show_log(screen, log.move_list)
-                    # game.show_last_move(screen)
+                    game.show_last_move(screen)
                     game.show_moves(screen)
                     game.show_pieces(screen)
                     game.show_exit_button(screen)
@@ -148,7 +149,7 @@ class Main:
                                     self.screen.blit(self.bg_surface, (0,0))
                                     game.show_background(screen)
                                     game.show_log(screen, log.move_list)
-                                    # game.show_last_move(screen)
+                                    game.show_last_move(screen)
                                     game.show_moves(screen)
                                     game.show_pieces(screen)
                                     game.show_exit_button(screen)
@@ -159,7 +160,7 @@ class Main:
                                 self.screen.blit(self.bg_surface, (0,0))
                                 game.show_background(screen)
                                 game.show_log(screen, log.move_list)
-                                # game.show_last_move(screen)
+                                game.show_last_move(screen)
                                 game.show_moves(screen)
                                 game.show_pieces(screen)
                                 game.show_exit_button(screen)
@@ -195,7 +196,7 @@ class Main:
                                     #     sound.play()
                                     # Redraw board
                                     game.show_background(screen)
-                                    # game.show_last_move(screen)
+                                    game.show_last_move(screen)
                                     game.show_log(screen, log.move_list)
                                     game.show_pieces(screen)
                                     game.show_exit_button(screen)
@@ -210,13 +211,22 @@ class Main:
                                         sound.play()
                                     else:
                                         print("No checkmate yet")
+                                    # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                                     # If turn is black then do agent move instead
-                                    # if game.next_player == "black": 
-                                    #     agent.update_board(board)
-                                    #     agent_result = agent.calculate_all_possible_moves(game.next_player)
-                                    #     agent_piece, agent_move = agent_result 
-                                    #     board.move(agent_piece, agent_move)
-                                    #     game.next_turn()
+                                    if game.next_player == "black": 
+                                        agent.update_board(board)
+                                        agent_result = agent.calculate_all_possible_moves(game.next_player)
+                                        if agent_result == None:
+                                            game.is_won = True
+                                            game.lost = game.next_player
+                                            sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                                            sound.play()
+                                        else:
+                                            agent_piece, agent_move = agent_result 
+                                            board.move(agent_piece, agent_move)
+                                            log.add_to_list(move)
+                                            game.next_turn()
+                                    # -----------------------------------------------------------------------
                                     
                                     
                             drag.undrag_piece()

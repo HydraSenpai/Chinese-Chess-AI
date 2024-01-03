@@ -15,20 +15,45 @@ class Agent:
     def calculate_all_possible_moves(self, colour):
         pieces = []
         possible_moves = []
+        check = False
+        # We need to first calculate if king is in check to filter moves
+        if self.is_check(colour):
+            check = True
+        else:
+            check = False
+                                
         for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
                     # Find every team piece and calculate all moves
                     if self.board.squares[row][column].has_team_piece(colour):
-                        p = self.board.squares[row][column].piece
+                        p = self.board.squares[row][column].piece     
+                        p.clear_moves()
                         self.board.calculate_moves(p, row, column, bool=False)
                         # Add possible moves to array
                         for x in p.moves:
-                            pieces.append(p)
-                            possible_moves.append(x)
+                            if p.name == 'king':
+                                if self.is_check(p.colour) and not self.flying_general(p, x):
+                                    if self.out_of_check(p, x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                                elif not self.in_check(p, x) and not self.flying_general(p, x):
+                                    pieces.append(p)
+                                    possible_moves.append(x)
+                            elif check:
+                                if not self.in_check(p, x) and not self.flying_general(p, x):
+                                    if self.out_of_check(p,x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                            else:
+                                pieces.append(p)
+                                possible_moves.append(x)
+        if len(possible_moves) == 0:
+            return None
         choice = random.randint(0, len(possible_moves) - 1)
         return (pieces[choice], possible_moves[choice])
-        
     
+        
+          
     def calculate_moves(self, piece, row, column, bool=True):
     
         def next_knight_moves(row, column):
@@ -562,11 +587,27 @@ class Agent:
             next_king_moves(row, column)
         elif piece.name == 'rook':
             next_rook_moves(row, column)
-            
+          
+    def move(self, piece, move):
+        initial = move.initial
+        final = move.final
+        
+        # Update squares
+        self.board.squares[initial.row][initial.column].piece = None
+        self.board.squares[final.row][final.column].piece = piece
+        
+        piece.moved = True
+        
+        # Clear valid moves
+        piece.clear_moves()
+        
+        # Set last move
+        self.last_move = move
+        
     # Method used to check if a particular move will put the kings in check by having no pieces inbetween       
     def flying_general(self, piece, move):
         temp_piece = copy.deepcopy(piece)
-        temp_board = copy.deepcopy(self)
+        temp_board = copy.deepcopy(self.board)
         temp_board.move(temp_piece, move)
         
         # Find top king piece
@@ -634,12 +675,6 @@ class Agent:
                     temp_board.calculate_moves(p, row, column, bool=False)
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                            # print("out of check method = False")
-                            # print(str(p.name) + " " + str(p.colour))
-                            # print(x.initial.row)
-                            # print(x.initial.column)
-                            # print(x.final.row)
-                            # print(x.final.column)
                             print("out of check method = False")
                             return False
         print("out of check method = True")
