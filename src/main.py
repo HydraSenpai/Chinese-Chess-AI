@@ -1,5 +1,5 @@
 import sys, pygame
-
+import time
 from const import *
 from game import Game
 from square import Square
@@ -218,6 +218,14 @@ class Main:
                                             sound.play()
                                         else:
                                             agent_piece, agent_move = agent_result 
+                                            # Play sound for AI
+                                            if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
+                                                sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                                                sound.play()
+                                            else:
+                                                # Play move sound
+                                                sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                                                sound.play()
                                             board.move(agent_piece, agent_move)
                                             log.add_to_list(agent_move)
                                             # Redraw board
