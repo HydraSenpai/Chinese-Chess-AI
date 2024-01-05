@@ -10,49 +10,7 @@ class Agent:
         self.board = None
     
     def update_board(self, board):
-        self.board = board
-
-    def calculate_all_possible_moves(self, colour):
-        pieces = []
-        possible_moves = []
-        check = False
-        # We need to first calculate if king is in check to filter moves
-        if self.is_check(colour):
-            check = True
-        else:
-            check = False
-                                
-        for row in range(PIECE_ROWS):
-                for column in range(PIECE_COLUMNS):
-                    # Find every team piece and calculate all moves
-                    if self.board.squares[row][column].has_team_piece(colour):
-                        p = self.board.squares[row][column].piece     
-                        p.clear_moves()
-                        self.board.calculate_moves(p, row, column, bool=False)
-                        # Add possible moves to array
-                        for x in p.moves:
-                            if p.name == 'king':
-                                if self.is_check(p.colour) and not self.flying_general(p, x):
-                                    if self.out_of_check(p, x):
-                                        pieces.append(p)
-                                        possible_moves.append(x)
-                                elif not self.in_check(p, x) and not self.flying_general(p, x):
-                                    pieces.append(p)
-                                    possible_moves.append(x)
-                            elif check:
-                                if not self.in_check(p, x) and not self.flying_general(p, x):
-                                    if self.out_of_check(p,x):
-                                        pieces.append(p)
-                                        possible_moves.append(x)
-                            elif not self.in_check(p, x) and not self.flying_general(p, x):
-                                pieces.append(p)
-                                possible_moves.append(x)
-        if len(possible_moves) == 0:
-            return None
-        choice = random.randint(0, len(possible_moves) - 1)
-        return (pieces[choice], possible_moves[choice])
-    
-        
+        self.board = board        
           
     def calculate_moves(self, piece, row, column, bool=True):
     
@@ -733,4 +691,118 @@ class Agent:
                                 
             return False
                                 
+    def calculate_all_possible_moves(self, colour, level):
+        pieces = []
+        possible_moves = []
+        check = False
+        # We need to first calculate if king is in check to filter moves
+        if self.is_check(colour):
+            check = True
+        else:
+            check = False
                                 
+        for row in range(PIECE_ROWS):
+                for column in range(PIECE_COLUMNS):
+                    # Find every team piece and calculate all moves
+                    if self.board.squares[row][column].has_team_piece(colour):
+                        p = self.board.squares[row][column].piece     
+                        p.clear_moves()
+                        self.board.calculate_moves(p, row, column, bool=False)
+                        # Add possible moves to array
+                        for x in p.moves:
+                            if p.name == 'king':
+                                if self.is_check(p.colour) and not self.flying_general(p, x):
+                                    if self.out_of_check(p, x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                                elif not self.in_check(p, x) and not self.flying_general(p, x):
+                                    pieces.append(p)
+                                    possible_moves.append(x)
+                            elif check:
+                                if not self.in_check(p, x) and not self.flying_general(p, x):
+                                    if self.out_of_check(p,x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                            elif not self.in_check(p, x) and not self.flying_general(p, x):
+                                pieces.append(p)
+                                possible_moves.append(x)
+        if len(possible_moves) == 0:
+            return None
+        if level == "beginner":
+            choice = random.randint(0, len(possible_moves) - 1)
+            return (pieces[choice], possible_moves[choice])
+        else:
+        # Here we can insert moves into algorithm to find optimal move
+            choice = random.randint(0, len(possible_moves) - 1)
+            return (pieces[choice], possible_moves[choice])
+    
+    def evaluation(self, move):
+        return 1
+ 
+    def next_states(self, colour):
+        pieces = []
+        possible_moves = []
+        check = False
+        # We need to first calculate if king is in check to filter moves
+        if self.is_check(colour):
+            check = True
+        else:
+            check = False
+                                
+        for row in range(PIECE_ROWS):
+                for column in range(PIECE_COLUMNS):
+                    # Find every team piece and calculate all moves
+                    if self.board.squares[row][column].has_team_piece(colour):
+                        p = self.board.squares[row][column].piece     
+                        p.clear_moves()
+                        self.board.calculate_moves(p, row, column, bool=False)
+                        # Add possible moves to array
+                        for x in p.moves:
+                            if p.name == 'king':
+                                if self.is_check(p.colour) and not self.flying_general(p, x):
+                                    if self.out_of_check(p, x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                                elif not self.in_check(p, x) and not self.flying_general(p, x):
+                                    pieces.append(p)
+                                    possible_moves.append(x)
+                            elif check:
+                                if not self.in_check(p, x) and not self.flying_general(p, x):
+                                    if self.out_of_check(p,x):
+                                        pieces.append(p)
+                                        possible_moves.append(x)
+                            elif not self.in_check(p, x) and not self.flying_general(p, x):
+                                pieces.append(p)
+                                possible_moves.append(x)
+        if len(possible_moves) == 0:
+            return None
+        else:
+            return possible_moves
+            
+    def minimax(self, position, depth, max):
+        if max:
+            colour = "red"
+        else:
+            colour = "black"
+        if depth == 0 or self.next_states(colour) == None:
+            return self.evaluation(position)
+            
+        if max:
+            maxEval = float('-inf')
+            next_turns = self.calculate_all_possible_moves()
+            for child in next_turns:
+                eval = self.minimax(child, depth - 1, False)
+                maxEval = max(maxEval, eval)
+            return maxEval
+        
+        else:
+            minEval = float('inf')
+            next_turns = self.calculate_all_possible_moves()
+            for child in next_turns:
+                eval = self.minimax(child, depth - 1, True)
+                minEval = min(minEval, eval)
+            return minEval
+        
+            
+        
+        

@@ -212,7 +212,7 @@ class Main:
                                     # If turn is black then do agent move instead
                                     if game.next_player == "black": 
                                         agent.update_board(board)
-                                        agent_result = agent.calculate_all_possible_moves(game.next_player)
+                                        agent_result = agent.calculate_all_possible_moves(game.next_player, self.ai_level)
                                         # If no move can be calculated then king is in check and game is over
                                         if agent_result == None:
                                             game.is_won = True
