@@ -13,6 +13,8 @@ class Main:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Chinese Chess')
+        icon = pygame.image.load("assets/images/pieces/black_king.png")
+        pygame.display.set_icon(icon)
         colour_bg = (56,56,56)
         self.screen.fill(colour_bg)
         self.game = Game()
@@ -211,6 +213,7 @@ class Main:
                                     if game.next_player == "black": 
                                         agent.update_board(board)
                                         agent_result = agent.calculate_all_possible_moves(game.next_player)
+                                        # If no move can be calculated then king is in check and game is over
                                         if agent_result == None:
                                             game.is_won = True
                                             game.lost = game.next_player
