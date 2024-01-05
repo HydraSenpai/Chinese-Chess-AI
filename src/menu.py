@@ -10,8 +10,17 @@ class Menu:
     def show_title(self, surface):
         title_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 120)
         title_text = title_font.render("Xiangqi", True, (255,255,255))
-        surface.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) // 2, 160))
+        surface.blit(title_text, ((SCREEN_WIDTH - title_text.get_width() - 200) // 2, 160))
+        
+        img = pygame.image.load("assets/images/pieces/black_elephant.png")
+        img_scaled = pygame.transform.scale(img, (SQUARE_SIZE * 1.2, SQUARE_SIZE * 1.2))
+        surface.blit(img_scaled, ((SCREEN_WIDTH - ((title_text.get_width() + title_text.get_rect().x) + 50)), (title_text.get_rect().y + (title_text.get_height() * 1.3))))
     
+    
+        img2 = pygame.image.load("assets/images/pieces/red_elephant.png")
+        img_scaled2 = pygame.transform.scale(img2, (SQUARE_SIZE * 1.2, SQUARE_SIZE * 1.2))
+        surface.blit(img_scaled2, ((SCREEN_WIDTH - ((title_text.get_width() + title_text.get_rect().x) - 50)), (title_text.get_rect().y + (title_text.get_height() * 1.3))))
+        
     # Function to create buttons (could be changed to be created once and stored in local)
     def show_buttons(self, surface):
         self.beginner_btn = self.create_button(surface, 400, "Beginner")
@@ -32,7 +41,6 @@ class Menu:
         text_x = square_rect.x + (square_rect.width - button_text.get_width()) // 2
         text_y = square_rect.y + (square_rect.height - button_text.get_height()) // 2
 
-        # Create circles for border radius(optional)
         
         # Draw items on screen
         pygame.draw.rect(surface, square_colour, square_rect)
