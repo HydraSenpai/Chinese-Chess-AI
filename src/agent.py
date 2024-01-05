@@ -44,7 +44,7 @@ class Agent:
                                     if self.out_of_check(p,x):
                                         pieces.append(p)
                                         possible_moves.append(x)
-                            else:
+                            elif not self.in_check(p, x) and not self.flying_general(p, x):
                                 pieces.append(p)
                                 possible_moves.append(x)
         if len(possible_moves) == 0:

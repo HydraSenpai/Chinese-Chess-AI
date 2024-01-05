@@ -164,8 +164,7 @@ class Main:
                                 game.show_moves(screen)
                                 game.show_pieces(screen)
                                 game.show_exit_button(screen)
-                                drag.update_blit(screen)
-                                
+                                drag.update_blit(screen) 
                         elif event.type == pygame.MOUSEBUTTONUP:
                             if drag.is_dragging:
                                 drag.update_mouse(event.pos)
@@ -190,10 +189,6 @@ class Main:
                                     board.move(drag.piece, move)
                                     # Add move to log
                                     log.add_to_list(move)
-                                    # # Check if king is in check
-                                    # if board.is_check("red"):
-                                    #     sound = pygame.mixer.Sound("assets/sounds/check.mp3")
-                                    #     sound.play()
                                     # Redraw board
                                     game.show_background(screen)
                                     game.show_last_move(screen)
@@ -224,11 +219,11 @@ class Main:
                                         else:
                                             agent_piece, agent_move = agent_result 
                                             board.move(agent_piece, agent_move)
-                                            log.add_to_list(move)
+                                            log.add_to_list(agent_move)
+                                            # Redraw board
+                                            game.show_log(screen, log.move_list)
                                             game.next_turn()
-                                    # -----------------------------------------------------------------------
-                                    
-                                    
+                                    # -----------------------------------------------------------------------        
                             drag.undrag_piece()
                             
                         # Pressing R resets the game if playing
@@ -246,7 +241,7 @@ class Main:
             # Updates screen so put at end
             pygame.display.update()
             
-            self.clock.tick(30)
+            self.clock.tick(60)
     
 main = Main()
 main.mainloop()
