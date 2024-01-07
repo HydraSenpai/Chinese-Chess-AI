@@ -25,8 +25,10 @@ class Main:
         self.settings = Settings()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
-        self.is_settings = False
+        self.is_settings = True
         self.ai_level = None
+        self.screen_size = "large"
+        self.play_sounds = True
         self.clock = pygame.time.Clock()
         
         
@@ -59,7 +61,6 @@ class Main:
                     self.menu.show_title(screen)
                     self.menu.show_buttons(screen)
                     self.menu.show_settings(screen)
-                    
                     # Only input checks should be for quitting and clicking difficulty to start game
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
@@ -82,6 +83,8 @@ class Main:
                     screen.fill((50, 43, 43))
                     settings.show_title(screen)
                     settings.show_exit_button(screen)
+                    settings.show_sounds_option(screen, self.play_sounds)
+                    settings.show_screen_options(screen, self.screen_size)
                     # Only input checks should be for quitting and changing settings
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT: 
@@ -90,8 +93,27 @@ class Main:
                         elif event.type == pygame.MOUSEBUTTONDOWN:
                             # Check if the mouse click occurred within the exit buttons box
                             result = self.settings.was_button_clicked(event.pos)
-                            if not result:
+                            sound_result = self.settings.was_sound_clicked(event.pos)
+                            screen_result = self.settings.was_screen_clicked(event.pos)
+                            if not result and not sound_result and not screen_result:
                                 break
+                            #Check if sound options were clicked
+                            elif sound_result:
+                                print(sound_result)
+                                if sound_result == "off":
+                                    self.play_sounds = False
+                                else:
+                                    self.play_sounds = True
+                            #Check if screen options were clicked
+                            elif screen_result:
+                                print(screen_result)
+                                if screen_result == "medium":
+                                    self.screen_size = "medium"
+                                elif screen_result == "large":
+                                    self.screen_size = "large"
+                                else:
+                                    self.screen_size = "full"
+                            #Exit button was pressed
                             else:
                                 self.is_settings = False
                     
@@ -201,13 +223,14 @@ class Main:
                                 move = Move(initial, final)
                                 # Start moving process
                                 if board.valid_move(drag.piece, move):
-                                    if board.squares[released_row][released_column].has_piece():    
-                                        sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                                        sound.play()
-                                    else:
-                                        # Play move sound
-                                        sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                                        sound.play()
+                                    if self.play_sounds:
+                                        if board.squares[released_row][released_column].has_piece():    
+                                            sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                                            sound.play()
+                                        else:
+                                            # Play move sound
+                                            sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                                            sound.play()
                                     board.move(drag.piece, move)
                                     # Add move to log
                                     log.add_to_list(move)
@@ -239,13 +262,14 @@ class Main:
                                         else:
                                             agent_piece, agent_move = agent_result 
                                             # Play sound for AI
-                                            if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
-                                                sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                                                sound.play()
-                                            else:
-                                                # Play move sound
-                                                sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                                                sound.play()
+                                            if self.play_sounds:
+                                                if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
+                                                    sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                                                    sound.play()
+                                                else:
+                                                    # Play move sound
+                                                    sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                                                    sound.play()
                                             board.move(agent_piece, agent_move)
                                             log.add_to_list(agent_move)
                                             # Redraw board
