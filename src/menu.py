@@ -46,6 +46,21 @@ class Menu:
         pygame.draw.rect(surface, square_colour, square_rect)
         surface.blit(button_text, (text_x, text_y))
         return square_rect
+    
+    def show_settings(self, surface):
+        # Create settings buttons
+        circle_colour = (233, 97, 97)
+        circle_size = SQUARE_SIZE // 4
+        self.stay_circle = pygame.Rect((SCREEN_WIDTH - circle_size * 2), 20, circle_size, circle_size)
+        stay_circle = self.stay_circle
+        pygame.draw.circle(surface, circle_colour, stay_circle.center, circle_size)
+        
+        # Create text for settings button
+        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
+        button_text = modal_font.render("S", True, (0,0,0))
+        text_x = stay_circle.x + (stay_circle.width - button_text.get_width()) // 2
+        text_y = stay_circle.y // 2
+        surface.blit(button_text, (text_x, text_y))
         
     # Function to check if button was clicked and return game mode if so
     def was_button_clicked(self, mouse_pos):
@@ -55,6 +70,12 @@ class Menu:
             return "intermediate"
         elif self.experienced_btn.collidepoint(mouse_pos):
             return "experienced"
+        else:
+            return None
+        
+    def was_settings_clicked(self, mouse_pos):
+        if hasattr(self, 'stay_circle') and self.stay_circle != None and self.stay_circle.collidepoint(mouse_pos):
+            return "settings"
         else:
             return None
         

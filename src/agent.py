@@ -4,10 +4,12 @@ from const import *
 from move import Move
 import copy
 import random
+import math
 
 class Agent:
     def __init__(self):
         self.board = None
+        # self.depth = 1
     
     def update_board(self, board):
         self.board = board        
@@ -613,10 +615,10 @@ class Agent:
                     # Search through all moves to find if any are a checkmate
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                            print('is check method = True')
+                            # print('is check method = True')
                             self.checked = True
                             return True
-        print('is check method = False')
+        # print('is check method = False')
         self.checked = False
         return False
     
@@ -695,6 +697,10 @@ class Agent:
         pieces = []
         possible_moves = []
         check = False
+        pathDictionary = {}
+        pathDictionary.clear()
+        moves = []
+        scores = []
         # We need to first calculate if king is in check to filter moves
         if self.is_check(colour):
             check = True
@@ -737,11 +743,11 @@ class Agent:
             return (pieces[choice], possible_moves[choice])
     
     def evaluation(self, move):
-        return 1
+        return random.randint(1, 10000)
  
-    def next_states(self, colour):
-        pieces = []
-        possible_moves = []
+    # Returns all moves from a given board and colour and returns them as boards
+    def next_states(self, board, colour):
+        possible_states = []
         check = False
         # We need to first calculate if king is in check to filter moves
         if self.is_check(colour):
@@ -752,55 +758,77 @@ class Agent:
         for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
                     # Find every team piece and calculate all moves
-                    if self.board.squares[row][column].has_team_piece(colour):
-                        p = self.board.squares[row][column].piece     
+                    if board.squares[row][column].has_team_piece(colour):
+                        p = board.squares[row][column].piece     
                         p.clear_moves()
-                        self.board.calculate_moves(p, row, column, bool=False)
+                        board.calculate_moves(p, row, column, bool=False)
                         # Add possible moves to array
                         for x in p.moves:
                             if p.name == 'king':
                                 if self.is_check(p.colour) and not self.flying_general(p, x):
                                     if self.out_of_check(p, x):
-                                        pieces.append(p)
-                                        possible_moves.append(x)
+                                        temp = copy.deepcopy(board)
+                                        temp.move(p, x)
+                                        possible_states.append(temp)
                                 elif not self.in_check(p, x) and not self.flying_general(p, x):
-                                    pieces.append(p)
-                                    possible_moves.append(x)
+                                    temp = copy.deepcopy(board)
+                                    temp.move(p, x)
+                                    possible_states.append(temp)
                             elif check:
                                 if not self.in_check(p, x) and not self.flying_general(p, x):
                                     if self.out_of_check(p,x):
-                                        pieces.append(p)
-                                        possible_moves.append(x)
+                                        temp = copy.deepcopy(board)
+                                        temp.move(p, x)
+                                        possible_states.append(temp)
                             elif not self.in_check(p, x) and not self.flying_general(p, x):
-                                pieces.append(p)
-                                possible_moves.append(x)
-        if len(possible_moves) == 0:
+                                temp = copy.deepcopy(board)
+                                temp.move(p, x)
+                                possible_states.append(temp)
+        if len(possible_states) == 0:
             return None
         else:
-            return possible_moves
+            return possible_states
             
-    def minimax(self, position, depth, max):
-        if max:
-            colour = "red"
-        else:
+    def minimax(self, position, depth, alpha, beta, maximum, pathDictionary, moves, scores):
+        print(depth)
+        if maximum:
             colour = "black"
-        if depth == 0 or self.next_states(colour) == None:
+        else:
+            colour = "red"
+            
+        if depth <= 0 or self.next_states(position, colour) == None:
             return self.evaluation(position)
             
-        if max:
-            maxEval = float('-inf')
-            next_turns = self.calculate_all_possible_moves()
+        if maximum:
+            if str(position.squares) in pathDictionary:
+                return pathDictionary[str(position.squares)]
+            maxEval = -math.inf
+            next_turns = self.next_states(position, colour)
             for child in next_turns:
-                eval = self.minimax(child, depth - 1, False)
+                eval = self.minimax(child, depth - 1, alpha, beta, False, pathDictionary, moves, scores)
                 maxEval = max(maxEval, eval)
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            moves.append(position.squares)
+            scores.append(maxEval)
+            pathDictionary[str(position.squares)] = maxEval
+            
             return maxEval
         
         else:
-            minEval = float('inf')
-            next_turns = self.calculate_all_possible_moves()
+            if str(position.squares) in pathDictionary:
+                return pathDictionary[str(position.squares)]
+            minEval = math.inf
+            next_turns = self.next_states(position, colour)
             for child in next_turns:
-                eval = self.minimax(child, depth - 1, True)
+                eval = self.minimax(child, depth - 1, alpha, beta, True, pathDictionary, moves, scores)
                 minEval = min(minEval, eval)
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            moves[maxEval] = position.squares
+            pathDictionary[str(position.squares)] = minEval
             return minEval
         
             

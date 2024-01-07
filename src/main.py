@@ -7,6 +7,7 @@ from move import Move
 from menu import Menu
 from log import Log
 from agent import Agent
+from settings import Settings
 
 class Main:
     def __init__(self):
@@ -21,10 +22,13 @@ class Main:
         self.menu = Menu()
         self.log = Log()
         self.agent = Agent()
+        self.settings = Settings()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
+        self.is_settings = False
         self.ai_level = None
         self.clock = pygame.time.Clock()
+        
         
     def mainloop(self):
         
@@ -34,29 +38,63 @@ class Main:
         board = self.game.board
         drag = self.game.dragger
         agent = self.agent
+        settings = self.settings
+
+        
+        def show():
+            game.show_background(screen)
+            game.show_log(screen, log.move_list)
+            game.show_last_move(screen)
+            game.show_moves(screen)
+            game.show_pieces(screen)
+            game.show_exit_button(screen)
         
         # Main game render loop
         while True:
             
-            # Game starts on loading screen until user starts game which will switch is_playing and start game
+            # Game starts on menu screen until user starts game which will switch is_playing and start game
             if not self.is_playing:
-                screen.fill((50, 43, 43))
-                self.menu.show_title(screen)
-                self.menu.show_buttons(screen)
-                
-                # Only input checks should be for quitting and clicking difficulty to start game
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT: 
-                        pygame.quit()
-                        sys.exit()
-                    elif event.type == pygame.MOUSEBUTTONDOWN:
-                        # Check if the mouse click occurred within the buttons box
-                        result = self.menu.was_button_clicked(event.pos)
-                        if not result:
-                            break
-                        else:
-                            self.ai_level = result
-                            self.is_playing = True
+                if not self.is_settings:
+                    screen.fill((50, 43, 43))
+                    self.menu.show_title(screen)
+                    self.menu.show_buttons(screen)
+                    self.menu.show_settings(screen)
+                    
+                    # Only input checks should be for quitting and clicking difficulty to start game
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT: 
+                            pygame.quit()
+                            sys.exit()
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                            # Check if the mouse click occurred within the buttons box
+                            settings_result = self.menu.was_settings_clicked(event.pos)
+                            result = self.menu.was_button_clicked(event.pos)
+                            if not result and not settings_result:
+                                break
+                            elif settings_result != None:
+                                self.is_settings = True
+                            else:
+                                self.ai_level = result
+                                self.is_playing = True
+                                
+                # Game menu has settings page to allow user to change settings of game
+                else:
+                    screen.fill((50, 43, 43))
+                    settings.show_title(screen)
+                    settings.show_exit_button(screen)
+                    # Only input checks should be for quitting and changing settings
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT: 
+                            pygame.quit()
+                            sys.exit()
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                            # Check if the mouse click occurred within the exit buttons box
+                            result = self.settings.was_button_clicked(event.pos)
+                            if not result:
+                                break
+                            else:
+                                self.is_settings = False
+                    
             
             # Game loop for game
             elif self.is_playing:
@@ -65,7 +103,6 @@ class Main:
                 game.show_last_move(screen)
                 game.show_log(screen, log.move_list)
                 game.show_pieces(screen)
-                
                 # If game is won then show winning modal to allow user to leave or stay looking at board
                 if game.is_won:
                     if not game.stay:
@@ -104,14 +141,7 @@ class Main:
                                 
                 # Main game input
                 elif not game.is_won:
-                    game.show_background(screen)
-                    game.show_log(screen, log.move_list)
-                    game.show_last_move(screen)
-                    game.show_moves(screen)
-                    game.show_pieces(screen)
-                    game.show_exit_button(screen)
-                    
-                    
+                    show()
                     if drag.is_dragging:
                         drag.update_blit(screen)
                     
@@ -149,23 +179,13 @@ class Main:
                                     drag.drag_piece(piece)
                                     # Show methods
                                     self.screen.blit(self.bg_surface, (0,0))
-                                    game.show_background(screen)
-                                    game.show_log(screen, log.move_list)
-                                    game.show_last_move(screen)
-                                    game.show_moves(screen)
-                                    game.show_pieces(screen)
-                                    game.show_exit_button(screen)
+                                    show()
                                     drag.update_blit(screen)
                         elif event.type == pygame.MOUSEMOTION:
                             if drag.is_dragging == True:
                                 drag.update_mouse(event.pos)
                                 self.screen.blit(self.bg_surface, (0,0))
-                                game.show_background(screen)
-                                game.show_log(screen, log.move_list)
-                                game.show_last_move(screen)
-                                game.show_moves(screen)
-                                game.show_pieces(screen)
-                                game.show_exit_button(screen)
+                                show()
                                 drag.update_blit(screen) 
                         elif event.type == pygame.MOUSEBUTTONUP:
                             if drag.is_dragging:
@@ -192,11 +212,8 @@ class Main:
                                     # Add move to log
                                     log.add_to_list(move)
                                     # Redraw board
-                                    game.show_background(screen)
-                                    game.show_last_move(screen)
-                                    game.show_log(screen, log.move_list)
-                                    game.show_pieces(screen)
-                                    game.show_exit_button(screen)
+                                    show()
+                                    
                                     game.next_turn()
                                     # Check if checkmate has occurred at end of each turn
                                     result = board.is_checkmate(game.next_player)
