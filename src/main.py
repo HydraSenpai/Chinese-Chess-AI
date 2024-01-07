@@ -25,7 +25,7 @@ class Main:
         self.settings = Settings()
         self.bg_surface = pygame.image.load("assets/images/bg.jpg").convert()
         self.is_playing = False
-        self.is_settings = True
+        self.is_settings = False
         self.ai_level = None
         self.screen_size = "large"
         self.play_sounds = True
@@ -111,8 +111,10 @@ class Main:
                                     self.screen_size = "medium"
                                 elif screen_result == "large":
                                     self.screen_size = "large"
+                                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                                 else:
                                     self.screen_size = "full"
+                                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
                             #Exit button was pressed
                             else:
                                 self.is_settings = False
