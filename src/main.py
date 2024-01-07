@@ -109,6 +109,7 @@ class Main:
                                 print(screen_result)
                                 if screen_result == "medium":
                                     self.screen_size = "medium"
+                                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT - 100))
                                 elif screen_result == "large":
                                     self.screen_size = "large"
                                     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -238,7 +239,6 @@ class Main:
                                     log.add_to_list(move)
                                     # Redraw board
                                     show()
-                                    
                                     game.next_turn()
                                     # Check if checkmate has occurred at end of each turn
                                     result = board.is_checkmate(game.next_player)
@@ -250,33 +250,34 @@ class Main:
                                         sound.play()
                                     else:
                                         print("No checkmate yet")
+                                    show()
                                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                                     # If turn is black then do agent move instead
-                                    if game.next_player == "black": 
-                                        agent.update_board(board)
-                                        agent_result = agent.calculate_all_possible_moves(game.next_player, self.ai_level)
-                                        # If no move can be calculated then king is in check and game is over
-                                        if agent_result == None:
-                                            game.is_won = True
-                                            game.lost = game.next_player
-                                            sound = pygame.mixer.Sound("assets/sounds/win.mp3")
-                                            sound.play()
-                                        else:
-                                            agent_piece, agent_move = agent_result 
-                                            # Play sound for AI
-                                            if self.play_sounds:
-                                                if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
-                                                    sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                                                    sound.play()
-                                                else:
-                                                    # Play move sound
-                                                    sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                                                    sound.play()
-                                            board.move(agent_piece, agent_move)
-                                            log.add_to_list(agent_move)
-                                            # Redraw board
-                                            game.show_log(screen, log.move_list)
-                                            game.next_turn()
+                                    # if game.next_player == "black": 
+                                    #     agent.update_board(board)
+                                    #     agent_result = agent.calculate_all_possible_moves(game.next_player, self.ai_level)
+                                    #     # If no move can be calculated then king is in check and game is over
+                                    #     if agent_result == None:
+                                    #         game.is_won = True
+                                    #         game.lost = game.next_player
+                                    #         sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                                    #         sound.play()
+                                    #     else:
+                                    #         agent_piece, agent_move = agent_result 
+                                    #         # Play sound for AI
+                                    #         if self.play_sounds:
+                                    #             if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
+                                    #                 sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                                    #                 sound.play()
+                                    #             else:
+                                    #                 # Play move sound
+                                    #                 sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                                    #                 sound.play()
+                                    #         board.move(agent_piece, agent_move)
+                                    #         log.add_to_list(agent_move)
+                                    #         # Redraw board
+                                    #         game.show_log(screen, log.move_list)
+                                    #         game.next_turn()
                                     # -----------------------------------------------------------------------        
                             drag.undrag_piece()
                             
@@ -295,7 +296,7 @@ class Main:
             # Updates screen so put at end
             pygame.display.update()
             
-            self.clock.tick(60)
+            self.clock.tick(30)
     
 main = Main()
 main.mainloop()
