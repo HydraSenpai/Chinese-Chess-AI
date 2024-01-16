@@ -16,6 +16,8 @@ class Game:
         self.lost = None
         # variable to keep track of showing modal for when the user wants to look at board after game
         self.stay = False
+        # variable to keep track of if ai is still being calculated
+        self.calculating_ai = False
         
         # Load Images to improve performance
         # Red images

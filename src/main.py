@@ -1,5 +1,6 @@
 import sys, pygame
 import time
+import copy
 from const import *
 from game import Game
 from square import Square
@@ -41,7 +42,34 @@ class Main:
         drag = self.game.dragger
         agent = self.agent
         settings = self.settings
-
+        
+        def ai_turn():
+            if game.calculating_ai == False:
+                game.calculating_ai = True
+                print("CALLING MINIMAX")
+                agent_result = agent.calculate_all_possible_moves(board, game.next_player, self.ai_level)
+                # If no move can be calculated then king is in check and game is over
+                if agent_result == None:
+                    game.is_won = True
+                    game.lost = game.next_player
+                    sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                    sound.play()
+                else:
+                    print("AGENT RESULT")
+                    board.squares = copy.deepcopy(agent_result)
+                    board.print_board()
+                    # Play sound for AI
+                    # if self.play_sounds:
+                    #     if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
+                    #         sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                    #         sound.play()
+                    #     else:
+                    #         # Play move sound
+                    #         sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                    #         sound.play()
+                    # log.add_to_list(agent_move)
+                    # Redraw board
+                game.calculating_ai = False
         
         def show():
             game.show_background(screen)
@@ -173,33 +201,17 @@ class Main:
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
                     if game.next_player == "black": 
-                        agent.update_board(board)
-                        agent_result = agent.calculate_all_possible_moves(game.next_player, self.ai_level)
-                        # If no move can be calculated then king is in check and game is over
-                        if agent_result == None:
-                            game.is_won = True
-                            game.lost = game.next_player
-                            sound = pygame.mixer.Sound("assets/sounds/win.mp3")
-                            sound.play()
-                        else:
-                            agent_piece, agent_move = agent_result 
-                            # Play sound for AI
-                            if self.play_sounds:
-                                if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
-                                    sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                                    sound.play()
-                                else:
-                                    # Play move sound
-                                    sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                                    sound.play()
-                            board.move(agent_piece, agent_move)
-                            log.add_to_list(agent_move)
-                            # Redraw board
+                        ai_turn()
+                        if game.calculating_ai == False:
                             game.show_log(screen, log.move_list)
+                            show()
                             game.next_turn()
+                        else:
+                            show()
                             
                     # -----------------------------------------------------------------------
                     else:
+                        # print("PLAYER TURN")
                         if drag.is_dragging:
                             drag.update_blit(screen)
                         for event in pygame.event.get():
@@ -291,7 +303,7 @@ class Main:
                             elif event.type == pygame.QUIT: 
                                 pygame.quit()
                                 sys.exit()
-                    
+                         
             # Updates screen so put at end
             pygame.display.update()
             

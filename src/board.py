@@ -3,6 +3,7 @@ from piece import *
 from const import *
 from move import Move
 import copy
+import time
 
 class Board:
     def __init__(self):
@@ -17,6 +18,8 @@ class Board:
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
         self.checked = False
+        self.debug = True
+        self.count = 0
         
     def print_board(self):
         print("----------------------------------------------")
@@ -44,7 +47,36 @@ class Board:
         
         # Set last move
         self.last_move = move
+
+    def move_squares(self, squares, piece, move):
+        initial = move.initial
+        final = move.final
         
+        # Update squares
+        squares[initial.row][initial.column].piece = None
+        squares[final.row][final.column].piece = piece
+        
+        piece.moved = True
+        
+        # Clear valid moves
+        piece.clear_moves()
+        
+        # Set last move
+        self.last_move = move
+                       
+    def revoke_move(self, piece, move):
+        initial = move.initial
+        final = move.final
+        
+        # Update squares
+        self.squares[initial.row][initial.column].piece = piece
+        self.squares[final.row][final.column].piece = None
+        
+        piece.moved = False
+        
+        # Clear valid moves
+        piece.clear_moves()
+              
     def valid_move(self, piece, move):
         return move in piece.moves
         # for i in piece.moves:
@@ -154,6 +186,7 @@ class Board:
             self.squares[9][4] = Square(9, 4, King(colour))
             
     def calculate_moves(self, piece, row, column, bool=True):
+        
         
         def next_knight_moves(row, column):
             possible_moves = []
@@ -685,9 +718,15 @@ class Board:
             next_king_moves(row, column)
         elif piece.name == 'rook':
             next_rook_moves(row, column)
-            
+        
+    
     # Method used to check if a particular move will put the kings in check by having no pieces inbetween       
     def flying_general(self, piece, move):
+        if self.debug:
+            st = time.time()
+        # new_piece = self.copy_piece(piece)
+        # squares = self.copy_squares()
+        # self.move_squares(squares, new_piece, move)
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
@@ -703,13 +742,27 @@ class Board:
         # Loop through row which king is on and check for rule by checking a piece is between it or no king at the end 
         for row in range(king_row+1, PIECE_ROWS):
             if temp_board.squares[row][king_col].has_piece() and temp_board.squares[row][king_col].piece.name == "king":
+                if self.debug:
+                    et = time.time()
+                    runtime = et - st
+                    print("FLYING GENERAL EXECUTION TIME: " + f"{runtime:.15f}")
                 return True
             if temp_board.squares[row][king_col].has_piece() and temp_board.squares[row][king_col].piece.name != "king":
+                if self.debug:
+                    et = time.time()
+                    runtime = et - st
+                    print("FLYING GENERAL EXECUTION TIME: " + f"{runtime:.15f}")
                 return False
+        if self.debug:
+            et = time.time()
+            runtime = et - st
+            print("FLYING GENERAL EXECUTION TIME: " + f"{runtime:.15f}")
         return False
     
     # Method used to calculate if moving a friendly piece results in its own checkmate (to prevent moves that put yourself in checkmate)
     def in_check(self, piece, move):
+        if self.debug:
+            st = time.time()
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
@@ -721,11 +774,21 @@ class Board:
                     temp_board.calculate_moves(p, row, column, bool=False)
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                            if self.debug:
+                                et = time.time()
+                                runtime = et - st
+                                print("IN CHECK EXECUTION TIME: " + f"{runtime:.15f}")
                             return True
+        if self.debug:
+            et = time.time()
+            runtime = et - st
+            print("IN CHECK EXECUTION TIME: " + f"{runtime:.15f}")
         return False
     
     # Method used to see if king is currently in check
     def is_check(self, next_player):
+        if self.debug:
+            st = time.time()
         temp_board = copy.deepcopy(self)
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
@@ -737,15 +800,23 @@ class Board:
                     # Search through all moves to find if any are a checkmate
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                            print('is check method = True')
                             self.checked = True
+                            if self.debug:
+                                et = time.time()
+                                runtime = et - st
+                                print("IS CHECK EXECUTION TIME: " + f"{runtime:.15f}")
                             return True
-        print('is check method = False')
         self.checked = False
+        if self.debug:
+            et = time.time()
+            runtime = et - st
+            print("IS CHECK EXECUTION TIME: " + f"{runtime:.15f}")
         return False
     
     # Method used to calculate if moving a friendly piece results in getting out of checkmate
     def out_of_check(self, piece, move):
+        if self.debug:
+            st = time.time()
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move)
@@ -757,19 +828,20 @@ class Board:
                     temp_board.calculate_moves(p, row, column, bool=False)
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                            # print("out of check method = False")
-                            # print(str(p.name) + " " + str(p.colour))
-                            # print(x.initial.row)
-                            # print(x.initial.column)
-                            # print(x.final.row)
-                            # print(x.final.column)
-                            print("out of check method = False")
+                            if self.debug:
+                                et = time.time()
+                                runtime = et - st
+                                print("OUT OF CHECK EXECUTION TIME: " + f"{runtime:.15f}")
                             return False
-        print("out of check method = True")
+        if self.debug:
+            et = time.time()
+            runtime = et - st
+            print("OUT OF CHECK EXECUTION TIME: " + f"{runtime:.15f}")
         return True 
     
     def is_checkmate(self, colour):
-        print(str(colour))
+        if self.debug:
+            st = time.time()
         # Check if king is in check
         if not self.is_check(colour):
             return False
@@ -816,10 +888,35 @@ class Board:
                                 # Since no moves were found to turn checkmate false after checking all moves for a specific check
                                 # Condition then the king has been checkmated
                                 if checkmated == True:
+                                    if self.debug:
+                                        et = time.time()
+                                        runtime = et - st
+                                        print("IS CHECKMATE EXECUTION TIME: " + f"{runtime:.15f}")
                                     return True
                                 
-                                
+            if self.debug:
+                et = time.time()
+                runtime = et - st
+                print("IS CHECKMATE EXECUTION TIME: " + f"{runtime:.15f}")                    
             return False
                                 
-                                
-                                
+    def copy_squares(self):
+        if self.debug:
+            st = time.time()
+        new_squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
+        
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                new_squares[row][column] = self.squares[row][column]
+                    
+        if self.debug:
+            et = time.time()
+            runtime = et - st
+            print("COPY SQUARES EXECUTION TIME: " + f"{runtime:.15f}")
+        return new_squares 
+    
+    def copy_piece(self, piece):
+        new_piece = Piece(piece.name, piece.colour, piece.value)
+        return new_piece
+        
+                                                              
