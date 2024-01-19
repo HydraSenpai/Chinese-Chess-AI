@@ -9,7 +9,8 @@ import time
 
 class Agent:
     def __init__(self):
-        self.debug = True  
+        self.debug = False  
+        
                                                    
     def calculate_all_possible_moves(self, board, colour, level):
         pieces = []
@@ -17,12 +18,18 @@ class Agent:
         check = False
         pathDictionary = {}
         pathDictionary.clear()
+        temp_board = 'rkeakaekr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RKEAKAEKR'
+        
+        # RECEIVE BOARD IN FORMAT rkeakaekr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RKEAKAEKR
+        # Where uppercase is other player
+        # Will turn this into array
+        split_board = temp_board.split('/')
         
         # Here we can insert moves into algorithm to find optimal move
         if level != "beginner":
             st = time.time()
             minimax_board = copy.deepcopy(board)
-            value, best_move = self.minimax(minimax_board.squares, 3, -math.inf, math.inf, True, pathDictionary)
+            value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
             # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
             et = time.time()
@@ -73,17 +80,6 @@ class Agent:
         if self.debug:
             st = time.time()
         value = 0
-        colour = "red"
-        if maximum:
-            colour = "black"
-        for row in range(PIECE_ROWS):
-            for column in range(PIECE_COLUMNS):
-                if squares[row][column].has_team_piece(colour):
-                    p = squares[row][column].piece
-                    value += p.value
-                elif squares[row][column].has_rival_piece(colour):
-                    p = squares[row][column].piece
-                    value -= p.value
         print("EVALUATION VALUE = " + str(value))
         if self.debug:
             et = time.time()
@@ -93,6 +89,7 @@ class Agent:
                           
     # Returns all moves from a given board and colour and returns them as boards
     def next_states(self, squares, colour):
+        
         if self.debug:
             st = time.time()
         possible_states = []
@@ -897,10 +894,10 @@ class Agent:
         initial = move.initial
         final = move.final
         
-        squares_copy = copy.deepcopy(squares)
+        # squares_copy = copy.deepcopy(squares)
         
         # Update squares
-        squares_copy[initial.row][initial.column].piece = None
-        squares_copy[final.row][final.column].piece = piece
+        squares[initial.row][initial.column].piece = None
+        squares[final.row][final.column].piece = piece
         
-        return squares_copy                                     
+        return squares                                     
