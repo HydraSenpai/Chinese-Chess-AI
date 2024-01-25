@@ -156,17 +156,12 @@ class Board:
        
     def add_custom_board(self, colour):
         if colour == 'red':    
-            
-            self.squares[3][4] = Square(3, 4, Pawn(colour))   
-            
-            # Create Cannon
-            self.squares[7][6] = Square(7, 6, Cannon(colour))
                                
             # Create Knights
             self.squares[2][2] = Square(2, 2, Knight(colour))
 
             # Create Rooks
-            self.squares[6][7] = Square(6, 7, Rook(colour))
+            self.squares[6][4] = Square(6, 4, Rook(colour))
             
             # Create King
             self.squares[0][4] = Square(0, 4, King(colour))
@@ -174,9 +169,6 @@ class Board:
             # Create Cannon
             self.squares[0][8] = Square(0, 8, Cannon(colour))
             
-            # Create Rooks
-            self.squares[0][6] = Square(0, 6, Rook(colour))
-            self.squares[2][7] = Square(2, 7, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))

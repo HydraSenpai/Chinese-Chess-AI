@@ -200,109 +200,109 @@ class Main:
                     show()
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
-                    if game.next_player == "black": 
-                        ai_turn()
-                        if game.calculating_ai == False:
-                            game.show_log(screen, log.move_list)
-                            show()
-                            game.next_turn()
-                        else:
-                            show()
+                    # if game.next_player == "black": 
+                    #     ai_turn()
+                    #     if game.calculating_ai == False:
+                    #         game.show_log(screen, log.move_list)
+                    #         show()
+                    #         game.next_turn()
+                    #     else:
+                    #         show()
                             
-                    # -----------------------------------------------------------------------
-                    else:
+                    # # -----------------------------------------------------------------------
+                    # else:
                         # print("PLAYER TURN")
-                        if drag.is_dragging:
-                            drag.update_blit(screen)
-                        for event in pygame.event.get():
-                            if event.type == pygame.MOUSEBUTTONDOWN:
-                                # Check if exit button was clicked to leave application
-                                leave_or_stay = game.was_button_clicked(event.pos)
-                                if leave_or_stay == "exit":
-                                    self.is_playing = False
-                                    game.reset()
-                                    game = self.game
-                                    board = self.game.board
-                                    drag = self.game.dragger
-                                    log.clear_list()
-                                    break
-                                # Update mouse position
-                                drag.update_mouse(event.pos)
-                                # Check if mouse click is in a row and column that contains a piece
-                                column_clicked = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
-                                row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
-                                # print("Row Clicked = " + str(row_clicked))
-                                # print("Column Clicked = " + str(column_clicked))
-                                if column_clicked > 8 or column_clicked < 0 or row_clicked > 9 or row_clicked < 0:
-                                    break
-                                if(board.squares[row_clicked][column_clicked].has_piece()):
-                                    piece = board.squares[row_clicked][column_clicked].piece
-                                    # Check colour is equal to turn
-                                    if piece.colour == game.next_player:
-                                        # Clear before valid move
-                                        piece.clear_moves()
-                                        # Calculate moves
-                                        board.calculate_moves(piece, row_clicked, column_clicked, bool=True)
-                                        # Save initial piece position and start dragging
-                                        drag.save_initial_pos(event.pos)
-                                        drag.drag_piece(piece)
-                                        # Show methods
-                                        self.screen.blit(self.bg_surface, (0,0))
-                                        show()
-                                        drag.update_blit(screen)
-                            elif event.type == pygame.MOUSEMOTION:
-                                if drag.is_dragging == True:
-                                    drag.update_mouse(event.pos)
+                    if drag.is_dragging:
+                        drag.update_blit(screen)
+                    for event in pygame.event.get():
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            # Check if exit button was clicked to leave application
+                            leave_or_stay = game.was_button_clicked(event.pos)
+                            if leave_or_stay == "exit":
+                                self.is_playing = False
+                                game.reset()
+                                game = self.game
+                                board = self.game.board
+                                drag = self.game.dragger
+                                log.clear_list()
+                                break
+                            # Update mouse position
+                            drag.update_mouse(event.pos)
+                            # Check if mouse click is in a row and column that contains a piece
+                            column_clicked = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
+                            row_clicked = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
+                            # print("Row Clicked = " + str(row_clicked))
+                            # print("Column Clicked = " + str(column_clicked))
+                            if column_clicked > 8 or column_clicked < 0 or row_clicked > 9 or row_clicked < 0:
+                                break
+                            if(board.squares[row_clicked][column_clicked].has_piece()):
+                                piece = board.squares[row_clicked][column_clicked].piece
+                                # Check colour is equal to turn
+                                if piece.colour == game.next_player:
+                                    # Clear before valid move
+                                    piece.clear_moves()
+                                    # Calculate moves
+                                    board.calculate_moves(piece, row_clicked, column_clicked, bool=True)
+                                    # Save initial piece position and start dragging
+                                    drag.save_initial_pos(event.pos)
+                                    drag.drag_piece(piece)
+                                    # Show methods
                                     self.screen.blit(self.bg_surface, (0,0))
                                     show()
-                                    drag.update_blit(screen) 
-                            elif event.type == pygame.MOUSEBUTTONUP:
-                                if drag.is_dragging:
-                                    drag.update_mouse(event.pos)
-                                    # Save released grid position
-                                    released_row = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
-                                    released_column = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
-                                    # Create possible move
-                                    initial = Square((drag.initial_row + 40) // (SQUARE_SIZE) - 1, (drag.initial_column + 40) // (SQUARE_SIZE) - 1)
-                                    final = Square(released_row, released_column)
-                                    move = Move(initial, final)
-                                    # Start moving process
-                                    if board.valid_move(drag.piece, move):
-                                        if self.play_sounds:
-                                            if board.squares[released_row][released_column].has_piece():    
-                                                sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                                                sound.play()
-                                            else:
-                                                # Play move sound
-                                                sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                                                sound.play()
-                                        board.move(drag.piece, move)
-                                        # Add move to log
-                                        log.add_to_list(move)
-                                        game.next_turn()
-                                        # Check if checkmate has occurred at end of each turn
-                                        result = board.is_checkmate(game.next_player)
-                                        if result:
-                                            print(str(game.next_player) + " has been checkmated")
-                                            game.is_won = True
-                                            game.lost = game.next_player
-                                            sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                                    drag.update_blit(screen)
+                        elif event.type == pygame.MOUSEMOTION:
+                            if drag.is_dragging == True:
+                                drag.update_mouse(event.pos)
+                                self.screen.blit(self.bg_surface, (0,0))
+                                show()
+                                drag.update_blit(screen) 
+                        elif event.type == pygame.MOUSEBUTTONUP:
+                            if drag.is_dragging:
+                                drag.update_mouse(event.pos)
+                                # Save released grid position
+                                released_row = (drag.mouseY + 40) // (SQUARE_SIZE) - 1
+                                released_column = (drag.mouseX + 40) // (SQUARE_SIZE) - 1
+                                # Create possible move
+                                initial = Square((drag.initial_row + 40) // (SQUARE_SIZE) - 1, (drag.initial_column + 40) // (SQUARE_SIZE) - 1)
+                                final = Square(released_row, released_column)
+                                move = Move(initial, final)
+                                # Start moving process
+                                if board.valid_move(drag.piece, move):
+                                    if self.play_sounds:
+                                        if board.squares[released_row][released_column].has_piece():    
+                                            sound = pygame.mixer.Sound("assets/sounds/capture.wav")
                                             sound.play()
                                         else:
-                                            print("No checkmate yet")       
-                                drag.undrag_piece()
-                                
-                            # Pressing R resets the game if playing
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_r:
-                                    game.reset()    
-                                    game = self.game
-                                    board = self.game.board
-                                    drag = self.game.dragger
-                                    log.clear_list()
-                            elif event.type == pygame.QUIT: 
-                                pygame.quit()
-                                sys.exit()
+                                            # Play move sound
+                                            sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                                            sound.play()
+                                    board.move(drag.piece, move)
+                                    # Add move to log
+                                    log.add_to_list(move)
+                                    game.next_turn()
+                                    # Check if checkmate has occurred at end of each turn
+                                    result = board.is_checkmate(game.next_player)
+                                    if result:
+                                        print(str(game.next_player) + " has been checkmated")
+                                        game.is_won = True
+                                        game.lost = game.next_player
+                                        sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                                        sound.play()
+                                    else:
+                                        print("No checkmate yet")       
+                            drag.undrag_piece()
+                            
+                        # Pressing R resets the game if playing
+                        elif event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_r:
+                                game.reset()    
+                                game = self.game
+                                board = self.game.board
+                                drag = self.game.dragger
+                                log.clear_list()
+                        elif event.type == pygame.QUIT: 
+                            pygame.quit()
+                            sys.exit()
                          
             # Updates screen so put at end
             pygame.display.update()
