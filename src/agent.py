@@ -11,76 +11,60 @@ class Agent:
     def __init__(self):
         self.debug = False  
         
-                                                   
-    def calculate_all_possible_moves(self, board, colour, level):
+    def print_row(self, rows):
+        print("----------------------------------------------")
+        for column in range(PIECE_COLUMNS):
+            for row in range(PIECE_ROWS):    
+                print(rows[row][column], end = " ")
+            print("\n")
+        print("-----------------------------------------------")
+                                                          
+    def calculate_all_possible_moves(self, board, upper, level):
         pieces = []
         possible_moves = []
         check = False
         pathDictionary = {}
         pathDictionary.clear()
-        temp_board = 'rkeakaekr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RKEAKAEKR'
-        
-        # RECEIVE BOARD IN FORMAT rkeakaekr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RKEAKAEKR
+        # x = first index y = second index
+        # temp_board = 'rkeakaekr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEAKAEHR'
+        # temp_board = 'r00000000R/h0c0000C0H/e00000000E/g00000000G/k00000000K/g00000000G/e00000000E/h0c0000C0H/r00000000R'
+        # temp_board = 'r00p00P00R/h0c0000C0H/e00p00P00E/g00000000G/k00p00P00K/g00000000G/e00p00P00E/h0c0000C0H/r00p00P00R'
+        # temp_board = 'r00000000R/h00000000H/e00p00P00E/g00000000G/k00p00P00K/g00000000G/e00p00P00E/h00000000H/r00p00P00R'
+        # temp_board = '0000000000/0000000000/0000000000/0000000000/k00p00P00K/0000000000/0000000000/0000000000/0000000000'
+        # temp_board = '0000000000/r0rP0000P0/0000000000/0000000000/k00000000K/0000000000/0000000000/0000000000/0000000000'
+        temp_board = '0000000000/0000000000/0000000000/0000000000/k00000P00K/0000000000/0000000000/0000000000/0000000000'
         # Where uppercase is other player
         # Will turn this into array
         split_board = temp_board.split('/')
-        
-        # Here we can insert moves into algorithm to find optimal move
+        self.print_row(split_board)
         if level != "beginner":
             st = time.time()
-            minimax_board = copy.deepcopy(board)
+            # value, best_move = self.minimax_simple(split_board, 1, True, pathDictionary)
             value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+            self.print_row(best_move)
             # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
             et = time.time()
             runtime = et - st
             print("EXECUTION TIME: " + str(runtime))
-            return best_move
-        
-        else:
-            # We need to first calculate if king is in check to filter moves
-            if board.is_check(colour):
-                check = True
-            else:
-                check = False
-                                    
-            for row in range(PIECE_ROWS): 
-                    for column in range(PIECE_COLUMNS):
-                        # Find every team piece and calculate all moves
-                        if board.squares[row][column].has_team_piece(colour):
-                            p = board.squares[row][column].piece     
-                            p.clear_moves()
-                            board.calculate_moves(p, row, column, bool=False)
-                            # Add possible moves to array
-                            for x in p.moves:
-                                if p.name == 'king':
-                                    if board.is_check(p.colour) and not board.flying_general(p, x):
-                                        if board.out_of_check(p, x):
-                                            pieces.append(p)
-                                            possible_moves.append(x)
-                                    elif not board.in_check(p, x) and not board.flying_general(p, x):
-                                        pieces.append(p)
-                                        possible_moves.append(x)
-                                elif check:
-                                    if not board.in_check(p, x) and not board.flying_general(p, x):
-                                        if board.out_of_check(p,x):
-                                            pieces.append(p)
-                                            possible_moves.append(x)
-                                elif not board.in_check(p, x) and not board.flying_general(p, x):
-                                    pieces.append(p)
-                                    possible_moves.append(x)
-            if len(possible_moves) == 0:
-                return None
-            if level == "beginner":
-                choice = random.randint(0, len(possible_moves) - 1)
-                board.move(pieces[choice], possible_moves[choice])
-                return board       
+            return best_move    
     
-    def evaluation(self, squares, maximum):
+    def evaluation(self, rows, upper):
         if self.debug:
             st = time.time()
         value = 0
+        
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS): 
+                if (rows[row][column] == '0'):
+                    pass
+                elif (not upper and rows[row][column].isupper()) or (upper and rows[row][column].islower()):
+                    value += 1
+                else:
+                    value -= 1
+        self.print_row(rows)
         print("EVALUATION VALUE = " + str(value))
+        
         if self.debug:
             et = time.time()
             runtime = et - st
@@ -88,7 +72,9 @@ class Agent:
         return value
                           
     # Returns all moves from a given board and colour and returns them as boards
-    def next_states(self, squares, colour):
+    def next_states(self, rows, upper): 
+        
+        # rows ['h00000000H', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', 'h00000000H']
         
         if self.debug:
             st = time.time()
@@ -98,18 +84,15 @@ class Agent:
         for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
                     # Find every team piece and calculate all moves
-                    if squares[row][column].has_team_piece(colour):
+                    if (rows[row][column].isupper() and upper and rows[row][column] != '0') or (rows[row][column].islower() and not upper and rows[row][column] != '0'):
                         count+=1
-                        p = squares[row][column].piece     
-                        p.clear_moves()
-                        self.calculate_moves(squares, p, row, column, bool=True)
+                        current_piece = rows[row][column]  
+                        moves = self.calculate_moves(rows, current_piece, row, column, upper, bool=True)
+                        # print("PIECE = " + str(current_piece))
                         # Add possible moves to array
-                        for x in p.moves:
-                            temp_squares = self.move(squares, p, x)
-                            possible_states.append(temp_squares)
-                            print("NEXT STATE")
-                            print("PIECE = " + str(p.name) + " " + "INITIAL = " + str(x.initial.row) + " " + str(x.initial.column) + " " + "FINAL = " + str(x.final.row) + " " + str(x.final.column))
-                        p.clear_moves()
+                        for move in moves:
+                            # self.print_row(move)
+                            possible_states.append(move)
         if self.debug:
             et = time.time()
             runtime = et - st
@@ -119,18 +102,17 @@ class Agent:
         else:
             return possible_states
  
-    def is_terminal_state(self, squares, colour):     
+    def is_terminal_state(self, rows, upper):     
         if self.debug:
             st = time.time()                   
         for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
                     # Find every team piece and calculate all moves
-                    if squares[row][column].has_team_piece(colour):
-                        p = squares[row][column].piece     
-                        p.clear_moves()
-                        self.calculate_moves(squares, p, row, column, bool=True)
+                    if (upper and rows[row][column].isupper() and rows[row][column] != '0') or (not upper and rows[row][column].islower() and rows[row][column] != '0'):
+                        p = rows[row][column]     
+                        moves = self.calculate_moves(rows, p, row, column, upper, bool=True)
                         # Add possible moves to array
-                        if len(p.moves) >= 1:
+                        if len(moves) >= 1:
                             if self.debug:
                                 et = time.time()
                                 runtime = et - st
@@ -142,22 +124,17 @@ class Agent:
             print("IS TERMINAL STATE EXECUTION TIME: " + f"{runtime:.15f}")
         return True
                       
-    def minimax(self, squares, depth, alpha, beta, maximum, pathDictionary):
+    def minimax(self, rows, depth, alpha, beta, upper, pathDictionary):
         best_move = None
+         
+        if depth <= 0 or self.is_terminal_state(rows, upper):
+            return self.evaluation(rows, upper), best_move
         
-        colour = "red"
-        if not maximum:
-            colour = "black"
-            
-        if depth <= 0 or self.is_terminal_state(squares, colour):
-            return self.evaluation(squares, maximum), best_move
-        
-        if maximum:
-            print("MINIMAX MAX")
-            if str(squares) in pathDictionary:
-                return pathDictionary[str(squares)], best_move
+        if upper:   
+            if str(rows) in pathDictionary:
+                return pathDictionary[str(rows)], best_move
             value = -math.inf
-            states = self.next_states(squares, "black")
+            states = self.next_states(rows, True)
             for s in states:
                 eval, _ = self.minimax(s, depth - 1, alpha, beta, False, pathDictionary)
                 if eval > value:
@@ -165,17 +142,15 @@ class Agent:
                     best_move = s
                 alpha = max(alpha, value)
                 if value >= beta:
-                    pathDictionary[str(squares)] = value
+                    pathDictionary[str(rows)] = value
                     break
-            pathDictionary[str(squares)] = value
+            pathDictionary[str(rows)] = value
             return value, best_move
-        
         else:
-            print("MINIMAX MIN")
-            if str(squares) in pathDictionary:
-                return pathDictionary[str(squares)], best_move
+            if str(rows) in pathDictionary:
+                return pathDictionary[str(rows)], best_move
             value = math.inf
-            states = self.next_states(squares, "red")
+            states = self.next_states(rows, False)
             for s in states:
                 eval, _ = self.minimax(s, depth - 1, alpha, beta, True, pathDictionary)
                 if eval < value:
@@ -183,143 +158,148 @@ class Agent:
                     best_move = s
                 beta = min(beta, value)
                 if value <= alpha:
-                    pathDictionary[str(squares)] = value
+                    pathDictionary[str(rows)] = value
                     break
-            pathDictionary[str(squares)] = value
+            pathDictionary[str(rows)] = value
             return value, best_move
 
-    def calculate_moves(self, squares, piece, row, column, bool=True):
+    def calculate_moves(self, rows, piece, row, column, upper, bool=True):
+        moves = []
+        # [rkeakaekr],
+        # [000000000],
+        # [0c00000c0],
+        # [p0p0p0p0p],
+        # [000000000],
+        # [000000000],
+        # [P0P0P0P0P],
+        # [0C00000C0],
+        # [000000000],
+        # [RKEAKAEKR]
         
+        def row_in_range(row):
+            if row < 0 or row > 8:
+                return False
+            return True
         
+        def column_in_range(row):
+            if row < 0 or row > 9:
+                return False
+            return True
+        
+        def is_valid(row, column):
+            if upper:
+                if not rows[row][column].isupper() and (rows[row][column] == '0' or rows[row][column].islower()):
+                    return True
+            else:
+                if not rows[row][column].islower() and (rows[row][column] == '0' or not rows[row][column].isupper()):
+                    return True
+            return False
+                
         def next_knight_moves(row, column):
             possible_moves = []
             #Check top
-            if Square.row_in_range(row-1) and Square.column_in_range(column):
-                if squares[row-1][column].is_empty():
-                    possible_moves.append((row-2, column-1))
-                    possible_moves.append((row-2, column+1))
+            if row_in_range(row-1) and column_in_range(column) and rows[row-1][column] == '0':
+                possible_moves.append((row-2, column-1))
+                possible_moves.append((row-2, column+1))
             #Check bottom
-            if Square.row_in_range(row+1) and Square.column_in_range(column):
-                if squares[row+1][column].is_empty():
-                    possible_moves.append((row+2, column-1))
-                    possible_moves.append((row+2, column+1))
+            if row_in_range(row+1) and column_in_range(column) and rows[row+1][column] == '0':
+                possible_moves.append((row+2, column-1))
+                possible_moves.append((row+2, column+1))
             #Check Left
-            if Square.row_in_range(row) and Square.column_in_range(column-1):
-                if squares[row][column-1].is_empty():
-                    possible_moves.append((row-1, column-2))
-                    possible_moves.append((row+1, column-2))
+            if row_in_range(row) and column_in_range(column-1) and rows[row][column-1] == '0':
+                possible_moves.append((row-1, column-2))
+                possible_moves.append((row+1, column-2))
             #Check Right
-            if Square.row_in_range(row) and Square.column_in_range(column+1):
-                if squares[row][column+1].is_empty():
-                    possible_moves.append((row-1, column+2))
-                    possible_moves.append((row+1, column+2))
+            if row_in_range(row) and column_in_range(column+1) and rows[row][column+1] == '0':
+                possible_moves.append((row-1, column+2))
+                possible_moves.append((row+1, column+2))
                 
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
-                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                if row_in_range(possible_row) and column_in_range(possible_column):
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            # if True:
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                             else:
                                 break
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
     
         def next_rook_moves(row, column):
             #Downward Check
             def downward_check():
                 counter = 1
                 next_move = (row + counter, column)
-                while(Square.row_in_range(row + counter)):
+                while(row_in_range(row + counter)):
                     next_move = (row + counter, column)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
-                    if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                    if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Upward Check
             def upward_check():
                 counter = 1
                 next_move = (row - counter, column)
-                while(Square.row_in_range(row - counter)):
+                while(row_in_range(row - counter)):
                     next_move = (row - counter, column)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
-                    if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                    if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Right Check
             def right_check():
                 counter = 1
                 next_move = (row, column + counter)
-                while(Square.column_in_range(column + counter)):
+                while(column_in_range(column + counter)):
                     next_move = (row, column + counter)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
-                    if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                    if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Left Check
             def left_check():
@@ -328,28 +308,22 @@ class Agent:
                 while(Square.column_in_range(column - counter)):
                     next_move = (row, column - counter)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].empty_or_rival(piece.colour):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
-                    if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                    if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             downward_check()
             upward_check()
@@ -363,30 +337,28 @@ class Agent:
                 (row, column+1),
                 (row, column-1),
             ]
-            max_column = 6
-            min_column = 3
-            if piece.colour == 'red':
-                max_row = 3
-                min_row = 0
+            max_row = 6
+            min_row = 3
+            if piece.islower():
+                max_column = 3
+                min_column = 0
             else:
-                max_row = 10
-                min_row = 7
+                max_column = 10
+                min_column = 7
                 
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final = Square(possible_row, possible_column)
-                        move = Move(initial, final)
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if self.is_check(squares, piece.colour) and not self.flying_general(squares, piece, move):
-                                if self.out_of_check(squares, piece, move):
-                                    piece.add_move(move)
-                            elif not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if self.is_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                if self.out_of_check(moved_rows, upper):
+                                    moves.append(moved_rows)
+                            elif not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         
         def next_guard_moves(row, column):
             possible_moves = [
@@ -395,142 +367,124 @@ class Agent:
                 (row-1, column+1),
                 (row+1, column-1),
             ]
-            max_column = 6
-            min_column = 3
-            if piece.colour == 'red':
-                max_row = 3
-                min_row = 0
+            max_row = 6
+            min_row = 3
+            if piece.islower():
+                max_column = 3
+                min_column = 0
             else:
-                max_row = 10
-                min_row = 7
+                max_column = 10
+                min_column = 7
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if possible_column in range(min_column, max_column) and possible_row in range(min_row, max_row):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                                          
         def next_elephant_moves(row, column):
             possible_moves = []
-            #Check top
-            if Square.row_in_range(row+2) and Square.column_in_range(column+2):
-                if squares[row+1][column+1].is_empty():
-                    if piece.colour == "red" and row+2 <= 4 or piece.colour == "black":
-                        possible_moves.append((row+2, column+2))
-            #Check bottom
-            if Square.row_in_range(row-2) and Square.column_in_range(column-2):
-                if squares[row-1][column-1].is_empty():
-                    if piece.colour == "black" and row-2 >= 5 or piece.colour == "red":
-                        possible_moves.append((row-2, column-2))
-            #Check Left
-            if Square.row_in_range(row+2) and Square.column_in_range(column-2):
-                if squares[row+1][column-1].is_empty():
-                    if piece.colour == "red" and row+2 <= 4 or piece.colour == "black":
-                        possible_moves.append((row+2, column-2))
-            #Check Right
-            if Square.row_in_range(row-2) and Square.column_in_range(column+2):
-                if squares[row-1][column+1].is_empty():
-                    if piece.colour == "black" and row-2 >= 5 or piece.colour == "red":
-                        possible_moves.append((row-2, column+2))
+            #Check top right
+            if row_in_range(row+2) and column_in_range(column+2) and rows[row+1][column+1] == '0':
+                if (piece.islower() and row+2 <= 4) or piece.isupper():
+                # if piece.colour == "red" and row+2 <= 4 or piece.colour == "black":
+                    possible_moves.append((row+2, column+2))
+            #Check top left
+            if row_in_range(row-2) and column_in_range(column-2) and rows[row-1][column-1] == '0':
+                if (piece.isupper() and column-2 >= 5) or piece.islower():
+                # if piece.colour == "black" and row-2 >= 5 or piece.colour == "red":
+                    possible_moves.append((row-2, column-2))
+            #Check bottom left
+            if row_in_range(row+2) and column_in_range(column-2) and rows[row+1][column-1] == '0':
+                if (piece.islower() and row+2 <= 4) or piece.isupper():
+                # if piece.colour == "red" and row+2 <= 4 or piece.colour == "black":
+                    possible_moves.append((row+2, column-2))
+            #Check bottom right
+            if row_in_range(row-2) and column_in_range(column+2) and rows[row-1][column+1] == '0':
+                if (piece.isupper() and row-2 >= 5) or piece.islower():
+                # if piece.colour == "black" and row-2 >= 5 or piece.colour == "red":
+                    possible_moves.append((row-2, column+2))
             
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
-                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                if row_in_range(possible_row) and column_in_range(possible_column):
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         
         def next_pawn_moves(row, column):
             def move_red_home():
-                possible_move = (row + 1, column)
+                possible_move = (row, column + 1)
                 possible_row, possible_column = possible_move
-                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                if row_in_range(possible_row) and column_in_range(possible_column):
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
                         
             def move_red_rival():
                 possible_moves = [
-                (row+1, column),
                 (row, column+1),
-                (row, column-1),
+                (row+1, column),
+                (row-1, column),
             ]
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
-                    if possible_row in range(5,10) and Square.column_in_range(possible_column):
-                        if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                            initial = Square(row, column)
-                            final_piece = squares[possible_row][possible_column].piece
-                            final = Square(possible_row, possible_column, final_piece)
-                            move = Move(initial, final)
+                    if possible_row in range(5,10) and column_in_range(possible_column):
+                        if is_valid(possible_row, possible_column):
+                            moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                             if bool:
-                                if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                    piece.add_move(move)
+                                if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                    moves.append(moved_rows)
                             else:
-                                piece.add_move(move)
+                                moves.append(moved_rows)
                             
             def move_black_home():
-                possible_move = (row - 1, column)
+                possible_move = (row, column - 1)
                 possible_row, possible_column = possible_move
-                if Square.row_in_range(possible_row) and Square.column_in_range(possible_column):
-                    if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                        initial = Square(row, column)
-                        final_piece = squares[possible_row][possible_column].piece
-                        final = Square(possible_row, possible_column, final_piece)
-                        move = Move(initial, final)
+                if row_in_range(possible_row) and column_in_range(possible_column):
+                    if is_valid(possible_row, possible_column):
+                        moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
-                            if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                piece.add_move(move)
+                            if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                moves.append(moved_rows)
                         else:
-                            piece.add_move(move)
+                            moves.append(moved_rows)
             def move_black_rival():
                 possible_moves = [
-                (row-1, column),
-                (row, column+1),
                 (row, column-1),
+                (row+1, column),
+                (row-1, column),
             ]
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
-                    if possible_row in range(0,5) and Square.column_in_range(possible_column):
-                        if squares[possible_row][possible_column].is_valid_move(piece.colour):
-                            initial = Square(row, column)
-                            final_piece = squares[possible_row][possible_column].piece
-                            final = Square(possible_row, possible_column, final_piece)
-                            move = Move(initial, final)
+                    if possible_row in range(0,5) and column_in_range(possible_column):
+                        if is_valid(possible_row, possible_column):
+                            moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                             if bool:
-                                if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                    piece.add_move(move)
+                                if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                    moves.append(moved_rows)
                             else:
-                                piece.add_move(move)
+                                moves.append(moved_rows)
             
-            if piece.colour == 'red':
-                if row < 5:
+            if piece.islower():
+                if column < 5:
                     move_red_home()
                 else:
                     move_red_rival()
             else:
-                if row > 4:
+                if column > 4:
                     move_black_home()
                 else:
                     move_black_rival()
@@ -540,214 +494,187 @@ class Agent:
             def downward_check():
                 counter = 1
                 next_move = (row + counter, column)
-                while(Square.row_in_range(row + counter)):
+                while(row_in_range(row + counter)):
                     next_move = (row + counter, column)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].is_empty():
+                    if not rows[possible_row][possible_column] == '0':
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
-                        while(Square.row_in_range(row + counter)):
+                        while(row_in_range(row + counter)):
                             next_move = (row + counter, column)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if (upper and rows[possible_row][possible_column].isupper()) or (not upper and rows[possible_row][possible_column].islower()):
                                 return
                             # If piece is rival then add move to possible moves
-                            if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                                initial = Square(row, column)
-                                final_piece = squares[possible_row][possible_column].piece
-                                final = Square(possible_row, possible_column, final_piece)
-                                move = Move(initial, final)
+                            if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                                moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
-                                    if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                        piece.add_move(move)
+                                    if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                        moves.append(moved_rows)
                                 else:
-                                    piece.add_move(move)
+                                    moves.append(moved_rows)
                                 return
                             counter += 1 
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Upward Check
             def upward_check():
                 counter = 1
                 next_move = (row - counter, column)
                 # Loop until check either isn't on board or is intercepted by own piece or rival piece
-                while(Square.row_in_range(row - counter)):
+                while(row_in_range(row - counter)):
                     next_move = (row - counter, column)
                     possible_row, possible_column = next_move
                     # Check whether move contains a blocking piece
-                    if not squares[possible_row][possible_column].is_empty():
+                    if not rows[possible_row][possible_column] == '0':
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
-                        while(Square.row_in_range(row - counter)):
+                        while(row_in_range(row - counter)):
                             next_move = (row - counter, column)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if (upper and rows[possible_row][possible_column].isupper()) or (not upper and rows[possible_row][possible_column].islower()):
                                 return
                             # If piece is rival then add move to possible moves
-                            if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                                initial = Square(row, column)
-                                final_piece = squares[possible_row][possible_column].piece
-                                final = Square(possible_row, possible_column, final_piece)
-                                move = Move(initial, final)
+                            if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                                moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
-                                    if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                        piece.add_move(move)
+                                    if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                        moves.append(moved_rows)
                                 else:
-                                    piece.add_move(move)
+                                    moves.append(moved_rows)
                                 return
                             counter += 1 
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Right Check
             def right_check():
                 counter = 1
                 next_move = (row, column + counter)
-                while(Square.column_in_range(column + counter)):
+                while(column_in_range(column + counter)):
                     next_move = (row, column + counter)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].is_empty():
+                    if not rows[possible_row][possible_column] == '0':
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
-                        while(Square.column_in_range(column + counter)):
+                        while(column_in_range(column + counter)):
                             next_move = (row, column + counter)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if (upper and rows[possible_row][possible_column].isupper()) or (not upper and rows[possible_row][possible_column].islower()):
                                 return
                             # If piece is rival then add move to possible moves
-                            if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                                initial = Square(row, column)
-                                final_piece = squares[possible_row][possible_column].piece
-                                final = Square(possible_row, possible_column, final_piece)
-                                move = Move(initial, final)
+                            if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                                moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
-                                    if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                        piece.add_move(move)
+                                    if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                        moves.append(moved_rows)
                                 else:
-                                    piece.add_move(move)
+                                    moves.append(moved_rows)
                                 return
                             counter += 1 
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             #Left Check
             def left_check():
                 counter = 1
                 next_move = (row, column - counter)
-                while(Square.column_in_range(column - counter)):
+                while(column_in_range(column - counter)):
                     next_move = (row, column - counter)
                     possible_row, possible_column = next_move
-                    if not squares[possible_row][possible_column].is_empty():
+                    if not rows[possible_row][possible_column] == '0':
                         # Check whether a rival piece is in a square after the first blocking piece
                         counter += 1
                         # Loop after blocking piece to find next piece
-                        while(Square.column_in_range(column - counter)):
+                        while(column_in_range(column - counter)):
                             next_move = (row, column - counter)
                             possible_row, possible_column = next_move
                             # If piece is team piece then no jump occurs and return
-                            if squares[possible_row][possible_column].has_team_piece(piece.colour):
+                            if (upper and rows[possible_row][possible_column].isupper()) or (not upper and rows[possible_row][possible_column].islower()):
                                 return
                             # If piece is rival then add move to possible moves
-                            if squares[possible_row][possible_column].has_rival_piece(piece.colour):
-                                initial = Square(row, column)
-                                final_piece = squares[possible_row][possible_column].piece
-                                final = Square(possible_row, possible_column, final_piece)
-                                move = Move(initial, final)
+                            if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
+                                moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
-                                    if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                                        piece.add_move(move)
+                                    if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                                        moves.append(moved_rows)
                                 else:
-                                    piece.add_move(move)
+                                    moves.append(moved_rows)
                                 return
                             counter += 1 
                         return
-                    initial = Square(row, column)
-                    final_piece = squares[possible_row][possible_column].piece
-                    final = Square(possible_row, possible_column, final_piece)
-                    move = Move(initial, final)
+                    moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
-                        if not self.in_check(squares, piece, move) and not self.flying_general(squares, piece, move):
-                            piece.add_move(move)
+                        if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
+                            moves.append(moved_rows)
                     else:
-                        piece.add_move(move)
+                        moves.append(moved_rows)
                     counter += 1
             downward_check()
             upward_check()
             left_check()
             right_check()
 
-        if piece.name == 'pawn':
+        if piece.lower() == 'p':
             next_pawn_moves(row, column)
-        elif piece.name == 'cannon':
+        elif piece.lower() == 'c':
             next_cannon_moves(row, column)
-        elif piece.name == 'knight':
+        elif piece.lower() == 'h':
             next_knight_moves(row, column)
-        elif piece.name == 'elephant':
+        elif piece.lower() == 'e':
             next_elephant_moves(row, column)
-        elif piece.name == 'guard':
+        elif piece.lower() == 'g':
             next_guard_moves(row, column)
-        elif piece.name == 'king':
+        elif piece.lower() == 'k':
             next_king_moves(row, column)
-        elif piece.name == 'rook':
+        elif piece.lower() == 'r':
             next_rook_moves(row, column)
+        
+        return moves
            
     # Method used to check if a particular move will put the kings in check by having no pieces inbetween       
-    def flying_general(self, squares, piece, move):
+    def flying_general(self, rows):
         if self.debug:
             st = time.time()
-        # new_piece = self.copy_piece(piece)
-        # squares = self.copy_squares()
-        # self.move_squares(squares, new_piece, move)
-        temp_squares = self.move(squares, piece, move)
-        
+            
         # Find top king piece
-        for row in range(3):
-            for column in range(PIECE_COLUMNS):
-                if temp_squares[row][column].has_piece() and temp_squares[row][column].piece.name == "king":
-                    # king = temp_squares[row][column].piece
+        for row in range(PIECE_ROWS):
+            for column in range(3):
+                if rows[row][column] == 'k' or rows[row][column] == 'K':
                     king_col = column
-                    king_row = row     
+                    king_row = row    
                        
         # Loop through row which king is on and check for rule by checking a piece is between it or no king at the end 
         for row in range(king_row+1, PIECE_ROWS):
-            if temp_squares[row][king_col].has_piece() and temp_squares[row][king_col].piece.name == "king":
+            if rows[king_col][row] == 'k' or rows[row][king_col] == 'K':
                 if self.debug:
                     et = time.time()
                     runtime = et - st
                     print("FLYING GENERAL EXECUTION TIME: " + f"{runtime:.15f}")
                 return True
-            if temp_squares[row][king_col].has_piece() and temp_squares[row][king_col].piece.name != "king":
+            if rows[row][king_col] != '0' and rows[row][king_col] != 'k' and rows[row][king_col] != 'K':
                 if self.debug:
                     et = time.time()
                     runtime = et - st
@@ -760,18 +687,20 @@ class Agent:
         return False
     
     # Method used to calculate if moving a friendly piece results in its own checkmate (to prevent moves that put yourself in checkmate)
-    def in_check(self, squares, piece, move):
+    def in_check(self, rows, upper):
         if self.debug:
             st = time.time()
-        temp_squares = self.move(squares, piece, move)
         
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
-                if temp_squares[row][column].has_rival_piece(piece.colour):
-                    p = temp_squares[row][column].piece
-                    self.calculate_moves(temp_squares, p, row, column, bool=False)
-                    for x in p.moves:
-                        if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                # Check for enemy pieces by finding opposite cases
+                if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
+                    p = rows[row][column]
+                    # Calculate moves of enemy piece
+                    moves = self.calculate_moves(rows, p, row, column, (not upper), bool=False)
+                    # For each move opponent check whether the friendly king has been taken
+                    for move in moves:
+                        if (upper and 'k' in move[row][column]) or (not upper and 'K' in move[row][column]):
                             if self.debug:
                                 et = time.time()
                                 runtime = et - st
@@ -784,20 +713,19 @@ class Agent:
         return False
     
     # Method used to see if king is currently in check
-    def is_check(self, squares, next_player):
+    def is_check(self, rows, upper):
         if self.debug:
             st = time.time()
-        temp_squares = squares.copy()
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
                 # Calculate all possible moves of each piece
-                if temp_squares[row][column].has_rival_piece(next_player):
-                    p = temp_squares[row][column].piece
-                    self.calculate_moves(temp_squares, p, row, column, bool=False)
+                if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
+                    p = rows[row][column]
+                    moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
                     # Search through all moves to find if any are a checkmate
-                    for x in p.moves:
-                        if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                    for move in moves:
+                        if (upper and 'k' in move[row][column]) or (not upper and 'K' in move[row][column]):
                             self.checked = True
                             if self.debug:
                                 et = time.time()
@@ -812,18 +740,17 @@ class Agent:
         return False
     
     # Method used to calculate if moving a friendly piece results in getting out of checkmate
-    def out_of_check(self, squares, piece, move):
+    def out_of_check(self, rows, upper):
         if self.debug:
             st = time.time()
-        temp_squares = self.move(squares, piece, move)
         
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
-                if temp_squares[row][column].has_rival_piece(piece.colour):
-                    p = temp_squares[row][column].piece
-                    self.calculate_moves(temp_squares, p, row, column, bool=False)
-                    for x in p.moves:
-                        if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
+                    p = rows[row][column].piece
+                    moves = self.calculate_moves(rows, p, row, column, upper, bool=False)
+                    for move in moves:
+                        if (upper and 'k' in move[row][column]) or (not upper and 'K' in move[row][column]):
                             if self.debug:
                                 et = time.time()
                                 runtime = et - st
@@ -853,7 +780,6 @@ class Agent:
                         # Filter through all moves to find any enemy moves that check the king
                         for x in p.moves:
                             if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
-                                print(str(p.name) + ", " + str(p.colour) + ", " + str(x.initial.row) + "," + str(x.initial.column))
                                 # If it is a check then we need to search for any friendly moves that bring the king out of check
                                 
                                 # Set checkmated to true to reset for each possible checkmate
@@ -890,14 +816,16 @@ class Agent:
                 print("IS CHECKMATE EXECUTION TIME: " + f"{runtime:.15f}")                    
             return False
 
-    def move(self, squares, piece, move):
-        initial = move.initial
-        final = move.final
-        
-        # squares_copy = copy.deepcopy(squares)
-        
-        # Update squares
-        squares[initial.row][initial.column].piece = None
-        squares[final.row][final.column].piece = piece
-        
-        return squares                                     
+    def move(self, rows, row, column, next_row, next_column, upper, piece):
+        new_rows = rows.copy()
+        # Update new_rows
+        new_rows[row] = new_rows[row][:column] + '0' + new_rows[row][column + 1:]
+        if upper:
+            new_rows[next_row] = new_rows[next_row][:next_column] + piece.upper() + new_rows[next_row][next_column + 1:]
+        else:
+            new_rows[next_row] = new_rows[next_row][:next_column] + piece + new_rows[next_row][next_column + 1:]
+        return new_rows                                     
+    
+    
+agent = Agent()
+agent.calculate_all_possible_moves(None, True, 'random')
