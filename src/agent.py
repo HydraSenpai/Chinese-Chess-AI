@@ -10,20 +10,30 @@ import time
 class Agent:
     def __init__(self):
         self.debug = False  
+        # EVALUATIVE PIECES
+        self.evaluate = ['p', 'r', 'c', 'h', 'P', 'R', 'C', 'H']
         # PIECE WEIGHTS
         self.weights = {
-            'p': 30,
-            'g': 120,
-            'e':  120,
-            'h':  270,
-            'c': 285,
-            'r': 600,
-            'k': 6000
+            'p': -30,
+            'g': -120,
+            'e':  -120,
+            'h':  -270,
+            'c': -285,
+            'r': -600,
+            'k': -6000,
+            'P': 30,
+            'G': 120,
+            'E':  120,
+            'H':  270,
+            'C': 285,
+            'R': 600,
+            'K': 6000
         }
         # UPPER PIECE SQUARE TABLES
         self.PST_upper = {
             # PAWN SQUARE TABLE
-            'p':[ 0,   3,   6,   9,   12,   9,   6,   3,   0, 
+            'P':
+            [ 0,   3,   6,   9,   12,   9,   6,   3,   0, 
              18,  36,  56,  80,  120,  80,  56,  36,  18,
              14,  26,  42,  60,   80,  60,  42,  26,  14,
              10,  20,  30,  34,   40,  34,  30,  20,  10,
@@ -37,7 +47,8 @@ class Agent:
             # SKIP GUARD
             # SKIP ELEPHANT
             # HORSE SQUARE TABLE
-            'h':[ 4,   8,  16,  12,    4,  12,  16,   8,   4, 
+            'H':
+                [ 4,   8,  16,  12,    4,  12,  16,   8,   4, 
               4,  10,  28,  16,    8,  16,  28,  10,   4,
              12,  14,  16,  20,   18,  20,  16,  14,  12,
               8,  24,  18,  24,   20,  24,  18,  24,   8,
@@ -49,7 +60,7 @@ class Agent:
               0,  -4,   0,   0,    0,   0,   0,  -4,   0,
             ],
             # CANNON SQUARE TABLE
-            'c':[ 6,   4,   0, -10,  -12, -10,   0,   4,   6,
+            'C':[ 6,   4,   0, -10,  -12, -10,   0,   4,   6,
               2,   2,   0,  -4,  -14,  -4,   0,   2,   2,
               2,   2,   0, -10,   -8, -10,   0,   2,   2,
               0,   0,  -2,   4,   10,   4,  -2,   0,   0,
@@ -61,7 +72,7 @@ class Agent:
               0,   0,   2,   6,    6,   6,   2,   0,   0,
             ],
             # ROOK SQUARE TABLE
-            'r':[14,  14,  12,  18,   16,  18,  12,  14,  14,
+            'R':[14,  14,  12,  18,   16,  18,  12,  14,  14,
              16,  20,  18,  24,   26,  24,  18,  20,  16,
              12,  12,  12,  18,   18,  18,  12,  12,  12,
              12,  18,  16,  22,   22,  22,  16,  18,  12,
@@ -176,20 +187,21 @@ class Agent:
             for column in range(PIECE_COLUMNS): 
                 if (rows[row][column] == '0'):
                     pass
-                elif (not upper and rows[row][column].isupper()) or (upper and rows[row][column].islower()):
-                    value += self.weights[rows[row][column]]
-                    value += self.weights[rows[row][column]]
                 else:
-                    value += 1
-        # if value > -1:
-        # self.print_row(rows)
-        # print("EVALUATION VALUE = " + str(value))
-        
+                    p = rows[row][column]
+                    value += self.weights[p]
+                    if p in self.evaluate:
+                        if p.isupper():
+                            value += self.PST_upper[p][(row*9)+column]
+                        else:
+                            value -= self.PST_lower[p][(row*9)+column]
         if self.debug:
             et = time.time()
             runtime = et - st
             print("EVALUATION EXECUTION TIME: " + f"{runtime:.15f}")
-        return value
+        if upper:
+            return value
+        return -value
                           
     # Returns all moves from a given board and colour and returns them as boards
     def next_states(self, rows, upper): 
@@ -995,4 +1007,8 @@ class Agent:
     
                
 agent = Agent()
-agent.calculate_all_possible_moves(None, True, 'random')
+temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+split_board = temp_board.split('/')
+
+print(agent.evaluation(split_board, True))
+# agent.calculate_all_possible_moves(None, True, 'random')
