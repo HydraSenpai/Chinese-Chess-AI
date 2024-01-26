@@ -9,7 +9,127 @@ import time
 
 class Agent:
     def __init__(self):
-        self.debug = True  
+        self.debug = False  
+        # PIECE WEIGHTS
+        self.weights = {
+            'p': 30,
+            'g': 120,
+            'e':  120,
+            'h':  270,
+            'c': 285,
+            'r': 600,
+            'k': 6000
+        }
+        # UPPER PIECE SQUARE TABLES
+        self.PST_upper = {
+            # PAWN SQUARE TABLE
+            'p':[ 0,   3,   6,   9,   12,   9,   6,   3,   0, 
+             18,  36,  56,  80,  120,  80,  56,  36,  18,
+             14,  26,  42,  60,   80,  60,  42,  26,  14,
+             10,  20,  30,  34,   40,  34,  30,  20,  10,
+              6,  12,  18,  18,   20,  18,  18,  12,   6, 
+              2,   0,   8,   0,    8,   0,   8,   0,   2,  
+              0,   0,  -2,   0,    4,   0,  -2,   0,   0,
+              0,   0,   0,   0,    0,   0,   0,   0,   0,     
+              0,   0,   0,   0,    0,   0,   0,   0,   0,
+              0,   0,   0,   0,    0,   0,   0,   0,   0
+            ],
+            # SKIP GUARD
+            # SKIP ELEPHANT
+            # HORSE SQUARE TABLE
+            'h':[ 4,   8,  16,  12,    4,  12,  16,   8,   4, 
+              4,  10,  28,  16,    8,  16,  28,  10,   4,
+             12,  14,  16,  20,   18,  20,  16,  14,  12,
+              8,  24,  18,  24,   20,  24,  18,  24,   8,
+              6,  16,  14,  18,   16,  18,  14,  16,   6, 
+              4,  12,  16,  14,   12,  14,  16,  12,   4,
+              2,   6,   8,   6,   10,   6,   8,   6,   2,
+              4,   2,   8,   8,    4,   8,   8,   2,   4,     
+              0,   2,   4,   4,   -2,   4,   4,   2,   0,
+              0,  -4,   0,   0,    0,   0,   0,  -4,   0,
+            ],
+            # CANNON SQUARE TABLE
+            'c':[ 6,   4,   0, -10,  -12, -10,   0,   4,   6,
+              2,   2,   0,  -4,  -14,  -4,   0,   2,   2,
+              2,   2,   0, -10,   -8, -10,   0,   2,   2,
+              0,   0,  -2,   4,   10,   4,  -2,   0,   0,
+              0,   0,   0,   2,    8,   2,   0,   0,   0, 
+             -2,   0,   4,   2,    6,   2,   4,   0,  -2,
+              0,   0,   0,   2,    4,   2,   0,   0,   0,
+              4,   0,   8,   6,   10,   6,   8,   0,   4,     
+              0,   2,   4,   6,    6,   6,   4,   2,   0,
+              0,   0,   2,   6,    6,   6,   2,   0,   0,
+            ],
+            # ROOK SQUARE TABLE
+            'r':[14,  14,  12,  18,   16,  18,  12,  14,  14,
+             16,  20,  18,  24,   26,  24,  18,  20,  16,
+             12,  12,  12,  18,   18,  18,  12,  12,  12,
+             12,  18,  16,  22,   22,  22,  16,  18,  12,
+             12,  14,  12,  18,   18,  18,  12,  14,  12, 
+             12,  16,  14,  20,   20,  20,  14,  16,  12,
+              6,  10,   8,  14,   14,  14,   8,  10,   6,
+              4,   8,   6,  14,   12,  14,   6,   8,   4,     
+              8,   4,   8,  16,    8,  16,   8,   4,   8,
+             -2,  10,   6,  14,   12,  14,   6,  10,  -2,
+            ]
+        }
+        # LOWER PIECE SQUARE TABLES
+        self.PST_lower = {
+            # PAWN SQUARE TABLE
+            'p':[ 
+             0,   0,   0,   0,   0,   0,   0,   0,   0,
+             0,   0,   0,   0,   0,   0,   0,   0,   0,
+             0,   0,   0,   0,   0,   0,   0,   0,   0,
+             0,   0,  -2,   0,   4,   0,  -2,   0,   0,
+             2,   0,   8,   0,   8,   0,   8,   0,   2,
+             6,  12,  18,  18,  20,  18,  18,  12,   6,
+             10,  20,  30,  34,  40,  34,  30,  20,  10,
+             14,  26,  42,  60,  80,  60,  42,  26,  14,
+             18,  36,  56,  80, 120,  80,  56,  36,  18,
+             0,   3,   6,   9,  12,   9,   6,   3,   0,
+            ],
+            # SKIP GUARD
+            # SKIP ELEPHANT
+            # HORSE SQUARE TABLE
+            'h':[ 
+             0,  -4,   0,   0,   0,   0,   0,  -4,   0,
+             0,   2,   4,   4,  -2,   4,   4,   2,   0,
+             4,   2,   8,   8,   4,   8,   8,   2,   4,
+             2,   6,   8,   6,  10,   6,   8,   6,   2,
+             4,  12,  16,  14,  12,  14,  16,  12,   4,
+             6,  16,  14,  18,  16,  18,  14,  16,   6,
+             8,  24,  18,  24,  20,  24,  18,  24,   8,
+             12,  14,  16,  20,  18,  20,  16,  14,  12,
+             4,  10,  28,  16,   8,  16,  28,  10,   4,
+             4,   8,  16,  12,   4,  12,  16,   8,   4,
+            ],
+            # CANNON SQUARE TABLE
+            'c':[ 
+             0,   0,   2,   6,   6,   6,   2,   0,   0,
+             0,   2,   4,   6,   6,   6,   4,   2,   0,
+             4,   0,   8,   6,  10,   6,   8,   0,   4,
+             0,   0,   0,   2,   4,   2,   0,   0,   0,
+             -2,   0,   4,   2,   6,   2,   4,   0,  -2,
+             0,   0,   0,   2,   8,   2,   0,   0,   0,
+             0,   0,  -2,   4,  10,   4,  -2,   0,   0,
+             2,   2,   0, -10,  -8, -10,   0,   2,   2,
+             2,   2,   0,  -4, -14,  -4,   0,   2,   2,
+             6,   4,   0, -10, -12, -10,   0,   4,   6,
+            ],
+            # ROOK SQUARE TABLE
+            'r':[ 
+             -2,  10,   6,  14,  12,  14,   6,  10,  -2,
+             8,   4,   8,  16,   8,  16,   8,   4,   8,
+             4,   8,   6,  14,  12,  14,   6,   8,   4,
+             6,  10,   8,  14,  14,  14,   8,  10,   6,
+             12,  16,  14,  20,  20,  20,  14,  16,  12,
+             12,  14,  12,  18,  18,  18,  12,  14,  12,
+             12,  18,  16,  22,  22,  22,  16,  18,  12,
+             12,  12,  12,  18,  18,  18,  12,  12,  12,
+             16,  20,  18,  24,  26,  24,  18,  20,  16,
+             14,  14,  12,  18,  16,  18,  12,  14,  14,
+            ],
+        }  
         
     def print_row(self, rows):
         print("----------------------------------------------")
@@ -20,9 +140,6 @@ class Agent:
         print("-----------------------------------------------")
                                                           
     def calculate_all_possible_moves(self, board, upper, level):
-        pieces = []
-        possible_moves = []
-        check = False
         pathDictionary = {}
         pathDictionary.clear()
         # x = first index y = second index
@@ -41,7 +158,7 @@ class Agent:
         if level != "beginner":
             st = time.time()
             # value, best_move = self.minimax_simple(split_board, 1, True, pathDictionary)
-            value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+            value, best_move = self.minimax(split_board, 5, -math.inf, math.inf, True, pathDictionary)
             self.print_row(best_move)
             # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
@@ -60,9 +177,10 @@ class Agent:
                 if (rows[row][column] == '0'):
                     pass
                 elif (not upper and rows[row][column].isupper()) or (upper and rows[row][column].islower()):
-                    value += 1
+                    value += self.weights[rows[row][column]]
+                    value += self.weights[rows[row][column]]
                 else:
-                    value -= 1
+                    value += 1
         # if value > -1:
         # self.print_row(rows)
         # print("EVALUATION VALUE = " + str(value))
@@ -110,7 +228,7 @@ class Agent:
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
                 # Find every team piece and calculate all moves
-                if (upper and rows[row][column].isupper() and rows[row][column] != '0') or (not upper and rows[row][column].islower() and rows[row][column] != '0'):
+                if (rows[row][column] != '0') and ((upper and rows[row][column].isupper()) or (not upper and rows[row][column].islower())):
                     p = rows[row][column]     
                     moves = self.calculate_moves(rows, p, row, column, upper, bool=True)
                     # Add possible moves to array
@@ -129,7 +247,9 @@ class Agent:
     def minimax(self, rows, depth, alpha, beta, upper, pathDictionary):
         best_move = None
          
-        if depth <= 0 or self.is_terminal_state(rows, upper):
+        if self.is_terminal_state(rows, upper):
+            return 100, best_move
+        if depth <= 0:
             return self.evaluation(rows, upper), best_move
         
         if upper:   
@@ -219,7 +339,7 @@ class Agent:
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
                 if row_in_range(possible_row) and column_in_range(possible_column):
-                    if is_valid(possible_row, possible_column) and not self.kill_king(rows, possible_row, possible_column):
+                    if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
                             # if True:
@@ -241,7 +361,7 @@ class Agent:
                     if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                        if self.kill_king(rows, possible_row, possible_column):
+                        if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             return
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
@@ -250,7 +370,7 @@ class Agent:
                         else:
                             moves.append(moved_rows)
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     else:
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
@@ -270,7 +390,7 @@ class Agent:
                     if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                        if self.kill_king(rows, possible_row, possible_column):
+                        if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             return
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
@@ -279,7 +399,7 @@ class Agent:
                         else:
                             moves.append(moved_rows)
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -298,7 +418,7 @@ class Agent:
                     if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                        if self.kill_king(rows, possible_row, possible_column):
+                        if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             return
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
@@ -307,7 +427,7 @@ class Agent:
                         else:
                             moves.append(moved_rows)
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -326,7 +446,7 @@ class Agent:
                     if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                        if self.kill_king(rows, possible_row, possible_column):
+                        if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             return
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
@@ -335,7 +455,7 @@ class Agent:
                         else:
                             moves.append(moved_rows)
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -444,7 +564,7 @@ class Agent:
                 possible_move = (row + 1, column)
                 possible_row, possible_column = possible_move
                 if row_in_range(possible_row) and column_in_range(possible_column):
-                    if is_valid(possible_row, possible_column) and not self.kill_king(rows, possible_row, possible_column):
+                    if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
                             if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
@@ -461,7 +581,7 @@ class Agent:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(5,10) and column_in_range(possible_column):
-                        if is_valid(possible_row, possible_column) and not self.kill_king(rows, possible_row, possible_column):
+                        if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                             if bool:
                                 if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
@@ -473,7 +593,7 @@ class Agent:
                 possible_move = (row - 1, column)
                 possible_row, possible_column = possible_move
                 if row_in_range(possible_row) and column_in_range(possible_column):
-                    if is_valid(possible_row, possible_column) and not self.kill_king(rows, possible_row, possible_column):
+                    if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                         if bool:
                             if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
@@ -489,7 +609,7 @@ class Agent:
                 for possible_move in possible_moves:
                     possible_row, possible_column = possible_move
                     if possible_row in range(0,5) and column_in_range(possible_column):
-                        if is_valid(possible_row, possible_column) and not self.kill_king(rows, possible_row, possible_column):
+                        if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                             if bool:
                                 if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows):
@@ -528,7 +648,7 @@ class Agent:
                                 return
                             # If piece is rival then add move to possible moves
                             if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                                if self.kill_king(rows, possible_row, possible_column):
+                                if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                                     return
                                 moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
@@ -539,7 +659,7 @@ class Agent:
                                 return
                             counter += 1 
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -569,7 +689,7 @@ class Agent:
                                 return
                             # If piece is rival then add move to possible moves
                             if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                                if self.kill_king(rows, possible_row, possible_column):
+                                if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                                     return
                                 moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
@@ -580,7 +700,7 @@ class Agent:
                                 return
                             counter += 1 
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -608,7 +728,7 @@ class Agent:
                                 return
                             # If piece is rival then add move to possible moves
                             if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                                if self.kill_king(rows, possible_row, possible_column):
+                                if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                                     return
                                 moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 if bool:
@@ -619,7 +739,7 @@ class Agent:
                                 return
                             counter += 1 
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -647,7 +767,7 @@ class Agent:
                                 return
                             # If piece is rival then add move to possible moves
                             if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                                if self.kill_king(rows, possible_row, possible_column):
+                                if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                                     return
                                 moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                                 # self.print_row(moved_rows)
@@ -659,7 +779,7 @@ class Agent:
                                 return
                             counter += 1 
                         return
-                    if self.kill_king(rows, possible_row, possible_column):
+                    if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                         return
                     moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                     if bool:
@@ -873,11 +993,6 @@ class Agent:
             new_rows[next_row] = new_rows[next_row][:next_column] + piece + new_rows[next_row][next_column + 1:]
         return new_rows                                     
     
-    def kill_king(self, rows, row, column):
-        if rows[row][column] == 'k' or rows[row][column] == 'K':
-            return True
-        return False
-        
-        
+               
 agent = Agent()
 agent.calculate_all_possible_moves(None, True, 'random')
