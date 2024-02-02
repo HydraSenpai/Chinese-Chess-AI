@@ -2,6 +2,8 @@ from square import Square
 from piece import *
 from const import *
 from move import Move
+import numpy as np
+from collections import defaultdict
 import copy
 import random
 import math
@@ -160,7 +162,7 @@ class Agent:
         # temp_board = '0000000000/0000000000/0000000000/0000000000/k00p00P00K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = '0000000000/r0rP0000P0/0000000000/0000000000/k00000000K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = '0000000000/0000000000/0000000000/0000000000/k00000P00K/0000000000/0000000000/0000000000/0000000000'
-        temp_board = 'cheakaehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEAKEAHR'
+        temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
         # temp_board = 'R0eakaehr/000000000/000000000/p0p0p0p0p/000000000/000000000/P0P0P0P0P/000000000/000000000/RHEAKAEHR'
         # Where uppercase is other player
         # Will turn this into array
@@ -169,8 +171,16 @@ class Agent:
         if level != "beginner":
             st = time.time()
             # value, best_move = self.minimax_simple(split_board, 1, True, pathDictionary)
-            value, best_move = self.minimax(split_board, 5, -math.inf, math.inf, True, pathDictionary)
-            self.print_row(best_move)
+            # value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+            # self.print_row(best_move)
+            root = Node(state=split_board, parent=None)
+            mcts = SearchTree(root)
+            best_node = mcts.best_action(1000)
+            c_state = best_node.state
+            c_board = c_state.board
+            return c_state,c_board
+            
+            return
             # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
             et = time.time()
@@ -194,15 +204,15 @@ class Agent:
                         if p.isupper():
                             value += self.PST_upper[p][(row*9)+column]
                         else:
-                            value -= self.PST_lower[p][(row*9)+column]
+                            value -= self.PST_lower[p][(row*9)+column]                    
         if self.debug:
             et = time.time()
             runtime = et - st
             print("EVALUATION EXECUTION TIME: " + f"{runtime:.15f}")
         if upper:
             return value
-        return -value
-                          
+        return -value     
+
     # Returns all moves from a given board and colour and returns them as boards
     def next_states(self, rows, upper): 
         
@@ -262,7 +272,7 @@ class Agent:
         if self.is_terminal_state(rows, upper):
             return 100, best_move
         if depth <= 0:
-            return self.evaluation(rows, upper), best_move
+            return self.evaluation(rows, not upper), best_move
         
         if upper:   
             if str(rows) in pathDictionary:
@@ -1004,11 +1014,96 @@ class Agent:
         else:
             new_rows[next_row] = new_rows[next_row][:next_column] + piece + new_rows[next_row][next_column + 1:]
         return new_rows                                     
+
+    class Node:
+        def __init__(self, state, parent=None):
+            self._number_of_visits = 0.
+            self._results = defaultdict(int)
+            self.state = state
+            self.parent = parent
+            self.children = []
+
+        @property
+        def untried_actions(self):
+            if not hasattr(self, '_untried_actions'):
+                self._untried_actions = self.state.get_legal_actions()
+            return self._untried_actions
+
+        @property
+        def q(self):
+            wins = self._results[self.parent.state.next_to_move]
+            loses = self._results[-1 * self.parent.state.next_to_move]
+            return wins - loses
+
+        @property
+        def n(self):
+            return self._number_of_visits
+
+        def expand(self):
+            action = self.untried_actions.pop()
+            next_state = self.state.move(action)
+            child_node = Node(next_state, parent=self)
+            self.children.append(child_node)
+            return child_node
+
+        def is_terminal_node(self):
+            return self.state.is_game_over()
+
+        def rollout(self):
+            current_rollout_state = self.state
+            while not current_rollout_state.is_game_over():
+                possible_moves = current_rollout_state.get_legal_actions()
+                action = self.rollout_policy(possible_moves)
+                current_rollout_state = current_rollout_state.move(action)
+            return current_rollout_state.game_result
+
+        def backpropagate(self, result):
+            self._number_of_visits += 1.
+            self._results[result] += 1.
+            if self.parent:
+                self.parent.backpropagate(result)
+
+        def is_fully_expanded(self):
+            return len(self.untried_actions) == 0
+
+        def best_child(self, c_param=1.4):
+            choices_weights = [
+                (c.q / (c.n)) + c_param * np.sqrt((2 * np.log(self.n) / (c.n)))
+                for c in self.children
+            ]
+            return self.children[np.argmax(choices_weights)]
+
+        def rollout_policy(self, possible_moves):
+            return possible_moves[np.random.randint(len(possible_moves))]
+
+    class SearchTree:
+        def __init__(self, node):
+            self.root = node
+
+        def best_action(self, simulations_number):
+            for _ in range(0, simulations_number):
+                v = self.tree_policy()
+                reward = v.rollout()
+                v.backpropagate(reward)
+            # exploitation only
+            return self.root.best_child(c_param=0.)
+
+        def tree_policy(self):
+            current_node = self.root
+            while not current_node.is_terminal_node():
+                if not current_node.is_fully_expanded():
+                    return current_node.expand()
+                else:
+                    current_node = current_node.best_child()
+            return current_node
     
+            
+    def monte_carlo(self, rows):
+        root = self.Node(rows)
+        mcts = self.SearchTree(root)
+        best_node = mcts.best_action(1000)
+        c_state = best_node.state
+        return c_state
                
 agent = Agent()
-temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
-split_board = temp_board.split('/')
-
-print(agent.evaluation(split_board, True))
-# agent.calculate_all_possible_moves(None, True, 'random')
+agent.calculate_all_possible_moves(None, True, 'random')
