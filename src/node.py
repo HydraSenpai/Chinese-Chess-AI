@@ -47,6 +47,8 @@ class Node:
                 current_rollout_state = self.rollout_policy(possible_moves)
                 current_rollout_turn = not current_rollout_turn
                 # print_row(current_rollout_state)
+            print_row(current_rollout_state)
+            print('turn = ' + str(current_rollout_turn))
             return self.game_result(current_rollout_state, current_rollout_turn)
 
         def backpropagate(self, result):
@@ -69,4 +71,6 @@ class Node:
             return possible_moves[np.random.randint(len(possible_moves))]
         
         def game_result(self, state, turn):
-            pass
+            if self.turn == turn:
+                return 1
+            return -1
