@@ -57,7 +57,8 @@ class Main:
                     sound.play()
                 else:
                     print("AGENT RESULT")
-                    board.squares = board.convert_string_to_board(agent_result)
+                    board.convert_string_to_board(agent_result)
+                    print('board after ai turn')
                     board.print_board()
                     # Play sound for AI
                     # if self.play_sounds:
@@ -201,18 +202,18 @@ class Main:
                     show()
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
-                    # if game.next_player == "black": 
-                    #     ai_turn()
-                    #     if game.calculating_ai == False:
-                    #         game.show_log(screen, log.move_list)
-                    #         show()
-                    #         game.next_turn()
-                    #     else:
-                    #         show()
+                    if game.next_player == "black": 
+                        ai_turn()
+                        if game.calculating_ai == False:
+                            game.show_log(screen, log.move_list)
+                            show()
+                            game.next_turn()
+                        else:
+                            show()
                             
-                    # # -----------------------------------------------------------------------
+                    # -----------------------------------------------------------------------
                     # else:
-                        # print("PLAYER TURN")
+                    #     print("PLAYER TURN")
                     if drag.is_dragging:
                         drag.update_blit(screen)
                     for event in pygame.event.get():

@@ -164,20 +164,20 @@ class Agent:
         # temp_board = '0000000000/0000000000/0000000000/0000000000/k00p00P00K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = '0000000000/r0rP0000P0/0000000000/0000000000/k00000000K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = '0000000000/0000000000/0000000000/0000000000/k00000P00K/0000000000/0000000000/0000000000/0000000000'
-        temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+        # temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
         # temp_board = 'R0eakaehr/000000000/000000000/p0p0p0p0p/000000000/000000000/P0P0P0P0P/000000000/000000000/RHEAKAEHR'
         # Where uppercase is other player
         # Will turn this into array
-        split_board = temp_board.split('/')
+        split_board = board.split('/')
         self.print_row(split_board)
         if level != "beginner":
             st = time.time()
             # value, best_move = self.minimax_simple(split_board, 1, True, pathDictionary)
-            # value, best_move = self.minimax(split_board, 5, -math.inf, math.inf, True, pathDictionary)
-            # self.print_row(best_move)
+            value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+            self.print_row(best_move)
             
-            result = self.monte_carlo(split_board, True)
-            return result
+            # result = self.monte_carlo(split_board, True)
+            # return result
             
             # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
@@ -1023,5 +1023,3 @@ class Agent:
         self.print_row(best_node)
         return best_node
                
-agent = Agent()
-agent.calculate_all_possible_moves(None, True, 'random')
