@@ -910,5 +910,66 @@ class Board:
     def copy_piece(self, piece):
         new_piece = Piece(piece.name, piece.colour, piece.value)
         return new_piece
+
+    def convert_board_to_string(self):
+        # temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+        board_string = ''
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                if self.squares[row][column].has_piece():
+                    piece =  self.squares[row][column].piece
+                    if piece.name == 'knight':
+                        if piece.colour == 'black':
+                            board_string += 'H'
+                        else:
+                            board_string += 'h'
+                    else:
+                        if piece.colour == 'black':
+                            board_string += self.squares[row][column].piece.name[0].upper()
+                        else:
+                            board_string += self.squares[row][column].piece.name[0]
+                else:
+                    board_string += '0'
+            board_string += '/'
+            
+        board_string = board_string[:-1]  
+        return board_string
+
+    def convert_string_to_board(self, string):
+        # temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+        names = {
+            'r' : 'rook',
+            'h' : 'knight',
+            'g' : 'guard',
+            'e' : 'elephant',
+            'p' : 'pawn',
+            'c' : 'cannon',
+            'k' : 'king'
+        }
+        row = 0 
+        column = 0
+        for char in string:
+            print(char + ' row=' + str(row) + ' column=' + str(column))
+            if char == '/':
+                column = -1
+                row += 1
+            elif char == '0':
+                self.squares[row][column].piece = None
+            elif char.isupper():
+                piece = Piece(names[char.lower()], 'black', 0)
+                self.squares[row][column].piece = piece
+            else:
+                piece = Piece(names[char], 'red', 0)
+                self.squares[row][column].piece = piece
+            column += 1
+                
         
+                
+    
+    
+                    
+board = Board()
+temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+board.convert_string_to_board(temp_board)    
+board.print_board()            
                                                               

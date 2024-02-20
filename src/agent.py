@@ -1018,7 +1018,7 @@ class Agent:
         # Create MC agent and root node
         root = Node(rows, not turn)
         mcts = SearchTree(root)
-        best_node = mcts.best_action(10)
+        best_node = mcts.best_action(5)
         print('done')
         self.print_row(best_node)
         return best_node

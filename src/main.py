@@ -41,13 +41,14 @@ class Main:
         board = self.game.board
         drag = self.game.dragger
         agent = self.agent
-        settings = self.settings
+        settings = self.settings           
         
         def ai_turn():
             if game.calculating_ai == False:
                 game.calculating_ai = True
                 print("CALLING MINIMAX")
-                agent_result = agent.calculate_all_possible_moves(board, game.next_player, self.ai_level)
+                converted_board = board.convert_board_to_string()
+                agent_result = agent.calculate_all_possible_moves(converted_board, game.next_player, self.ai_level)
                 # If no move can be calculated then king is in check and game is over
                 if agent_result == None:
                     game.is_won = True
@@ -56,7 +57,7 @@ class Main:
                     sound.play()
                 else:
                     print("AGENT RESULT")
-                    board.squares = copy.deepcopy(agent_result)
+                    board.squares = board.convert_string_to_board(agent_result)
                     board.print_board()
                     # Play sound for AI
                     # if self.play_sounds:
