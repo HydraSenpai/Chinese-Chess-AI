@@ -309,7 +309,7 @@ class Main:
             # Updates screen so put at end
             pygame.display.update()
             
-            self.clock.tick(15)
+            self.clock.tick(20)
     
 main = Main()
 main.mainloop()

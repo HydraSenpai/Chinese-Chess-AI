@@ -10,11 +10,11 @@ class SearchTree:
         for _ in range(0, simulations_number):
             # Find next node (state) to rollout
             v = self.tree_policy()
-            print('found node to expand')
+            # print('found node to expand')
             reward = v.rollout()
-            print('rolled out node')
+            # print('rolled out node')
             v.backpropagate(reward)
-            print('backpropogated')
+            # print('backpropogated')
         return self.root.best_child(c_param=1.4).state
     # This method is used to find the next node to rollout by going down tree to find node with UCT (Upper Confidence Bound)
     def tree_policy(self):
@@ -27,5 +27,5 @@ class SearchTree:
             else:
                 # If all children have been searched pick the best child and rollout from that state again
                 current_node = current_node.best_child()
-        print_row(current_node)
+        # print_row(current_node)
         return current_node

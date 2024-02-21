@@ -170,21 +170,27 @@ class Agent:
         # Will turn this into array
         split_board = board.split('/')
         self.print_row(split_board)
-        if level != "beginner":
-            st = time.time()
-            # value, best_move = self.minimax_simple(split_board, 1, True, pathDictionary)
+        st = time.time()
+        if level == "beginner":
+            # RANDOM MOVE CALL
+            possible_states = self.next_states(split_board, upper)
+            best_move = possible_states[random.randint(0, len(possible_states) - 1)]
+            
+        
+        elif level == "experienced":
+            # MINIMAX CALL
             value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
             self.print_row(best_move)
-            
-            # result = self.monte_carlo(split_board, True)
-            # return result
-            
-            # value, best_move = self.minimax(minimax_board, 3, True)
             print("END VALUE = " + str(value))
-            et = time.time()
-            runtime = et - st
-            print("EXECUTION TIME: " + str(runtime))
-            return best_move    
+            
+        else:
+            # MONTE CARLO CALL
+            best_move = self.monte_carlo(split_board, True)
+            
+        et = time.time()
+        runtime = et - st
+        print("EXECUTION TIME: " + str(runtime))
+        return best_move    
     
     def evaluation(self, rows, upper):
         if self.debug:
@@ -1018,7 +1024,7 @@ class Agent:
         # Create MC agent and root node
         root = Node(rows, not turn)
         mcts = SearchTree(root)
-        best_node = mcts.best_action(5)
+        best_node = mcts.best_action(2)
         print('done')
         self.print_row(best_node)
         return best_node

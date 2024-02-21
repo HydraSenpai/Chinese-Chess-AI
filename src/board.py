@@ -18,7 +18,7 @@ class Board:
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
         self.checked = False
-        self.debug = True
+        self.debug = False
         self.count = 0
         
     def print_board(self):
@@ -936,10 +936,7 @@ class Board:
         return board_string
 
     def convert_string_to_board(self, string):
-        print('string ' + str(string))
         string = '/'.join(string)
-        print('string ' + str(string))
-        # temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
         names = {
             'r' : 'rook',
             'h' : 'knight',
@@ -952,7 +949,6 @@ class Board:
         row = 0 
         column = 0
         for char in string:
-            print(char + ' row=' + str(row) + ' column=' + str(column))
             if char == '/':
                 column = -1
                 row += 1
