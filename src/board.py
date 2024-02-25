@@ -161,7 +161,7 @@ class Board:
             self.squares[2][2] = Square(2, 2, Knight(colour))
 
             # Create Rooks
-            self.squares[6][4] = Square(6, 4, Rook(colour))
+            self.squares[6][5] = Square(6, 5, Rook(colour))
             
             # Create King
             self.squares[0][4] = Square(0, 4, King(colour))
@@ -789,7 +789,7 @@ class Board:
                 if temp_board.squares[row][column].has_rival_piece(next_player):
                     p = temp_board.squares[row][column].piece
                     temp_board.calculate_moves(p, row, column, bool=False)
-                    # Search through all moves to find if any are a checkmate
+                    # Search through all moves to find if any are a check
                     for x in p.moves:
                         if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
                             self.checked = True

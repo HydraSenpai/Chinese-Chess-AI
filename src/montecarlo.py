@@ -16,6 +16,8 @@ class SearchTree:
             v.backpropagate(reward)
             # print('backpropogated')
         return self.root.best_child(c_param=1.4).state
+    
+    
     # This method is used to find the next node to rollout by going down tree to find node with UCT (Upper Confidence Bound)
     def tree_policy(self):
         current_node = self.root

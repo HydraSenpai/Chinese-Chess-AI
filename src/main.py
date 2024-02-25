@@ -58,8 +58,8 @@ class Main:
                 else:
                     print("AGENT RESULT")
                     board.convert_string_to_board(agent_result)
-                    print('board after ai turn')
-                    board.print_board()
+                    # print('board after ai turn')
+                    # board.print_board()
                     # Play sound for AI
                     # if self.play_sounds:
                     #     if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
@@ -72,6 +72,16 @@ class Main:
                     # log.add_to_list(agent_move)
                     # Redraw board
                 game.calculating_ai = False
+                # Check if checkmate has occurred at end of each turn
+                result = board.is_checkmate(game.next_player)
+                if result:
+                    print(str(game.next_player) + " has been checkmated")
+                    game.is_won = True
+                    game.lost = game.next_player
+                    sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                    sound.play()
+                else:
+                    print("No checkmate yet") 
         
         def show():
             game.show_background(screen)
