@@ -199,7 +199,7 @@ class Agent:
         
         if self.is_check(rows, not upper):
             # print('choosing check move')
-            value = 1000
+            value = 100
         
         
         for row in range(PIECE_ROWS):
@@ -1442,9 +1442,13 @@ class Agent:
         
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
+                # Check for rival pieces
                 if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
                     p = rows[row][column]
-                    moves = self.calculate_moves(rows, p, row, column, upper, bool=False)
+                    moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
+                    for i in moves:
+                        print(i)
+                    # Calculate enemy piece moves and then check if player is still in check
                     for move in moves:
                         if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
                             if self.debug:
@@ -1478,23 +1482,32 @@ class Agent:
                         if p not in piece_list:
                             break
                         # Filter through all moves to find any enemy moves that check the king
+                        print("enemy piece moves")
+                        for i in moves:
+                            print(i)
                         for move in moves:
                             if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
+                                print("kills king")
+                                print(move)
                                 # If it is a check then we need to search for any friendly moves that bring the king out of check
-                                
                                 # Set checkmated to true to reset for each possible checkmate
                                 checkmated = True
                                 
+                                print("friendly moves")
                                 # Search through all friendly pieces of the king being checked
                                 for row1 in range(PIECE_ROWS):
                                     for column1 in range(PIECE_COLUMNS):
                                         # Calculate all possible moves of each friendly piece
-                                        if (upper and rows[row][column].isupper() and rows[row][column] != '0') or (not upper and rows[row][column].islower() and rows[row][column] != '0'):
+                                        if (upper and rows[row1][column1].isupper() and rows[row1][column1] != '0') or (not upper and rows[row1][column1].islower() and rows[row1][column1] != '0'):
                                             friendly_piece = rows[row1][column1]
-                                            friendly_moves = self.calculate_moves(move, friendly_piece, row1, column1, upper, bool=False)
-                                            # For each move calculate if there is a way to get it out of check
+                                            friendly_moves = self.calculate_moves(rows, friendly_piece, row1, column1, upper, bool=False)
+                                            for i in friendly_moves:
+                                                print(i)
+                                            # For each move check if it gets the king out of check
+                                            print("escaping moves")
                                             for friendly_move in friendly_moves:
                                                 if self.out_of_check(friendly_move, upper) and not self.flying_general(friendly_move):
+                                                    print(friendly_move)
                                                     # If a move successfully gets out of check then we can stop searching for that check and move on
                                                     checkmated = False
                                                     row1 = PIECE_ROWS - 1
@@ -1581,9 +1594,12 @@ class Agent:
     def get_ordered_moves(rows, upper):
         pass               
     
-temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'    
-split_board = temp_board.split('/')
-
+    
 agent = Agent()
-
+    
+temp_board = '0000k000R/000000000/000000000/000000000/000000000/000000000/0000R0000/000000000/0000P0000/0000K0000'   
+split_board = temp_board.split('/')
 print(agent.is_checkmate(split_board, False))
+
+# split_board = ['0000k000', '00000000R', '000000000', '000000000', '000000000', '000000000', '000000000', '0000P0000', '000000000', '0000K0000']
+# print(agent.out_of_check(split_board, False))
