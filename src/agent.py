@@ -1458,11 +1458,12 @@ class Agent:
             print("OUT OF CHECK EXECUTION TIME: " + f"{runtime:.15f}")
         return True 
     
-    def is_checkmate(self, squares, colour):
+    # Method used to check whether a side is in checkmate
+    def is_checkmate(self, rows, upper):
         if self.debug:
             st = time.time()
         # Check if king is in check
-        if not self.is_check(colour):
+        if not self.is_check(rows, upper):
             return False
         else:
             piece_list = ['c', 'r', 'h', 'p', 'C', 'R', 'H', 'P']
@@ -1471,14 +1472,14 @@ class Agent:
             for row in range(PIECE_ROWS):
                 for column in range(PIECE_COLUMNS):
                     # Calculate all possible moves of each enemy piece
-                    if squares[row][column].has_rival_piece(colour):
-                        p = squares[row][column].piece
-                        self.calculate_moves(squares, p, row, column, bool=False)
+                    if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
+                        p = rows[row][column]
+                        moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
                         if p not in piece_list:
                             break
                         # Filter through all moves to find any enemy moves that check the king
-                        for x in p.moves:
-                            if x.final.has_rival_piece(p.colour) and x.final.piece.name == 'king':
+                        for move in moves:
+                            if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
                                 # If it is a check then we need to search for any friendly moves that bring the king out of check
                                 
                                 # Set checkmated to true to reset for each possible checkmate
@@ -1488,12 +1489,12 @@ class Agent:
                                 for row1 in range(PIECE_ROWS):
                                     for column1 in range(PIECE_COLUMNS):
                                         # Calculate all possible moves of each friendly piece
-                                        if squares[row1][column1].has_team_piece(colour):
-                                            friendly_piece = squares[row1][column1].piece
-                                            self.calculate_moves(squares, friendly_piece, row1, column1, bool=False)
+                                        if (upper and rows[row][column].isupper() and rows[row][column] != '0') or (not upper and rows[row][column].islower() and rows[row][column] != '0'):
+                                            friendly_piece = rows[row1][column1]
+                                            friendly_moves = self.calculate_moves(move, friendly_piece, row1, column1, upper, bool=False)
                                             # For each move calculate if there is a way to get it out of check
-                                            for y in friendly_piece.moves:
-                                                if self.out_of_check(squares, friendly_piece, y) and not self.flying_general(squares, friendly_piece, y):
+                                            for friendly_move in friendly_moves:
+                                                if self.out_of_check(friendly_move, upper) and not self.flying_general(friendly_move):
                                                     # If a move successfully gets out of check then we can stop searching for that check and move on
                                                     checkmated = False
                                                     row1 = PIECE_ROWS - 1
@@ -1580,9 +1581,9 @@ class Agent:
     def get_ordered_moves(rows, upper):
         pass               
     
-# temp_board = '0000k0000/000000000/000H00000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'    
-# split_board = temp_board.split('/')
+temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'    
+split_board = temp_board.split('/')
 
-# agent = Agent()
+agent = Agent()
 
-# print(agent.out_of_check(split_board, True))
+print(agent.is_checkmate(split_board, False))

@@ -73,7 +73,10 @@ class Main:
                     # Redraw board
                 game.calculating_ai = False
                 # Check if checkmate has occurred at end of each turn
-                result = board.is_checkmate(game.next_player)
+                result = board.is_checkmate("black")
+                other_result = board.is_checkmate("red")
+                print("result " + str(result))
+                print("other result" + str(other_result))
                 if result:
                     print(str(game.next_player) + " has been checkmated")
                     game.is_won = True
