@@ -179,9 +179,23 @@ class Agent:
         
         elif level == "experienced":
             # MINIMAX CALL
-            value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
-            self.print_row(best_move)
-            print("END VALUE = " + str(value))
+            print("is check")
+            if self.is_check(split_board, upper):
+                print("is check")
+                states = []
+                possible_states = self.next_states(split_board, upper)
+                for i in possible_states:
+                    if not self.is_check(i, not upper):
+                        states.append(i)
+                        print(i)
+                if states == []:
+                    return []
+                best_move = states[random.randint(0, len(states) - 1)]
+            else:
+                value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+                print("END VALUE = " + str(value))
+
+            # self.print_row(best_move)
             
         else:
             # MONTE CARLO CALL
@@ -224,19 +238,15 @@ class Agent:
 
     # Returns all moves from a given board and colour and returns them as boards
     def next_states(self, rows, upper): 
-        
-        # rows ['h00000000H', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', '0000000000', 'h00000000H']
-        
+
         if self.debug:
             st = time.time()
         possible_states = []
-        count = 0
                                 
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
                 # Find every team piece and calculate all moves
                 if (rows[row][column].isupper() and upper and rows[row][column] != '0') or (rows[row][column].islower() and not upper and rows[row][column] != '0'):
-                    count+=1
                     current_piece = rows[row][column]  
                     moves = self.calculate_moves(rows, current_piece, row, column, upper, bool=True)
                     # print("PIECE = " + str(current_piece))
@@ -298,12 +308,12 @@ class Agent:
                 return False
             return True
         
-        def is_valid(row, column):
+        def is_valid(moving_row, moving_column):
             if upper:
-                if not rows[row][column].isupper() and (rows[row][column] == '0' or rows[row][column].islower()):
+                if not rows[moving_row][moving_column].isupper() and (rows[moving_row][moving_column] == '0' or rows[moving_row][moving_column].islower()):
                     return True
             else:
-                if not rows[row][column].islower() and (rows[row][column] == '0' or not rows[row][column].isupper()):
+                if not rows[moving_row][moving_column].islower() and (rows[moving_row][moving_column] == '0' or rows[moving_row][moving_column].isupper()):
                     return True
             return False
                 
@@ -341,8 +351,6 @@ class Agent:
                                 # if True:
                                 if not self.in_check(moved_rows, upper) and not self.flying_general(moved_rows) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                                     moves.append(moved_rows)
-                                else:
-                                    break
                             else:
                                 moves.append(moved_rows)
     
@@ -354,7 +362,7 @@ class Agent:
                 while(row_in_range(row + counter)):
                     next_move = (row + counter, column)
                     possible_row, possible_column = next_move
-                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper())):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
                         # if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
@@ -393,7 +401,7 @@ class Agent:
                 while(row_in_range(row - counter)):
                     next_move = (row - counter, column)
                     possible_row, possible_column = next_move
-                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper())):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
                         # if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
@@ -431,7 +439,7 @@ class Agent:
                 while(column_in_range(column + counter)):
                     next_move = (row, column + counter)
                     possible_row, possible_column = next_move
-                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper())):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
                         # if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
@@ -469,11 +477,10 @@ class Agent:
                 while(column_in_range(column - counter)):
                     next_move = (row, column - counter)
                     possible_row, possible_column = next_move
-                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower())) or (not upper and rows[possible_row][possible_column].isupper()):
+                    # print(str(possible_row) + " " + str(possible_column))
+                    if not (rows[possible_row][possible_column] == '0' or (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper())):
                         return
                     if (upper and rows[possible_row][possible_column].islower()) or (not upper and rows[possible_row][possible_column].isupper()):
-                        # if (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
-                        #     return
                         if rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K':
                             moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
                             if not bool:
@@ -624,6 +631,7 @@ class Agent:
                     possible_row, possible_column = possible_move
                     if possible_row in range(5,10) and column_in_range(possible_column):
                         if is_valid(possible_row, possible_column):
+                            # print(str(possible_row) + " " + str(possible_column))
                         # if is_valid(possible_row, possible_column) and not (rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K'):
                             if rows[possible_row][possible_column] == 'k' or rows[possible_row][possible_column] == 'K':
                                 moved_rows = self.move(rows, row, column, possible_row, possible_column, upper, piece)
@@ -1416,18 +1424,21 @@ class Agent:
                 if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
                     p = rows[row][column]
                     if p not in piece_list:
-                        break
-                    moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
-                    # Search through all moves to find if any are a check
-                    for move in moves:
-                        # print(move)
-                        if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
-                            self.checked = True
-                            if self.debug:
-                                et = time.time()
-                                runtime = et - st
-                                print("IS CHECK EXECUTION TIME: " + f"{runtime:.15f}")
-                            return True
+                        pass
+                    else:
+                        moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
+                        # Search through all moves to find if any are a check
+                        for move in moves:
+                            # print(move)
+                            if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
+                                # print("kills")
+                                # print(move)
+                                self.checked = True
+                                if self.debug:
+                                    et = time.time()
+                                    runtime = et - st
+                                    print("IS CHECK EXECUTION TIME: " + f"{runtime:.15f}")
+                                return True
         self.checked = False
         if self.debug:
             et = time.time()
@@ -1446,8 +1457,6 @@ class Agent:
                 if (upper and rows[row][column].islower() and rows[row][column] != '0') or (not upper and rows[row][column].isupper() and rows[row][column] != '0'):
                     p = rows[row][column]
                     moves = self.calculate_moves(rows, p, row, column, not upper, bool=False)
-                    for i in moves:
-                        print(i)
                     # Calculate enemy piece moves and then check if player is still in check
                     for move in moves:
                         if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
@@ -1542,8 +1551,8 @@ class Agent:
     def minimax(self, rows, depth, alpha, beta, upper, pathDictionary):
         best_move = None
          
-        if self.is_terminal_state(rows, upper):
-            return 1000000, best_move
+        if self.is_checkmate(rows, not upper):
+            return 10000, best_move
         if depth <= 0:
             return self.evaluation(rows, not upper), best_move
         
@@ -1595,11 +1604,16 @@ class Agent:
         pass               
     
     
-agent = Agent()
-    
-temp_board = '0000k000R/000000000/000000000/000000000/000000000/000000000/0000R0000/000000000/0000P0000/0000K0000'   
-split_board = temp_board.split('/')
-print(agent.is_checkmate(split_board, False))
+# agent = Agent()
 
-# split_board = ['0000k000', '00000000R', '000000000', '000000000', '000000000', '000000000', '000000000', '0000P0000', '000000000', '0000K0000']
-# print(agent.out_of_check(split_board, False))
+# board = ['0000k0000', '000000000', '0R00c0000', 'p0p000p0p', '000000000', '000000000', 'P0P000P0P', '00H000000', '0000K00r0', '000G000HR']
+# result = agent.is_check(board, True)
+# print(result)
+
+
+# temp_board = '0000k0000/r000R0000/000000000/000000000/000000000/000000000/0000c0000/0000G0000/0000r0000/0000K0000'   
+# board = temp_board.split('/')
+# # result = agent.calculate_all_possible_moves(temp_board, True, 'experienced')
+# result = agent.is_check(board, True)
+# print("result returned")
+# print(result)

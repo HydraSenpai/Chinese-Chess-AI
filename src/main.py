@@ -215,14 +215,14 @@ class Main:
                     show()
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
-                    if game.next_player == "black": 
-                        ai_turn()
-                        if game.calculating_ai == False:
-                            game.show_log(screen, log.move_list)
-                            show()
-                            game.next_turn()
-                        else:
-                            show()
+                    # if game.next_player == "black": 
+                    #     ai_turn()
+                    #     if game.calculating_ai == False:
+                    #         game.show_log(screen, log.move_list)
+                    #         show()
+                    #         game.next_turn()
+                    #     else:
+                    #         show()
                             
                     # -----------------------------------------------------------------------
                     # else:

@@ -10,10 +10,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        self.add_pieces('red')
-        self.add_pieces('black')
-        # self.add_custom_board("red")
-        # self.add_custom_board("black")
+        # self.add_pieces('red')
+        # self.add_pieces('black')
+        self.add_custom_board("red")
+        self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
@@ -158,17 +158,17 @@ class Board:
         if colour == 'red':    
                                
             # Create Knights
-            self.squares[2][2] = Square(2, 2, Knight(colour))
-
-            # Create Rooks
-            self.squares[6][5] = Square(6, 5, Rook(colour))
+            self.squares[2][1] = Square(2, 1, Knight(colour))
+            self.squares[2][6] = Square(2, 6, Knight(colour))
             
             # Create King
             self.squares[0][4] = Square(0, 4, King(colour))
         else:      
             # Create Cannon
-            self.squares[0][8] = Square(0, 8, Cannon(colour))
+            self.squares[3][4] = Square(3, 4, Cannon(colour))
             
+            # Create Pawn
+            self.squares[6][4] = Square(6, 4, Pawn(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
@@ -197,11 +197,13 @@ class Board:
                 if self.squares[row][column-1].is_empty():
                     possible_moves.append((row-1, column-2))
                     possible_moves.append((row+1, column-2))
+              
             #Check Right
             if Square.row_in_range(row) and Square.column_in_range(column+1):
                 if self.squares[row][column+1].is_empty():
                     possible_moves.append((row-1, column+2))
                     possible_moves.append((row+1, column+2))
+                
                 
             for possible_move in possible_moves:
                 possible_row, possible_column = possible_move
@@ -214,8 +216,6 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move) and not self.flying_general(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
     
@@ -710,8 +710,7 @@ class Board:
             next_king_moves(row, column)
         elif piece.name == 'rook':
             next_rook_moves(row, column)
-        
-    
+           
     # Method used to check if a particular move will put the kings in check by having no pieces inbetween       
     def flying_general(self, piece, move):
         if self.debug:
@@ -865,11 +864,6 @@ class Board:
                                             temp_board.calculate_moves(friendly_piece, row1, column1, bool=False)
                                             # For each move calculate if there is a way to get it out of check
                                             for y in friendly_piece.moves:
-                                                print(str(friendly_piece.name) + " " + str(friendly_piece.colour))
-                                                print(y.initial.row)
-                                                print(y.initial.column)
-                                                print(y.final.row)
-                                                print(y.final.column)
                                                 if self.out_of_check(friendly_piece, y) and not self.flying_general(friendly_piece, y):
                                                     # If a move successfully gets out of check then we can stop searching for that check and move on
                                                     checkmated = False
@@ -961,7 +955,5 @@ class Board:
                 piece = Piece(names[char], 'red', 0)
                 self.squares[row][column].piece = piece
             column += 1
-                
-        
-                          
+                                   
                                                               
