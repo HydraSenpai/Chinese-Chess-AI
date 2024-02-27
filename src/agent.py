@@ -168,6 +168,7 @@ class Agent:
         # temp_board = 'R0eakaehr/000000000/000000000/p0p0p0p0p/000000000/000000000/P0P0P0P0P/000000000/000000000/RHEAKAEHR'
         # Where uppercase is other player
         # Will turn this into array
+        print(board)
         split_board = board.split('/')
         self.print_row(split_board)
         st = time.time()
@@ -179,23 +180,27 @@ class Agent:
         
         elif level == "experienced":
             # MINIMAX CALL
-            print("is check")
-            if self.is_check(split_board, upper):
-                print("is check")
-                states = []
-                possible_states = self.next_states(split_board, upper)
-                for i in possible_states:
-                    if not self.is_check(i, not upper):
-                        states.append(i)
-                        print(i)
-                if states == []:
-                    return []
-                best_move = states[random.randint(0, len(states) - 1)]
-            else:
-                value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
-                print("END VALUE = " + str(value))
+            # print("is check")
+            # if self.is_check(split_board, upper):
+            #     print("is check")
+            #     states = []
+            #     possible_states = self.next_states(split_board, upper)
+            #     for i in possible_states:
+            #         if not self.is_check(i, not upper):
+            #             states.append(i)
+            #             print(i)
+            #     if states == []:
+            #         return []
+            #     best_move = states[random.randint(0, len(states) - 1)]
+            # else:
+            value, best_move = self.minimax(split_board, 3, -math.inf, math.inf, True, pathDictionary)
+            if best_move == None:
+                best_move = self.next_states(split_board, True)
+                if best_move != None:
+                    best_move = best_move[0]
+            self.print_row(best_move)
+            print("END VALUE = " + str(value))
 
-            # self.print_row(best_move)
             
         else:
             # MONTE CARLO CALL
@@ -1416,6 +1421,7 @@ class Agent:
     def is_check(self, rows, upper):
         if self.debug:
             st = time.time()
+        # piece_list = ['c', 'C']
         piece_list = ['c', 'r', 'h', 'p', 'C', 'R', 'H', 'P']
         # Search through board to find all enemy pieces
         for row in range(PIECE_ROWS):
@@ -1431,8 +1437,6 @@ class Agent:
                         for move in moves:
                             # print(move)
                             if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
-                                # print("kills")
-                                # print(move)
                                 self.checked = True
                                 if self.debug:
                                     et = time.time()
@@ -1491,9 +1495,6 @@ class Agent:
                         if p not in piece_list:
                             break
                         # Filter through all moves to find any enemy moves that check the king
-                        print("enemy piece moves")
-                        for i in moves:
-                            print(i)
                         for move in moves:
                             if (not upper and not ('k' in move[0] or 'k' in move[1] or 'k' in move[2])) or (upper and not ('K' in move[7] or 'K' in move[8] or 'K' in move[9])):
                                 print("kills king")
@@ -1552,7 +1553,7 @@ class Agent:
         best_move = None
          
         if self.is_checkmate(rows, not upper):
-            return 10000, best_move
+            return 1000, best_move
         if depth <= 0:
             return self.evaluation(rows, not upper), best_move
         
@@ -1572,7 +1573,6 @@ class Agent:
                     break
             pathDictionary[str(rows)] = value
             return value, best_move
-        
         else:
             if str(rows) in pathDictionary:
                 return pathDictionary[str(rows)], best_move
@@ -1604,16 +1604,17 @@ class Agent:
         pass               
     
     
-# agent = Agent()
+agent = Agent()
 
-# board = ['0000k0000', '000000000', '0R00c0000', 'p0p000p0p', '000000000', '000000000', 'P0P000P0P', '00H000000', '0000K00r0', '000G000HR']
+# board = ['0000k0000', '000000000', '0000c0000', 'p0pC00p0p', '0000c0000', '000000000', 'P0P000P0P', '000000000', '0000000r0', '000GK00HR']
 # result = agent.is_check(board, True)
 # print(result)
 
 
-# temp_board = '0000k0000/r000R0000/000000000/000000000/000000000/000000000/0000c0000/0000G0000/0000r0000/0000K0000'   
+# temp_board = '00egkger0/00000r000/0000c0000/p0p000p0p/00h0c0000/000000000/P0P000P0P/00H0000CR/00000K000/0REG0GEH0'  
 # board = temp_board.split('/')
-# # result = agent.calculate_all_possible_moves(temp_board, True, 'experienced')
-# result = agent.is_check(board, True)
+# print(agent.next_states(board, True)) 
+# result = agent.calculate_all_possible_moves(temp_board, True, 'experienced')
+# result = agent.next_states(board, True)
 # print("result returned")
 # print(result)

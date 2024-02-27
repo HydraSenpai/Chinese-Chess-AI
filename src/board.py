@@ -10,10 +10,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        # self.add_pieces('red')
-        # self.add_pieces('black')
-        self.add_custom_board("red")
-        self.add_custom_board("black")
+        self.add_pieces('red')
+        self.add_pieces('black')
+        # self.add_custom_board("red")
+        # self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
@@ -100,8 +100,8 @@ class Board:
             self.squares[3][8] = Square(3, 8, Pawn(colour))
             
             # Create Cannon
-            self.squares[2][1] = Square(3, 1, Cannon(colour))
-            self.squares[2][7] = Square(3, 7, Cannon(colour))
+            self.squares[2][1] = Square(2, 1, Cannon(colour))
+            self.squares[2][7] = Square(2, 7, Cannon(colour))
                 
             # Create Knights
             self.squares[0][1] = Square(0, 1, Knight(colour))
@@ -155,27 +155,68 @@ class Board:
             self.squares[9][4] = Square(9, 4, King(colour))
        
     def add_custom_board(self, colour):
-        if colour == 'red':    
-                               
+        if colour == 'red':
+            # Create all pawns
+            self.squares[3][0] = Square(3, 1, Pawn(colour))
+            self.squares[3][2] = Square(3, 2, Pawn(colour))
+
+            self.squares[3][6] = Square(3, 6, Pawn(colour))
+            self.squares[3][8] = Square(3, 8, Pawn(colour))
+            
+            # Create Cannon
+            self.squares[2][4] = Square(2, 4, Cannon(colour))
+            self.squares[4][4] = Square(4, 4, Cannon(colour))
+                
             # Create Knights
-            self.squares[2][1] = Square(2, 1, Knight(colour))
-            self.squares[2][6] = Square(2, 6, Knight(colour))
+            self.squares[4][2] = Square(4, 2, Knight(colour))
+            # self.squares[0][7] = Square(0, 7, Knight(colour))
+            
+            # Create Elephant
+            self.squares[0][2] = Square(0, 2, Elephant(colour))
+            self.squares[0][6] = Square(0, 6, Elephant(colour))
+            
+            # Create Rooks
+            self.squares[1][4] = Square(1, 4, Rook(colour))
+            self.squares[0][7] = Square(0, 7, Rook(colour))
+            # self.squares[9][7] = Square(9, 7, Rook(colour))
+            # self.squares[9][8] = Square(9, 8, Rook(colour))
+            
+            # Create Guard
+            self.squares[0][3] = Square(0, 3, Guard(colour))
+            self.squares[0][5] = Square(0, 5, Guard(colour))
             
             # Create King
             self.squares[0][4] = Square(0, 4, King(colour))
-        else:      
-            # Create Cannon
-            self.squares[3][4] = Square(3, 4, Cannon(colour))
+        else:
+            # Create all pawns
+            self.squares[6][0] = Square(6, 0, Pawn(colour))
+            self.squares[6][2] = Square(6, 2, Pawn(colour))
+
+            self.squares[6][6] = Square(6, 6, Pawn(colour))
+            self.squares[6][8] = Square(6, 8, Pawn(colour))
             
-            # Create Pawn
-            self.squares[6][4] = Square(6, 4, Pawn(colour))
+            # Create Cannon
+            # self.squares[7][1] = Square(7, 1, Cannon(colour))
+            self.squares[7][7] = Square(7, 7, Cannon(colour))
+                
+            # Create Knights
+            self.squares[7][2] = Square(7, 2, Knight(colour))
+            self.squares[9][7] = Square(9, 7, Knight(colour))
+            
+            # Create Elephant
+            self.squares[9][2] = Square(9, 2, Elephant(colour))
+            self.squares[9][6] = Square(9, 6, Elephant(colour))
+            
+            # Create Rooks
+            self.squares[9][1] = Square(9, 1, Rook(colour))
+            self.squares[7][8] = Square(7, 8, Rook(colour))
             
             # Create Guard
             self.squares[9][3] = Square(9, 3, Guard(colour))
             self.squares[9][5] = Square(9, 5, Guard(colour))
             
             # Create King
-            self.squares[9][4] = Square(9, 4, King(colour))
+            self.squares[8][5] = Square(8, 5, King(colour))
             
     def calculate_moves(self, piece, row, column, bool=True):
         

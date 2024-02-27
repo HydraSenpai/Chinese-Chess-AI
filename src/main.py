@@ -58,6 +58,7 @@ class Main:
                 else:
                     print("AGENT RESULT")
                     board.convert_string_to_board(agent_result)
+                    board.print_board()
                     # print('board after ai turn')
                     # board.print_board()
                     # Play sound for AI
@@ -215,14 +216,14 @@ class Main:
                     show()
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
-                    # if game.next_player == "black": 
-                    #     ai_turn()
-                    #     if game.calculating_ai == False:
-                    #         game.show_log(screen, log.move_list)
-                    #         show()
-                    #         game.next_turn()
-                    #     else:
-                    #         show()
+                    if game.next_player == "black": 
+                        ai_turn()
+                        if game.calculating_ai == False:
+                            game.show_log(screen, log.move_list)
+                            show()
+                            game.next_turn()
+                        else:
+                            show()
                             
                     # -----------------------------------------------------------------------
                     # else:
