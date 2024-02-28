@@ -57,31 +57,44 @@ class Main:
                     sound.play()
                 else:
                     print("AGENT RESULT")
-                    board.convert_string_to_board(agent_result)
                     board.print_board()
-                    # print('board after ai turn')
+                    piece, row, column, moved_row, moved_column = board.find_move(converted_board, agent_result, game.next_player)
+                    print(piece, row, column, moved_row, moved_column)
+                    initial = Square(row, column)
+                    final = Square(moved_row, moved_column)
+                    move = Move(initial, final)
+                    piece = board.squares[row][column].piece
+                    print(piece.name, piece.colour)            
+                    
+                    # board.convert_string_to_board(agent_result)
                     # board.print_board()
                     # Play sound for AI
-                    # if self.play_sounds:
-                    #     if board.squares[agent_move.final.row][agent_move.final.column].has_piece():    
-                    #         sound = pygame.mixer.Sound("assets/sounds/capture.wav")
-                    #         sound.play()
-                    #     else:
-                    #         # Play move sound
-                    #         sound = pygame.mixer.Sound("assets/sounds/move.wav")
-                    #         sound.play()
-                    # log.add_to_list(agent_move)
+                    if self.play_sounds:
+                        if board.squares[move.final.row][move.final.column].has_piece():    
+                            sound = pygame.mixer.Sound("assets/sounds/capture.wav")
+                            sound.play()
+                        else:
+                            # Play move sound
+                            sound = pygame.mixer.Sound("assets/sounds/move.wav")
+                            sound.play()
+                    board.move(piece, move)
+                    board.print_board()
+                    log.add_to_list(move)
                     # Redraw board
                 game.calculating_ai = False
                 # Check if checkmate has occurred at end of each turn
-                result = board.is_checkmate("black")
-                other_result = board.is_checkmate("red")
-                print("result " + str(result))
-                print("other result" + str(other_result))
-                if result:
-                    print(str(game.next_player) + " has been checkmated")
+                red_result = board.is_checkmate("red")
+                black_result = board.is_checkmate("black")
+                if red_result:
+                    print(str("red") + " has been checkmated")
                     game.is_won = True
-                    game.lost = game.next_player
+                    game.lost = "red"
+                    sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                    sound.play()
+                elif black_result:
+                    print(str("black") + " has been checkmated")
+                    game.is_won = True
+                    game.lost = "black"
                     sound = pygame.mixer.Sound("assets/sounds/win.mp3")
                     sound.play()
                 else:
@@ -297,11 +310,18 @@ class Main:
                                     log.add_to_list(move)
                                     game.next_turn()
                                     # Check if checkmate has occurred at end of each turn
-                                    result = board.is_checkmate(game.next_player)
-                                    if result:
-                                        print(str(game.next_player) + " has been checkmated")
+                                    red_result = board.is_checkmate("red")
+                                    black_result = board.is_checkmate("black")
+                                    if red_result:
+                                        print(str("red") + " has been checkmated")
                                         game.is_won = True
-                                        game.lost = game.next_player
+                                        game.lost = "red"
+                                        sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                                        sound.play()
+                                    elif black_result:
+                                        print(str("black") + " has been checkmated")
+                                        game.is_won = True
+                                        game.lost = "black"
                                         sound = pygame.mixer.Sound("assets/sounds/win.mp3")
                                         sound.play()
                                     else:
