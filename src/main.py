@@ -99,6 +99,13 @@ class Main:
                     sound.play()
                 else:
                     print("No checkmate yet") 
+                if board.is_stalemate("red"):
+                    print("stalemate")
+                    game.is_won = True
+                    game.lost = "draw"
+                    sound = pygame.mixer.Sound("assets/sounds/win.mp3")
+                    sound.play()
+                print("no stalemate")
         
         def show():
             game.show_background(screen)

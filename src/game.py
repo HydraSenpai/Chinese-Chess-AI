@@ -216,15 +216,27 @@ class Game:
         pygame.draw.rect(surface, rect_colour, modal_rect)
         
         # Create text for modal loser
-        modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 50)
-        if loser == "red":
-            winner = "black"
+        
+        if loser == "draw":
+            modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 50)
+            if loser == "red":
+                winner = "black"
+            else:
+                winner = "red"
+            loser_text = modal_font.render("Draw / Stalemate", True, (255,255,255))
+            text_x = modal_rect.x + (modal_rect.width - loser_text.get_width()) // 2
+            text_y = modal_rect.y + 30
+            surface.blit(loser_text, (text_x, text_y))    
         else:
-            winner = "red"
-        loser_text = modal_font.render(str(winner).capitalize() + " checkmated " + str(loser).capitalize() + "!", True, (255,255,255))
-        text_x = modal_rect.x + (modal_rect.width - loser_text.get_width()) // 2
-        text_y = modal_rect.y + 30
-        surface.blit(loser_text, (text_x, text_y))
+            modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 50)
+            if loser == "red":
+                winner = "black"
+            else:
+                winner = "red"
+            loser_text = modal_font.render(str(winner).capitalize() + " checkmated " + str(loser).capitalize() + "!", True, (255,255,255))
+            text_x = modal_rect.x + (modal_rect.width - loser_text.get_width()) // 2
+            text_y = modal_rect.y + 30
+            surface.blit(loser_text, (text_x, text_y))
         
         # Create text for modal
         modal_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)

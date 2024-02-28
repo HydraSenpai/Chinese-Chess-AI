@@ -1124,7 +1124,7 @@ class Agent:
         best_move = None
          
         if self.is_checkmate(rows, not upper):
-            return 1000, best_move
+            return 10000, best_move
         if depth <= 0:
             return self.evaluation(rows, not upper), best_move
         

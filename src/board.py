@@ -10,10 +10,10 @@ class Board:
         # Creates empty 8x8 board array
         self.squares = [[0,0,0,0,0,0,0,0,0] for row in range(PIECE_ROWS)]
         self.create()
-        # self.add_pieces('red')
-        # self.add_pieces('black')
-        self.add_custom_board("red")
-        self.add_custom_board("black")
+        self.add_pieces('red')
+        self.add_pieces('black')
+        # self.add_custom_board("red")
+        # self.add_custom_board("black")
         self.last_move = None
         self.is_in_check = False
         # Variable used to store if king is in check (updated each turn)
@@ -1004,22 +1004,42 @@ class Board:
         moved_row = None
         moved_column = None
         piece = None
-                           
-                           
+        
         for row in range(PIECE_ROWS):
             for column in range(PIECE_COLUMNS):
-                    if original_board[row][column] != moved_board[row][column]:
-                        if original_board[row][column] != '0':
-                            orig_row = row
-                            orig_column = column
-                        if moved_board[row][column] != '0':
-                            moved_row = row
-                            moved_column = column
-                            piece = original_board[row][column]
-
-        return piece, orig_row, orig_column, moved_row, moved_column
-                        
+                if original_board[row][column] != moved_board[row][column]:
+                    if original_board[row][column] != '0' and ((turn == "black" and original_board[row][column].isupper()) or (turn == "red" and original_board[row][column].islower())):
+                        orig_row = row
+                        orig_column = column
+                        piece = original_board[row][column]
+                        row = PIECE_ROWS - 1
+                        column = column - 1
+        
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                if original_board[row][column] != moved_board[row][column]:
+                    if moved_board[row][column] != '0':
+                        moved_row = row
+                        moved_column = column
+                        return piece, orig_row, orig_column, moved_row, moved_column                   
+        
                     
+    def is_stalemate(self, colour):
+        if self.is_check(colour) or self.is_checkmate(colour):
+            return False
+        temp_board = copy.deepcopy(self)
+        for row in range(PIECE_ROWS):
+            for column in range(PIECE_COLUMNS):
+                # Calculate all possible moves of each team piece
+                if temp_board.squares[row][column].has_team_piece(colour):
+                    p = temp_board.squares[row][column].piece
+                    temp_board.calculate_moves(p, row, column, bool=True)
+                    for i in p.moves:
+                        print(i.final.row)
+                        print(i.final.column)
+                        return False
+        return True
+                           
                 
 
 
