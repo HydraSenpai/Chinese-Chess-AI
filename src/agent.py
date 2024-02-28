@@ -936,7 +936,6 @@ class Agent:
                     king_row = row    
         if king_row == None:
             print("hello")
-            # self.print_row(rows)
         # Loop through row which king is on and check for rule by checking a piece is between it or no king at the end 
         for row in range(king_row+1, PIECE_ROWS):
             if rows[row][king_col] == 'k' or rows[row][king_col] == 'K':
@@ -1174,3 +1173,9 @@ class Agent:
     def get_ordered_moves(rows, upper):
         pass               
     
+agent = Agent()
+
+
+temp_board = '00ek0r000/000000000/0000c0000/0000c0000/000000000/000000000/000000000/000000000/000000000/0000K0000'
+board = temp_board.split('/')
+print(agent.is_terminal_state(board, True))
