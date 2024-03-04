@@ -91,75 +91,197 @@ class TestAgent(unittest.TestCase):
         with self.assertRaises(TypeError):
             agent.flying_general(board)
 
-    def test_in_check(self):
+    def test_is_check(self):
         agent = Agent()
         
         # ROOK CHECKS
         # Board with K in check from r from front        
         temp_board = '0000k0000/0000r0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check from r from left
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/r000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check from r from right
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K000r'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K not in check as p blocks r 
         temp_board = '0000k0000/0000r0000/0000p0000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertFalse(agent.in_check(board, True))
+        self.assertFalse(agent.is_check(board, True))
         
         # CANNON CHECKS
         # Board with K not in check by c at [1][4]
         temp_board = '0000k0000/0000c0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertFalse(agent.in_check(board, True))
+        self.assertFalse(agent.is_check(board, True))
         # Board with K in check by c at [1][4]
         temp_board = '0000k0000/0000c0000/0000c0000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by c at left
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/cp00K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by c at right
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K00pc'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by c at right over own piece
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K00Pc'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         
         
         # HORSE CHECKS
         # Board with K in check by h at [7][3]
         temp_board = '0000k0000/0000c0000/0000c0000/000000000/000000000/000000000/000000000/000h00000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by h at [8][7]
         temp_board = '0000k0000/0000c0000/0000c0000/000000000/000000000/000000000/000000000/000000000/000000h00/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         
         # PAWN CHECKS
         # Board with K in check by p at [8][4] at front
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000p0000/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by p at [9][3] at left
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000pK0000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         # Board with K in check by p at [9][5] at right
         temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000Kp000'
         board = temp_board.split('/')
-        self.assertTrue(agent.in_check(board, True))
+        self.assertTrue(agent.is_check(board, True))
         
+    def test_calculate_moves(self):
+        agent = Agent()
         
+        # PAWN CHECKS
+        # Board with P in home side so can only move forward        
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000P0000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'P', 8, 4, True, True)) == 1)    
         
+        # Board with P in rival side so can move forward and sideways    
+        temp_board = '0000k0000/000000000/0000P0000/000000000/000000000/000000000/000000000/000000000/0000P0000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'P', 2, 4, True, True)) == 3)    
+        
+        # Board with P in rival side so can only move forward due to flying general rule    
+        temp_board = '0000k0000/000000000/0000P0000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'P', 2, 4, True, True)) == 1) 
+        
+        # Board with P in rival side so can move forward and sideways due to False being passed in so check and flying general checks aren't checked    
+        temp_board = '0000k0000/000000000/0000P0000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'P', 2, 4, True, False)) == 3)
+        
+        # KNIGHT CHECKS
+        # Board with H free to move    
+        temp_board = '0000k0000/0000P0000/000000000/000000000/0000H0000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 4, True, True)) == 8)
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 4, True, False)) == 8)
+        
+        # Board with H on wall so cant move off board   
+        temp_board = '0000k0000/0000P0000/000000000/000000000/00000000H/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 8, True, True)) == 4)
+        
+        # Board with H one from wall so cant move off board   
+        temp_board = '0000k0000/0000P0000/000000000/000000000/0000000H0/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 7, True, True)) == 6)
+        
+        # Board with H blocked on all sides so cant move   
+        temp_board = '0000k0000/0000P0000/000000000/0000p0000/000pHp000/0000p0000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 4, True, True)) == 0)
+        
+        # Board with H blocked on 3 sides so has 2 possible moves downwards   
+        temp_board = '0000k0000/0000P0000/000000000/0000p0000/000pHp000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'H', 4, 4, True, True)) == 2)
+
+        # ELEPHANT MOVES
+        # Board with E on starting position should have 2 moves   
+        temp_board = '0000k0000/0000P0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/00E0K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'E', 9, 2, True, True)) == 2)
+        
+        # Board with E on starting position but blocked on left should have 1 move   
+        temp_board = '0000k0000/0000P0000/000000000/000000000/000000000/000000000/000000000/000000000/0E0000000/00E0K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'E', 9, 2, True, True)) == 1)
+        
+        # Board with E on edge of team side should have 2 moves downwards as it can't cross the river 
+        temp_board = '0000k0000/0000P0000/000000000/000000000/000000000/00E000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'E', 5, 2, True, True)) == 2)
+        
+        # KING MOVES
+        # Board with K blocked by own P and flying general so cant move
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/00000P000/00000K000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'K', 9, 5, True, True)) == 0)
+        
+        # Board with K which can move all directions
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/0000P0000/000000000/0000K0000/000000000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'K', 8, 4, True, True)) == 4)
+        
+        # Board with K which is in flying general rule so can move sideways only
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000/000000000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'K', 8, 4, True, True)) == 2)
+        
+        # GUARD MOVES
+        # Board with K which is in flying general rule so can move sideways only
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'K', 8, 4, True, True)) == 0)
+        
+        # CANNON MOVES
+        # Board with C in middle of board so should be able to move up and down because of flying general
+        temp_board = '0000k0000/000000000/000000000/000000000/0000C0000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'C', 4, 4, True, True)) == 7)
+        
+        # Board with C in middle of board so should be able to all directions
+        temp_board = '0000k0000/000000000/000000000/000000000/0000C0000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'C', 4, 4, True, False)) == 15)
+        
+        # Board with C blocked by 2 pieces each direction so can jump over and take a piece in each direction
+        temp_board = '0000k0000/000000000/00000p000/0000p0000/00ppCpp00/0000p0000/0000p0000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'C', 4, 4, True, False)) == 4)
+        
+        # ROOK CHECKS
+        # Board with R in middle of board so should be able to move up and down because of flying general
+        temp_board = '0000k0000/000000000/000000000/000000000/0000R0000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'R', 4, 4, True, True)) == 7)
+        
+        # Board with R in middle of board so should be able to all directions
+        temp_board = '0000k0000/000000000/000000000/000000000/0000R0000/000000000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'R', 4, 4, True, False)) == 16)
+        
+        # Board with R blocked by a piece in each direction so can jump over and take a piece in each direction
+        temp_board = '0000k0000/000000000/000000000/0000p0000/000pRp000/0000p0000/000000000/000000000/000000000/0000K0000'
+        board = temp_board.split('/')
+        self.assertTrue(len(agent.calculate_moves(board, 'R', 4, 4, True, False)) == 4)
+        
+    def minimax_testing(self):
+        pass
+            
 if __name__ == '__main__':
     unittest.main()
