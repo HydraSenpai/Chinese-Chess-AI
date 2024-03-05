@@ -1,6 +1,7 @@
 import sys, pygame
 import time
 import copy
+import threading
 from const import *
 from game import Game
 from square import Square
@@ -236,14 +237,12 @@ class Main:
                     show()
                     # REMOVE THESE LINES TO PLAY AGAINST OTHER PLAYER -----------------------
                     # If turn is black then do agent move instead
-                    if game.next_player == "black": 
+                    pygame.display.update()
+                    if game.next_player == "black" and not drag.is_dragging: 
                         ai_turn()
                         if game.calculating_ai == False:
                             game.show_log(screen, log.move_list)
-                            show()
                             game.next_turn()
-                        else:
-                            show()
                             
                     # -----------------------------------------------------------------------
                     # else:

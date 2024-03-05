@@ -8,7 +8,7 @@ class SearchTree:
     def best_action(self, simulations_number):
         print('best action')
         for _ in range(0, simulations_number):
-            # Find next node (state) to rollout
+            # Find the next state to rollout
             v = self.tree_policy()
             # print('found node to expand')
             reward = v.rollout()
