@@ -121,7 +121,7 @@ class Game:
                 surface.blit(index_text, (text_x, text_y))
                 
                 # Create text for the first move in index
-                index_text = index_font.render(str(initial_row)+str(initial_column)+str(final_row)+str(final_column), True, (0,0,0))
+                index_text = index_font.render(chr(initial_column + 97)+str(initial_row)+chr(final_column + 97)+str(final_row), True, (0,0,0))
                 text_x = move_rect.x + ((move_rect.width // 3) + ((move_rect.width // 3) // 4))
                 text_y = move_rect.y
                 surface.blit(index_text, (text_x, text_y))
@@ -151,13 +151,13 @@ class Game:
                 surface.blit(index_text, (text_x, text_y))
                                 
                 # Create text for the first move in index
-                index_text = index_font.render(str(initial_row2)+str(initial_column2)+str(final_row2)+str(final_column2), True, (0,0,0))
+                index_text = index_font.render(chr(initial_column2+97)+str(initial_row2)+chr(final_column2 + 97)+str(final_row2), True, (0,0,0))
                 text_x = move_rect.x + ((move_rect.width // 3) + ((move_rect.width // 3) // 4))
                 text_y = move_rect.y + (40 * math.ceil((i + start_value) // 2))
                 surface.blit(index_text, (text_x, text_y))
 
                 # Create text for the second move in index
-                index_text = index_font.render(str(initial_row)+str(initial_column)+str(final_row)+str(final_column), True, (0,0,0))
+                index_text = index_font.render(chr(initial_column + 97)+str(initial_row)+chr(final_column + 97)+str(final_row), True, (0,0,0))
                 text_x = move_rect.x + (((move_rect.width // 3) * 2) + ((move_rect.width // 3) // 4))
                 text_y = move_rect.y + (40 * math.ceil((i + start_value) // 2))
                 surface.blit(index_text, (text_x, text_y))
