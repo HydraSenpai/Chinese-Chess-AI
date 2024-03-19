@@ -1,4 +1,6 @@
 import unittest
+import math
+import time
 from agent import Agent
 
 class TestAgent(unittest.TestCase):
@@ -278,10 +280,46 @@ class TestAgent(unittest.TestCase):
         # Board with R blocked by a piece in each direction so can jump over and take a piece in each direction
         temp_board = '0000k0000/000000000/000000000/0000p0000/000pRp000/0000p0000/000000000/000000000/000000000/0000K0000'
         board = temp_board.split('/')
-        self.assertTrue(len(agent.calculate_moves(board, 'R', 4, 4, True, False)) == 4)
+        self.assertTrue(len(agent.calculate_moves(board, 'R', 4, 4, True, False)) == 4)      
         
-    def minimax_testing(self):
+    def test_minimax_testing(self):
+        agent = Agent()
+        # Minimax should always return two items, move and value        
+        temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+        board = temp_board.split('/')
+        result = agent.minimax(board, 1, -math.inf, math.inf, True, {})
+        self.assertTrue(len(result) == 2) 
+        
+        # First value should be an int as its the state score
+        self.assertTrue(isinstance(result[0], int))
+        
+        # Second value should be an array as its the state score
+        self.assertTrue(isinstance(result[1], list))
+        
+        # Stress test as minimax can handle large depths
+        result = agent.minimax(board, 5, -math.inf, math.inf, True, {})
+        self.assertTrue(len(result) == 2) 
+        
+        # Different depths will pick the optimal move
+        temp_board = '0000k0000/000000000/000000000/000000000/000000000/000000000/000000000/000000000/00000000R/0000K0000'
+        board = temp_board.split('/')
+        result1 = agent.minimax(board, 2, -math.inf, math.inf, True, {})
+        result2 = agent.minimax(board, 4, -math.inf, math.inf, True, {})
+        self.assertTrue(result1[1] == result2[1]) 
+        
+        # Depth of 3 will return optimal move in under 10 seconds
+        temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
+        board = temp_board.split('/')
+        start_time = time.time()
+        result1 = agent.minimax(board, 3, -math.inf, math.inf, True, {})
+        end_time = time.time()
+        execution_time = end_time - start_time
+        
+        print(execution_time)
+        self.assertTrue(execution_time < 10000) 
+          
+    def mcts_testing(self):
         pass
-            
+    
 if __name__ == '__main__':
     unittest.main()

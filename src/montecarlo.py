@@ -1,17 +1,19 @@
 from node import Node
 from methods import *
 
+# CODE REFERENCED FROM CHESS.COM and project code from https://ai-boson.github.io/mcts/
 class SearchTree:
     def __init__(self, node):
         self.root = node
 
+    # This method finds the best action after running simulations
     def best_action(self, simulations_number):
         print('best action')
         for _ in range(0, simulations_number):
             # Find the next state to rollout
-            v = self.tree_policy()
+            v = self.find_next_node()
             # print('found node to expand')
-            reward = v.rollout()
+            reward = v.rollout_node()
             # print('rolled out node')
             v.backpropagate(reward)
             # print('backpropogated')
@@ -19,7 +21,7 @@ class SearchTree:
     
     
     # This method is used to find the next node to rollout by going down tree to find node with UCT (Upper Confidence Bound)
-    def tree_policy(self):
+    def find_next_node(self):
         current_node = self.root
         while not current_node.is_terminal_node():
             # Check if any children are left of current state

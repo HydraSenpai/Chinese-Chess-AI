@@ -11,6 +11,9 @@ from log import Log
 from agent import Agent
 from settings import Settings
 
+# CODE IN MAIN, BOARD, SQUARE, PIECE CLASS REFERENCE https://github.com/AlejoG10/python-chess-ai-yt AS A GUIDE
+# ADJUSTMENTS AND FIXES HAVE BEEN MADE TO EVERY CLASS
+
 class Main:
     def __init__(self):
         pygame.init()
@@ -251,6 +254,7 @@ class Main:
                         drag.update_blit(screen)
                     for event in pygame.event.get():
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            show()
                             # Check if exit button was clicked to leave application
                             leave_or_stay = game.was_button_clicked(event.pos)
                             if leave_or_stay == "exit":
@@ -285,7 +289,9 @@ class Main:
                                     self.screen.blit(self.bg_surface, (0,0))
                                     show()
                                     drag.update_blit(screen)
+                        # Check for mouse movement from user
                         elif event.type == pygame.MOUSEMOTION:
+                            # If piece is being dragged update it on screen
                             if drag.is_dragging == True:
                                 drag.update_mouse(event.pos)
                                 self.screen.blit(self.bg_surface, (0,0))
@@ -337,6 +343,7 @@ class Main:
                         # Pressing R resets the game if playing
                         elif event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_r:
+                                # Reset key variables
                                 game.reset()    
                                 game = self.game
                                 board = self.game.board
@@ -349,7 +356,7 @@ class Main:
             # Updates screen so put at end
             pygame.display.update()
             
-            self.clock.tick(30)
+            self.clock.tick(20)
     
 main = Main()
 main.mainloop()

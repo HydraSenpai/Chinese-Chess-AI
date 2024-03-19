@@ -22,15 +22,15 @@ class Agent:
             'g': -120,
             'e':  -120,
             'h':  -270,
-            'c': -285,
-            'r': -600,
+            'c': -300,
+            'r': -650,
             'k': -6000,
             'P': 30,
             'G': 120,
             'E':  120,
             'H':  270,
-            'C': 285,
-            'R': 600,
+            'C': 300,
+            'R': 650,
             'K': 6000
         }
         # UPPER PIECE SQUARE TABLES
@@ -165,7 +165,7 @@ class Agent:
         # temp_board = '0000000000/r0rP0000P0/0000000000/0000000000/k00000000K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = '0000000000/0000000000/0000000000/0000000000/k00000P00K/0000000000/0000000000/0000000000/0000000000'
         # temp_board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR'
-        # temp_board = 'R0eakaehr/000000000/000000000/p0p0p0p0p/000000000/000000000/P0P0P0P0P/000000000/000000000/RHEAKAEHR'
+        # board = 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEAKAEHR'
         # Where uppercase is other player
         # Will turn this into array
         split_board = board.split('/')
