@@ -1127,7 +1127,9 @@ class Agent:
         if depth <= 0:
             return self.evaluation(rows, not upper), best_move
         
+        # MAX TURN
         if upper:   
+            # Transposition table look up
             if str(rows) in pathDictionary:
                 return pathDictionary[str(rows)], best_move
             value = -math.inf
@@ -1138,12 +1140,15 @@ class Agent:
                     value = eval
                     best_move = s
                 alpha = max(alpha, value)
+                # Perform beta pruning here
                 if value >= beta:
                     pathDictionary[str(rows)] = value
                     break
             pathDictionary[str(rows)] = value
             return value, best_move
+        # MIN TURN
         else:
+            # Transposition table look up
             if str(rows) in pathDictionary:
                 return pathDictionary[str(rows)], best_move
             value = math.inf
@@ -1154,6 +1159,7 @@ class Agent:
                     value = eval
                     best_move = s
                 beta = min(beta, value)
+                # Perform alpha pruning here
                 if value <= alpha:
                     pathDictionary[str(rows)] = value
                     break
@@ -1165,6 +1171,7 @@ class Agent:
         # Create MC agent and root node
         root = Node(rows, not turn)
         mcts = SearchTree(root)
+        # Search tree
         best_node = mcts.best_action(2)
         print('done')
         self.print_row(best_node)

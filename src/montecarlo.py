@@ -6,7 +6,7 @@ class SearchTree:
     def __init__(self, node):
         self.root = node
 
-    # This method finds the best action after running simulations
+    # This method finds the best action after running simulations on nodes
     def best_action(self, simulations_number):
         print('best action')
         for _ in range(0, simulations_number):
@@ -17,7 +17,7 @@ class SearchTree:
             # print('rolled out node')
             v.backpropagate(reward)
             # print('backpropogated')
-        return self.root.best_child(c_param=1.4).state
+        return self.root.best_child(c_param=1.5).state
     
     
     # This method is used to find the next node to rollout by going down tree to find node with UCT (Upper Confidence Bound)

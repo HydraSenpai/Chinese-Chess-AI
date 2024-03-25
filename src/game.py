@@ -41,7 +41,7 @@ class Game:
         }
     
     # Show methods
-    
+    # Draws the board   
     def show_background(self, surface):
         for row in range(ROWS):
             # Check if we're on river row so no borders are drawn
@@ -77,7 +77,8 @@ class Game:
         pygame.draw.line(surface, (0,0,0), (3*SQUARE_SIZE+80, 7*SQUARE_SIZE+80), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), 3)
         pygame.draw.line(surface, (0,0,0), (5*SQUARE_SIZE+80, 9*SQUARE_SIZE+80), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), 3)
         pygame.draw.line(surface, (0,0,0), (4*SQUARE_SIZE+80, 8*SQUARE_SIZE+80), (5*SQUARE_SIZE+80, 7*SQUARE_SIZE+80), 3)
-                
+   
+    # Draw all pieces to the screen             
     def show_pieces(self, surface):
         for row in range(PIECE_ROWS):
             for col in range(PIECE_COLUMNS):
@@ -99,7 +100,8 @@ class Game:
                         img_center = (col * SQUARE_SIZE) + 80, (row * SQUARE_SIZE) + 80
                         piece.texture_rect = img_scaled.get_rect(center=img_center)
                         surface.blit(img_scaled, piece.texture_rect)
-                    
+    
+    # Displays the list of moves                
     def show_log(self, surface, move_list):
         
         def show_move_list(moves_list):
@@ -131,7 +133,8 @@ class Game:
                 start_value = 1
             else:
                 start_value = 0
-                               
+                           
+            # Display the remaining moves    
             for i in range(start_value, len(moves_list)-1, 2):
                 initial_row = moves_list[i].initial.row
                 initial_column = moves_list[i].initial.column
@@ -170,7 +173,8 @@ class Game:
         reversed_list = move_list[::-1]
         show_move_list(reversed_list)
         self.show_turn(surface)
-        
+
+    # Shows a label with the colour of whose turn it is        
     def show_turn(self, surface):
         if self.next_player == "red":
             text = "It is Red's turn!"
@@ -183,7 +187,8 @@ class Game:
         index_font = pygame.font.Font("assets/fonts/Inter-Regular.ttf", 30)
         index_text = index_font.render(text, True, (255,255,255))
         surface.blit(index_text, (WIDTH + (SQUARE_SIZE * 2), 40))
-        
+   
+    # Displays the possible moves when a piece is being dragged
     def show_moves(self, surface):
         if self.dragger.is_dragging:
             piece = self.dragger.piece
@@ -191,13 +196,15 @@ class Game:
                 colour = '#C86464'
                 rect = (move.final.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), move.final.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.ellipse(surface, colour, rect)
-                       
+
+    # Change turn                       
     def next_turn(self):
         if self.next_player == 'red':
             self.next_player = 'black'
         else: 
             self.next_player = 'red'
-             
+
+    # Shows an indicator of the last move, original position and new position             
     def show_last_move(self, surface):
         if self.board.last_move:
             initial = self.board.last_move.initial
@@ -206,7 +213,8 @@ class Game:
                 colour = (231, 247, 0)
                 rect = (pos.column * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), pos.row * SQUARE_SIZE + 80 - ((SQUARE_SIZE // 1.2) // 2), SQUARE_SIZE // 1.1, SQUARE_SIZE // 1.1)
                 pygame.draw.ellipse(surface, colour, rect)
-                
+ 
+    # Shows a sign after the game is won to let the user return or play again               
     def show_winning_modal(self, surface, loser):
         # Create background for modal
         rect_colour = (56,56,56)

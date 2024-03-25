@@ -74,6 +74,7 @@ class Node:
         def rollout_result(self, possible_moves):
             return possible_moves[np.random.randint(len(possible_moves))]
         
+        # Return the win or lose for the simulation
         def result_from_simulation(self, state, turn):
             if self.turn == turn:
                 return 1

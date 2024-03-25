@@ -28,7 +28,7 @@ class TestAgent(unittest.TestCase):
         board = Board()
         self.assertTrue(board.convert_board_to_string() == 'rhegkgehr/000000000/0c00000c0/p0p0p0p0p/000000000/000000000/P0P0P0P0P/0C00000C0/000000000/RHEGKGEHR')
         
-        # Check string to board works
+        # Check string to board works by changing a moved board to the starting state and comparing it to a new starting state board
         board = Board()
         board.add_custom_board("red")
         board.add_custom_board("black")
