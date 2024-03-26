@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from collections import defaultdict
 from methods import *
 
@@ -31,7 +32,7 @@ class Node:
 
         # Expands the chosen node to the next state
         def expand(self):
-            next_state = self._untried_actions.pop()
+            next_state = self._untried_actions.pop(random.randrange(len(self._untried_actions)))
             child_node = Node(next_state, self.turn, parent=self)
             self.children.append(child_node)
             return child_node

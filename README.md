@@ -4,7 +4,7 @@ Required python packages (pip install pygame in python/scripts directory)
 pygame
 
 To run system:
-locate main class in the source folder
+locate main class in the source folder whilst in project directory
 run application (f5)
 
 playthrough:
